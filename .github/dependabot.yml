@@ -7,6 +7,11 @@ updates:
     directory: "/dashboard"
     schedule:
       interval: "daily"
+      
+  - package-ecosystem: "npm"
+    directory: "/integration"
+    schedule:
+      interval: "daily"
 
   - package-ecosystem: "gomod"
     directory: "/"
@@ -14,6 +19,6 @@ updates:
       interval: "daily"
       
   - package-ecosystem: "cargo"
-    directory: "/kubeapps/cmd/pinniped-proxy"
+    directory: "/cmd/pinniped-proxy"
     schedule:
       interval: "daily"
