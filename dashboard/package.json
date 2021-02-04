@@ -76,7 +76,7 @@
     "redux-thunk": "^2.2.0",
     "remark-gfm": "^1.0.0",
     "seamless-immutable": "^7.1.4",
-    "semver": "^5.6.0",
+    "semver": "^7.3.4",
     "swagger-ui-react": "^3.40.0",
     "typesafe-actions": "^2.0.4",
     "yaml": "1.7.2"
