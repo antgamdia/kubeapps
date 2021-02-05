@@ -9,7 +9,7 @@
     "@clr/icons": "^4.0.6",
     "@clr/react": "^4.0.6",
     "@clr/ui": "^4.0.6",
-    "@types/diff": "^4.0.2",
+    "@types/diff": "^5.0.0",
     "@types/js-yaml": "^3.10.1",
     "@types/json-schema": "^7.0.3",
     "@types/jsonwebtoken": "^8.3.4",
