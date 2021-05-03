@@ -1,5 +1,6 @@
 #!/bin/bash
-# Copyright (c) 2018 Bitnami
+# Copyright 2021 the Kubeapps contributors. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +16,7 @@
 
 set -e
 
-CHARTS_REPO="bitnami/charts"
+CHARTS_REPO="antgamdia/charts"
 source $(dirname $0)/chart_sync_utils.sh
 
 user=${1:?}
@@ -23,12 +24,12 @@ email=${2:?}
 if changedVersion; then
     tempDir=$(mktemp -u)/charts
     mkdir -p $tempDir
-    git clone https://github.com/${CHARTS_REPO} $tempDir --depth 1 --no-single-branch 
+    git clone https://github.com/${CHARTS_REPO} $tempDir
     configUser $tempDir $user $email
     git fetch --tags
     latestVersion=$(latestReleaseTag)
-    updateRepo $tempDir $latestVersion
-    commitAndSendExternalPR $tempDir "kubeapps-bump-${latestVersion}"
+    updateFromRepo $tempDir $latestVersion
+    commitAndSendInternalPR ${PROJECT_DIR} "SyncChartChanges-${latestVersion}"
 else
     echo "Skipping Chart sync. The version has not changed"
 fi
