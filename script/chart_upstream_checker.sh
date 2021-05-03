@@ -15,20 +15,21 @@
 
 set -e
 
-CHARTS_REPO="bitnami/charts"
+CHARTS_REPO="antgamdia/charts"
 source $(dirname $0)/chart_sync_utils.sh
 
 user=${1:?}
 email=${2:?}
-if changedVersion; then
-    tempDir=$(mktemp -u)/charts
-    mkdir -p $tempDir
-    git clone https://github.com/${CHARTS_REPO} $tempDir
-    configUser $tempDir $user $email
-    git fetch --tags
+# if changedVersion; then
+    tempDir=/tmp/tmp.ypsRSTDQLq/charts
+    # tempDir=$(mktemp -u)/charts
+    # mkdir -p $tempDir
+    # git clone https://github.com/${CHARTS_REPO} $tempDir
+    # configUser $tempDir $user $email
+    # git fetch --tags
     latestVersion=$(latestReleaseTag)
-    updateRepo $tempDir $latestVersion
-    commitAndSendPR $tempDir "kubeapps-bump-${chartVersion}"
-else
-    echo "Skipping Chart sync. The version has not changed"
-fi
+    updateFromRepo $tempDir $latestVersion
+    commitAndSendInternalPR ${PROJECT_DIR} "SyncChartChanges-${latestVersion}"
+# else
+    # echo "Skipping Chart sync. The version has not changed"
+# fi
