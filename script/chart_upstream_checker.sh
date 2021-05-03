@@ -24,8 +24,9 @@ email=${2:?}
 if changedVersion; then
     tempDir=$(mktemp -u)/charts
     mkdir -p $tempDir
-    git clone https://github.com/${CHARTS_REPO} $tempDir
+    git clone https://github.com/${CHARTS_REPO} $tempDir  --depth 1 --no-single-branch 
     configUser $tempDir $user $email
+    configUser $PROJECT_DIR $user $email
     git fetch --tags
     latestVersion=$(latestReleaseTag)
     updateFromRepo $tempDir $latestVersion

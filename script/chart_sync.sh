@@ -15,7 +15,7 @@
 
 set -e
 
-CHARTS_REPO="bitnami/charts"
+CHARTS_REPO="antgamdia/charts"
 source $(dirname $0)/chart_sync_utils.sh
 
 user=${1:?}
@@ -25,6 +25,7 @@ if changedVersion; then
     mkdir -p $tempDir
     git clone https://github.com/${CHARTS_REPO} $tempDir --depth 1 --no-single-branch 
     configUser $tempDir $user $email
+    configUser $PROJECT_DIR $user $email
     git fetch --tags
     latestVersion=$(latestReleaseTag)
     updateRepo $tempDir $latestVersion
