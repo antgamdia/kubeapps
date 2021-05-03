@@ -348,7 +348,7 @@ install_github: &install_github
       wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
       tar zxf gh_${GITHUB_VERSION}_linux_amd64.tar.gz
       sudo mv gh_${GITHUB_VERSION}_linux_amd64/bin/gh /usr/local/bin/
-      gh auth login --with-token < ${ACCESS_TOKEN}
+      # Using the authentication token defined in the GITHUB_TOKEN env var.
 install_multicluster_deps: &install_multicluster_deps
   run:
     name: "Install multicluster deps"
