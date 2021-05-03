@@ -65,95 +65,95 @@ workflows:
   version: 2
   kubeapps:
     jobs:
-      - test_go:
-          <<: *build_always
-      - test_dashboard:
-          <<: *build_always
-      - test_pinniped_proxy:
-          <<: *build_always
-      - test_chart_render:
-          <<: *build_always
-      - build_go_images:
-          <<: *build_always
-      - build_dashboard:
-          <<: *build_always
-      - build_pinniped_proxy:
-          <<: *build_always
-      - local_e2e_tests:
-          <<: *build_always
-          matrix:
-            parameters:
-              # Enable the line below to do bundle builds to debug CI issues
-              number: ["1"]
-              # number: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-          requires:
-            - test_go
-            - test_dashboard
-            - build_go_images
-            - build_dashboard
-            - build_pinniped_proxy
+      # - test_go:
+      #     <<: *build_always
+      # - test_dashboard:
+      #     <<: *build_always
+      # - test_pinniped_proxy:
+      #     <<: *build_always
+      # - test_chart_render:
+      #     <<: *build_always
+      # - build_go_images:
+      #     <<: *build_always
+      # - build_dashboard:
+      #     <<: *build_always
+      # - build_pinniped_proxy:
+      #     <<: *build_always
+      # - local_e2e_tests:
+      #     <<: *build_always
+      #     matrix:
+      #       parameters:
+      #         # Enable the line below to do bundle builds to debug CI issues
+      #         number: ["1"]
+      #         # number: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+      #     requires:
+      #       - test_go
+      #       - test_dashboard
+      #       - build_go_images
+      #       - build_dashboard
+      #       - build_pinniped_proxy
       - check_upstream_chart:
           <<: *build_on_master
-      - GKE_1_17_MASTER:
-          <<: *build_on_master
-          requires:
-            - test_go
-            - test_dashboard
-            - build_go_images
-            - build_dashboard
-            - build_pinniped_proxy
-            - check_upstream_chart
-      - GKE_1_17_LATEST_RELEASE:
-          <<: *build_on_master
-          requires:
-            - test_go
-            - test_dashboard
-            - build_go_images
-            - build_dashboard
-            - build_pinniped_proxy
-            - check_upstream_chart
-      - GKE_1_18_MASTER:
-          <<: *build_on_master
-          requires:
-            - test_go
-            - test_dashboard
-            - build_go_images
-            - build_dashboard
-            - build_pinniped_proxy
-            - check_upstream_chart
-      - GKE_1_18_LATEST_RELEASE:
-          <<: *build_on_master
-          requires:
-            - test_go
-            - test_dashboard
-            - build_go_images
-            - build_dashboard
-            - build_pinniped_proxy
-            - check_upstream_chart
-      - push_images:
-          <<: *build_on_master
-          requires:
-            - local_e2e_tests
-            - GKE_1_17_MASTER
-            - GKE_1_17_LATEST_RELEASE
-            - GKE_1_18_MASTER
-            - GKE_1_18_LATEST_RELEASE
-      - sync_chart:
-          <<: *build_on_tag
-          requires:
-            - local_e2e_tests
-            - GKE_1_17_MASTER
-            - GKE_1_17_LATEST_RELEASE
-            - GKE_1_18_MASTER
-            - GKE_1_18_LATEST_RELEASE
-      - release:
-          <<: *build_on_tag
-          requires:
-            - local_e2e_tests
-            - GKE_1_17_MASTER
-            - GKE_1_17_LATEST_RELEASE
-            - GKE_1_18_MASTER
-            - GKE_1_18_LATEST_RELEASE
+      # - GKE_1_17_MASTER:
+      #     <<: *build_on_master
+      #     requires:
+      #       - test_go
+      #       - test_dashboard
+      #       - build_go_images
+      #       - build_dashboard
+      #       - build_pinniped_proxy
+      #       - check_upstream_chart
+      # - GKE_1_17_LATEST_RELEASE:
+      #     <<: *build_on_master
+      #     requires:
+      #       - test_go
+      #       - test_dashboard
+      #       - build_go_images
+      #       - build_dashboard
+      #       - build_pinniped_proxy
+      #       - check_upstream_chart
+      # - GKE_1_18_MASTER:
+      #     <<: *build_on_master
+      #     requires:
+      #       - test_go
+      #       - test_dashboard
+      #       - build_go_images
+      #       - build_dashboard
+      #       - build_pinniped_proxy
+      #       - check_upstream_chart
+      # - GKE_1_18_LATEST_RELEASE:
+      #     <<: *build_on_master
+      #     requires:
+      #       - test_go
+      #       - test_dashboard
+      #       - build_go_images
+      #       - build_dashboard
+      #       - build_pinniped_proxy
+      #       - check_upstream_chart
+      # - push_images:
+      #     <<: *build_on_master
+      #     requires:
+      #       - local_e2e_tests
+      #       - GKE_1_17_MASTER
+      #       - GKE_1_17_LATEST_RELEASE
+      #       - GKE_1_18_MASTER
+      #       - GKE_1_18_LATEST_RELEASE
+      # - sync_chart:
+      #     <<: *build_on_tag
+      #     requires:
+      #       - local_e2e_tests
+      #       - GKE_1_17_MASTER
+      #       - GKE_1_17_LATEST_RELEASE
+      #       - GKE_1_18_MASTER
+      #       - GKE_1_18_LATEST_RELEASE
+      # - release:
+      #     <<: *build_on_tag
+      #     requires:
+      #       - local_e2e_tests
+      #       - GKE_1_17_MASTER
+      #       - GKE_1_17_LATEST_RELEASE
+      #       - GKE_1_18_MASTER
+      #       - GKE_1_18_LATEST_RELEASE
 
 ## Definitions
 common_envars: &common_envars
