@@ -138,8 +138,9 @@ workflows:
       #       - GKE_1_17_LATEST_RELEASE
       #       - GKE_1_18_MASTER
       #       - GKE_1_18_LATEST_RELEASE
-      # - sync_chart:
-      #     <<: *build_on_tag
+      - sync_chart:
+          <<: *build_on_master #delete
+          # <<: *build_on_tag
       #     requires:
       #       - local_e2e_tests
       #       - GKE_1_17_MASTER
