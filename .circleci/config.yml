@@ -635,7 +635,7 @@ jobs:
       - <<: *install_github
       - add_ssh_keys:
           fingerprints:
-            - "cc:ed:2d:1f:74:3b:32:c3:99:62:d7:7d:81:af:01:e0"
+            - "9b:1d:d4:ce:6a:33:10:1b:fd:94:ae:28:e3:16:e5:bc"
       - run:
           name: Configure ssh keys
           command: |
