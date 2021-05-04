@@ -16,7 +16,6 @@
 
 set -e
 
-CHARTS_REPO="antgamdia/charts"
 source $(dirname $0)/chart_sync_utils.sh
 
 user=${1:?}
