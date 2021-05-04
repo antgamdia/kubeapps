@@ -641,8 +641,9 @@ jobs:
       - run:
           name: Configure ssh key in git
           command: |
-            git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062 -F /dev/null"
-            eval `ssh-agent -s`
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062
+          # git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062 -F /dev/null"
           # if ls ~/.ssh/id_rsa_* 1> /dev/null 2>&1; then
           #   rm -f ~/.ssh/id_rsa
           #   # Change order to use configured ssh_key first
