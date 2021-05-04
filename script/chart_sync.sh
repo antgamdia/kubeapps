@@ -25,7 +25,6 @@ if changedVersion; then
     git clone https://github.com/${CHARTS_REPO} $tempDir --depth 1 --no-single-branch 
     configUser $tempDir $user $email
     configUser $PROJECT_DIR $user $email
-    git fetch --tags
     latestVersion=$(latestReleaseTag $PROJECT_DIR)
     updateRepoWithLocalChanges $tempDir $latestVersion
     commitAndSendExternalPR $tempDir "kubeapps-bump-${latestVersion}"

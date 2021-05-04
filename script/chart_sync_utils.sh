@@ -26,6 +26,7 @@ PR_EXTERNAL_TEMPLATE_FILE="${PROJECT_DIR}/script/PR_external_chart_template.md"
 # Returns the tag for the latest release
 latestReleaseTag() {
     local targetRepo=${1:?}
+    git -C "${targetRepo}/.git" fetch --tags
     git -C "${targetRepo}/.git" describe --tags $(git rev-list --tags --max-count=1)
     }
 
