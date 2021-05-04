@@ -640,6 +640,7 @@ jobs:
           name: Configure ssh keys
           command: |
             if ls ~/.ssh/id_rsa_* 1> /dev/null 2>&1; then
+              rm -f ~/.ssh/id_rsa
               # Change order to use configured ssh_key first
               ssh-add -D
               ssh-add ~/.ssh/id_rsa_* ~/.ssh/id_rsa
