@@ -345,9 +345,9 @@ install_github: &install_github
   run:
     name: "Install GitHub CLI"
     command: |
-      wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
-      tar zxf gh_${GITHUB_VERSION}_linux_amd64.tar.gz
-      sudo mv gh_${GITHUB_VERSION}_linux_amd64/bin/gh /usr/local/bin/
+      wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_/tmp/linux_amd64.tar.gz
+      tar zxf /tmp/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
+      sudo mv /tmp/gh_${GITHUB_VERSION}_linux_amd64/bin/gh /usr/local/bin/
       # Using the authentication token defined in the GITHUB_TOKEN env var.
 install_multicluster_deps: &install_multicluster_deps
   run:
@@ -639,7 +639,8 @@ jobs:
       - run:
           name: Configure ssh key in git
           command: |
-            git config core.sshCommand "ssh -i ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062 -F /dev/null"
+            git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062 -F /dev/null"
+            eval `ssh-agent -s`
           # if ls ~/.ssh/id_rsa_* 1> /dev/null 2>&1; then
           #   rm -f ~/.ssh/id_rsa
           #   # Change order to use configured ssh_key first
