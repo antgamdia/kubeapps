@@ -635,16 +635,17 @@ jobs:
       - <<: *install_github
       - add_ssh_keys:
           fingerprints:
-            - "9b:1d:d4:ce:6a:33:10:1b:fd:94:ae:28:e3:16:e5:bc"
-      # - run:
-      #     name: Configure ssh keys
-      #     command: |
-      #       if ls ~/.ssh/id_rsa_* 1> /dev/null 2>&1; then
-      #         rm -f ~/.ssh/id_rsa
-      #         # Change order to use configured ssh_key first
-      #         ssh-add -D
-      #         ssh-add ~/.ssh/id_rsa_* ~/.ssh/id_rsa
-      #       fi
+            - "d9:e6:25:ea:b8:b8:42:5d:c8:89:20:8a:51:4b:60:62"
+      - run:
+          name: Configure ssh key in git
+          command: |
+            git config core.sshCommand "ssh -i ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062 -F /dev/null"
+          # if ls ~/.ssh/id_rsa_* 1> /dev/null 2>&1; then
+          #   rm -f ~/.ssh/id_rsa
+          #   # Change order to use configured ssh_key first
+          #   ssh-add -D
+          #   ssh-add ~/.ssh/id_rsa_* ~/.ssh/id_rsa
+          # fi
       - run:
           name: Execute the check_upstream_chart script
           command: |
