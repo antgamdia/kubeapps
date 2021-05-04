@@ -27,7 +27,7 @@ if changedVersion; then
     configUser $PROJECT_DIR $user $email
     git fetch --tags
     latestVersion=$(latestReleaseTag $PROJECT_DIR)
-    updateRepo $tempDir $latestVersion
+    updateRepoWithLocalChanges $tempDir $latestVersion
     commitAndSendExternalPR $tempDir "kubeapps-bump-${latestVersion}"
 else
     echo "Skipping Chart sync. The version has not changed"

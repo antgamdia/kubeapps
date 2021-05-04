@@ -93,7 +93,7 @@ replaceImage_productionToLatest() {
     rm "${file}.bk"
 }
 
-updateRepo() {
+updateRepoWithLocalChanges() {
     local targetRepo=${1:?}
     local targetTag=${2:?}
     local targetTagWithoutV=${targetTag#v}
@@ -107,6 +107,7 @@ updateRepo() {
     cp -R "${KUBEAPPS_CHART_DIR}" "${targetChartPath}"
     # Update Chart.yaml with new version
     sed -i.bk 's/appVersion: DEVEL/appVersion: '"${targetTagWithoutV}"'/g' "${chartYaml}"
+    echo 's/appVersion: DEVEL/appVersion: '"${targetTagWithoutV}"'/g'
     rm "${targetChartPath}/Chart.yaml.bk"
     # Replace images for the latest available
     replaceImage_latestToProduction dashboard "${targetChartPath}/values.yaml"
@@ -117,7 +118,7 @@ updateRepo() {
     replaceImage_latestToProduction pinniped-proxy "${targetChartPath}/values.yaml"
 }
 
-updateFromRepo() {
+updateRepoWithRemoteChanges() {
     local targetRepo=${1:?}
     local targetTag=${2:?}
     local targetTagWithoutV=${targetTag#v}
@@ -131,6 +132,7 @@ updateFromRepo() {
     rm -rf "${KUBEAPPS_CHART_DIR}"
     cp -R "${targetChartPath}" "${KUBEAPPS_CHART_DIR}"
     # Update Chart.yaml with new version
+    
     sed -i.bk "s/appVersion: "${targetTagWithoutV}"/appVersion: DEVEL/g" "${localChartYaml}"
     rm "${KUBEAPPS_CHART_DIR}/Chart.yaml.bk"
     # Replace images for the latest available

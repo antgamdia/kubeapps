@@ -21,14 +21,15 @@ source $(dirname $0)/chart_sync_utils.sh
 user=${1:?}
 email=${2:?}
 if changedVersion; then
-    tempDir=$(mktemp -u)/charts
-    mkdir -p $tempDir
-    git clone https://github.com/${CHARTS_REPO} $tempDir  --depth 1 --no-single-branch 
-    configUser $tempDir $user $email
-    configUser $PROJECT_DIR $user $email
+    tempDir='/tmp/tmp.axg3Tyrir7/charts'
+    # tempDir=$(mktemp -u)/charts
+    # mkdir -p $tempDir
+    # git clone https://github.com/${CHARTS_REPO} $tempDir  --depth 1 --no-single-branch 
+    # configUser $tempDir $user $email
+    # configUser $PROJECT_DIR $user $email
     git fetch --tags
     latestVersion=$(latestReleaseTag $PROJECT_DIR)
-    updateFromRepo $tempDir $latestVersion
+    updateRepoWithRemoteChanges $tempDir $latestVersion
     commitAndSendInternalPR ${PROJECT_DIR} "sync-chart-changes-${latestVersion}"
 else
     echo "Skipping Chart sync. The version has not changed"
