@@ -92,7 +92,7 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      - check_upstream_chart:
+      - sync_chart_from_bitnami:
           <<: *build_on_master
       # - GKE_1_17_MASTER:
       #     <<: *build_on_master
@@ -102,7 +102,7 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      #       - check_upstream_chart
+      #       - sync_chart_from_bitnami
       # - GKE_1_17_LATEST_RELEASE:
       #     <<: *build_on_master
       #     requires:
@@ -111,7 +111,7 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      #       - check_upstream_chart
+      #       - sync_chart_from_bitnami
       # - GKE_1_18_MASTER:
       #     <<: *build_on_master
       #     requires:
@@ -120,7 +120,7 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      #       - check_upstream_chart
+      #       - sync_chart_from_bitnami
       # - GKE_1_18_LATEST_RELEASE:
       #     <<: *build_on_master
       #     requires:
@@ -129,7 +129,7 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      #       - check_upstream_chart
+      #       - sync_chart_from_bitnami
       # - push_images:
       #     <<: *build_on_master
       #     requires:
@@ -138,7 +138,7 @@ workflows:
       #       - GKE_1_17_LATEST_RELEASE
       #       - GKE_1_18_MASTER
       #       - GKE_1_18_LATEST_RELEASE
-      - sync_chart:
+      - sync_chart_to_bitnami:
           <<: *build_on_master #delete
           # <<: *build_on_tag
       #     requires:
@@ -607,7 +607,7 @@ jobs:
       TEST_LATEST_RELEASE: 1
       USE_MULTICLUSTER_OIDC_ENV: "false"
       <<: *common_envars
-  sync_chart:
+  sync_chart_to_bitnami:
     environment:
       <<: *common_envars
     docker:
@@ -617,20 +617,22 @@ jobs:
       - <<: *install_github
       - add_ssh_keys:
           fingerprints:
-            - "d9:e6:25:ea:b8:b8:42:5d:c8:89:20:8a:51:4b:60:62"
+            # Deployment key uploaded to the bitnami/charts repository
+            - "ba:56:29:3b:70:d7:bb:14:a9:db:42:7b:73:42:23:e4"
       - run:
           # This is a key pair: https://circleci.com/docs/2.0/gh-bb-integration/
-            # public key uploaded to GitHub as a deploy key with write permissions
+            # public key uploaded to GitHub as a deploy key with write permissions in both kubeapps and bitnami/charts
             # private key uploaded to CircleCI with hostname "github.com"
           name: Start ssh-agent and configure the key
           command: |
             eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062
+            # the name is always "id_rsa_"+fingerprint without ":""
+            ssh-add ~/.ssh/id_rsa_ba56293b70d7bb14a9db427b734223e4
       - run:
           name: Execute the chart_sync script
           command: |
             ./script/chart_sync.sh kubernetes-bitnami kubernetes@bitnami.com
-  check_upstream_chart:
+  sync_chart_from_bitnami:
     environment:
       <<: *common_envars
     docker:
@@ -640,7 +642,8 @@ jobs:
       - <<: *install_github
       - add_ssh_keys:
           fingerprints:
-            - "d9:e6:25:ea:b8:b8:42:5d:c8:89:20:8a:51:4b:60:62"
+            # Deployment key uploaded to the kubeapps/kubeapps repository
+            - "60:9f:97:43:bc:e0:61:b1:76:8b:71:0f:00:cf:f7:69"
       - run:
           # This is a key pair: https://circleci.com/docs/2.0/gh-bb-integration/
             # public key uploaded to GitHub as a deploy key with write permissions
@@ -648,7 +651,8 @@ jobs:
           name: Start ssh-agent and configure the key
           command: |
             eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062
+            # the name is always "id_rsa_"+fingerprint without ":""
+            ssh-add ~/.ssh/id_rsa_609f9743bce061b1768b710f00cff769
       - run:
           name: Execute the check_upstream_chart script
           command: |
