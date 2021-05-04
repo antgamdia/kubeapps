@@ -26,8 +26,7 @@ PR_EXTERNAL_TEMPLATE_FILE="${PROJECT_DIR}/script/PR_external_chart_template.md"
 # Returns the tag for the latest release
 latestReleaseTag() {
     local targetRepo=${1:?}
-    cd $targetRepo
-    git describe --tags $(git rev-list --tags --max-count=1)
+    git -C "${targetRepo}/.git" describe --tags $(git rev-list --tags --max-count=1)
     }
 
 changedVersion() {
@@ -107,7 +106,6 @@ updateRepoWithLocalChanges() {
     cp -R "${KUBEAPPS_CHART_DIR}" "${targetChartPath}"
     # Update Chart.yaml with new version
     sed -i.bk 's/appVersion: DEVEL/appVersion: '"${targetTagWithoutV}"'/g' "${chartYaml}"
-    echo 's/appVersion: DEVEL/appVersion: '"${targetTagWithoutV}"'/g'
     rm "${targetChartPath}/Chart.yaml.bk"
     # Replace images for the latest available
     replaceImage_latestToProduction dashboard "${targetChartPath}/values.yaml"
@@ -132,7 +130,6 @@ updateRepoWithRemoteChanges() {
     rm -rf "${KUBEAPPS_CHART_DIR}"
     cp -R "${targetChartPath}" "${KUBEAPPS_CHART_DIR}"
     # Update Chart.yaml with new version
-    
     sed -i.bk "s/appVersion: "${targetTagWithoutV}"/appVersion: DEVEL/g" "${localChartYaml}"
     rm "${KUBEAPPS_CHART_DIR}/Chart.yaml.bk"
     # Replace images for the latest available
