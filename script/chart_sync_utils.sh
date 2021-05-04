@@ -24,8 +24,10 @@ PR_EXTERNAL_TEMPLATE_FILE="${PROJECT_DIR}/script/PR_external_chart_template.md"
 
 # Returns the tag for the latest release
 latestReleaseTag() {
-  git describe --tags $(git rev-list --tags --max-count=1)
-}
+    local targetRepo=${1:?}
+    cd $targetRepo
+    git describe --tags $(git rev-list --tags --max-count=1)
+    }
 
 changedVersion() {
     local currentVersion=$(cat "${KUBEAPPS_CHART_DIR}/Chart.yaml" | grep "version:")

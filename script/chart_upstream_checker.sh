@@ -28,9 +28,9 @@ if changedVersion; then
     configUser $tempDir $user $email
     configUser $PROJECT_DIR $user $email
     git fetch --tags
-    latestVersion=$(latestReleaseTag)
+    latestVersion=$(latestReleaseTag $PROJECT_DIR)
     updateFromRepo $tempDir $latestVersion
-    commitAndSendInternalPR ${PROJECT_DIR} "SyncChartChanges-${latestVersion}"
+    commitAndSendInternalPR ${PROJECT_DIR} "sync-chart-changes-${latestVersion}"
 else
     echo "Skipping Chart sync. The version has not changed"
 fi

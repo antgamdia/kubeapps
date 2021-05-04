@@ -27,7 +27,7 @@ if changedVersion; then
     configUser $tempDir $user $email
     configUser $PROJECT_DIR $user $email
     git fetch --tags
-    latestVersion=$(latestReleaseTag)
+    latestVersion=$(latestReleaseTag $PROJECT_DIR)
     updateRepo $tempDir $latestVersion
     commitAndSendExternalPR $tempDir "kubeapps-bump-${latestVersion}"
 else

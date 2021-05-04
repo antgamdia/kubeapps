@@ -639,7 +639,7 @@ jobs:
           fingerprints:
             - "d9:e6:25:ea:b8:b8:42:5d:c8:89:20:8a:51:4b:60:62"
       - run:
-          name: Configure ssh key in git
+          name: Start ssh-agent and configure the key
           command: |
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/id_rsa_d9e625eab8b8425dc889208a514b6062
