@@ -345,6 +345,7 @@ install_github: &install_github
   run:
     name: "Install GitHub CLI"
     command: |
+      cd /tmp
       wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
       tar zxf gh_${GITHUB_VERSION}_linux_amd64.tar.gz
       rm gh_${GITHUB_VERSION}_linux_amd64.tar.gz
