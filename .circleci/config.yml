@@ -345,9 +345,10 @@ install_github: &install_github
   run:
     name: "Install GitHub CLI"
     command: |
-      wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_linux_amd64.tar.gz -O /tmp/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
-      tar zxf /tmp/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
-      sudo mv /tmp/gh_${GITHUB_VERSION}_linux_amd64/bin/gh /usr/local/bin/
+      wget https://github.com/cli/cli/releases/download/v${GITHUB_VERSION}/gh_${GITHUB_VERSION}_linux_amd64.tar.gz
+      tar zxf gh_${GITHUB_VERSION}_linux_amd64.tar.gz
+      rm gh_${GITHUB_VERSION}_linux_amd64.tar.gz
+      sudo mv gh_${GITHUB_VERSION}_linux_amd64/bin/gh /usr/local/bin/
       # Using the authentication token defined in the GITHUB_TOKEN env var.
 install_multicluster_deps: &install_multicluster_deps
   run:
