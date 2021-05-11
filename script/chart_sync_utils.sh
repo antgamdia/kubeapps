@@ -106,9 +106,9 @@ updateRepoWithLocalChanges() {
         echo "Wrong repo path. You should provide the root of the repository" > /dev/stderr
         return 1
     fi
-    git -C "${targetRepo}/.git" remote add upstream https://github.com/${CHARTS_REPO_ORIGINAL}.git
-    git -C "${targetRepo}/.git" pull upstream master
-    git -C "${targetRepo}/.git" push origin master
+    git -C "${targetRepo}" remote add upstream https://github.com/${CHARTS_REPO_ORIGINAL}.git
+    git -C "${targetRepo}" pull upstream master
+    git -C "${targetRepo}" push origin master
     rm -rf "${targetChartPath}"
     cp -R "${KUBEAPPS_CHART_DIR}" "${targetChartPath}"
     # Update Chart.yaml with new version
