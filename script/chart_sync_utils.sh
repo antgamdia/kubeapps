@@ -185,7 +185,8 @@ commitAndSendExternalPR() {
     # NOTE: This expects to have a loaded SSH key
     git push origin $targetBranch
     git config --local "remote.origin.gh-resolved" ${CHARTS_REPO}
-    gh pr create -H $targetBranch -B master -F ${PR_EXTERNAL_TEMPLATE_FILE} --title "[bitnami/kubeapps] Bump chart version to $chartVersion"
+    echo "TEMPORARILY DISABLED, SHOULD CREATE PR"
+    # gh pr create -H $targetBranch -B master -F ${PR_EXTERNAL_TEMPLATE_FILE} --title "[bitnami/kubeapps] Bump chart version to $chartVersion"
     cd -
 }
 
@@ -212,6 +213,7 @@ commitAndSendInternalPR() {
     # NOTE: This expects to have a loaded SSH key
     git push origin $targetBranch
     git config --local "remote.origin.gh-resolved" ${KUBEAPPS_REPO}
-    gh pr create -H $targetBranch -d -B master -F ${PR_INTERNAL_TEMPLATE_FILE} --title "Sync chart with bitnami/kubeapps chart (version $chartVersion)"
+    echo "TEMPORARILY DISABLED, SHOULD CREATE PR"
+    # gh pr create -H $targetBranch -d -B master -F ${PR_INTERNAL_TEMPLATE_FILE} --title "Sync chart with bitnami/kubeapps chart (version $chartVersion)"
     cd -
 }
