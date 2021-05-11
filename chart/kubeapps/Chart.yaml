@@ -19,10 +19,11 @@ keywords:
   - dashboard
   - service catalog
   - deployment
+  - local change to test CI
 maintainers:
   - email: containers@bitnami.com
     name: Bitnami
 name: kubeapps
 sources:
   - https://github.com/kubeapps/kubeapps
-version: 6.1.2
+version: 10.0.0
