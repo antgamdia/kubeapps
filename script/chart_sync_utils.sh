@@ -47,8 +47,8 @@ changedVersion() {
         echo "Both chart versions ("${currentVersion}") and ("${externalVersion}") are equal"
         false
     else
-        echo "WARNING: the current chart version ("${currentVersion}") is greater than the chart external version ("${externalVersion}")."
-        false
+        echo "Current current chart version ("${currentVersion}") is greater than the chart external version ("${externalVersion}")"
+        true
     fi
 }
 
