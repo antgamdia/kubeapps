@@ -21,7 +21,7 @@ set -e
 ## the development chart repository (KUBEAPPS_REPO)
 CHARTS_REPO_ORIGINAL="antgamdia/charts"
 CHARTS_REPO="kubeapps-bot/charts"
-KUBEAPPS_REPO="bitnami/kubeapps"
+KUBEAPPS_REPO="antgamdia/kubeapps"
 
 CHART_REPO_PATH="bitnami/kubeapps"
 PROJECT_DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd`
@@ -192,18 +192,10 @@ commitAndSendInternalPR() {
         return 1
     fi
     local chartVersion=$(grep -e '^version:' ${localChartYaml} | awk '{print $2}')
-    git remote add upstream https://github.com/${CHARTS_REPO_ORIGINAL}.git
-    git pull upstream master
-    git push origin master
     git checkout -b $targetBranch
     git add --all .
     git commit -m "bump chart version to $chartVersion"
     # NOTE: This expects to have a loaded SSH key
-    # git push origin $targetBranch
-    echo "TEMPORARILY DISABLED, SHOULD PUSH TO ORIGIN"
-    git remote -v # delete
-    git config --local "remote.origin.gh-resolved" ${KUBEAPPS_REPO}
-    echo "TEMPORARILY DISABLED, SHOULD CREATE PR"
-    # gh pr create -H $targetBranch -d -B master -F ${PR_INTERNAL_TEMPLATE_FILE} --title "Sync chart with bitnami/kubeapps chart (version $chartVersion)"
-    cd -
+    git push -u origin $targetBranch
+    gh pr create -B master -R ${KUBEAPPS_REPO} -F ${PR_INTERNAL_TEMPLATE_FILE} --title "Sync chart with bitnami/kubeapps chart (version $chartVersion)"
 }
