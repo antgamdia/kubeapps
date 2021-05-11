@@ -692,7 +692,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             # Deployment key uploaded to the kubeapps/kubeapps repository
-            - "20:5e:d1:68:7c:10:67:c1:ab:e2:6e:33:e3:7a:64:6e"
+            - "f1:13:b8:1d:99:88:2f:47:a0:5b:89:eb:0d:41:57:1d"
       - run:
           # This is a key pair: https://circleci.com/docs/2.0/gh-bb-integration/
           # public key uploaded to GitHub as a deploy key with write permissions
@@ -701,7 +701,7 @@ jobs:
           command: |
             eval "$(ssh-agent -s)"
             # the name is always "id_rsa_"+fingerprint without ":""
-            ssh-add ~/.ssh/id_rsa_205ed1687c1067c1abe26e33e37a646e
+            ssh-add ~/.ssh/id_rsa_f113b81d99882f47a05b89eb0d41571d
       - run:
           # Assuming there is a personal access token created in GitHub granted with the scopes
           # "repo:status", "public_repo" and "read:org"
