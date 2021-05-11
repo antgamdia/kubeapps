@@ -104,8 +104,8 @@ workflows:
       #       - build_go_images
       #       - build_dashboard
       #       - build_pinniped_proxy
-      # - sync_chart_from_bitnami:
-      #     <<: *build_always
+      - sync_chart_from_bitnami:
+          <<: *build_always
           # <<: *build_on_master
       # - GKE_1_17_MASTER:
       #     <<: *build_on_master
@@ -151,8 +151,8 @@ workflows:
       #       - GKE_1_17_LATEST_RELEASE
       #       - GKE_1_18_MASTER
       #       - GKE_1_18_LATEST_RELEASE
-      - sync_chart_to_bitnami:
-          <<: *build_always
+      # - sync_chart_to_bitnami:
+      #     <<: *build_always
           # <<: *build_on_tag
           # requires:
           #   - local_e2e_tests
