@@ -142,7 +142,8 @@ data:
     {{- if .Values.featureFlags.kubeappsAPIsServer }}
       location ~* /apis {
         rewrite ^ $request_uri; # pass the encoded url downstream as is,
-        rewrite /apis([^?]*) $1?$args break;
+        # rewrite /apis([^?]*) $1?$args break;
+        rewrite /apis([^?]*) $1 break;
     {{- if .Values.frontend.proxypassExtraSetHeader }}
         proxy_set_header {{ .Values.frontend.proxypassExtraSetHeader }};
     {{- end }}
@@ -176,5 +177,15 @@ data:
         add_header Authorization $http_authorization;
 
         proxy_pass http://{{ template "kubeapps.dashboard.fullname" . }}:{{ .Values.dashboard.service.port }};
+      }
+    }
+
+    server {
+      listen 50051 http2; # TODO(agamez) template it!
+
+      # TODO(agamez) think about passing authentication and other options
+
+      location / {
+        grpc_pass {{ include "kubeapps.kubeappsapis.grpc_pass" . -}};
       }
     }

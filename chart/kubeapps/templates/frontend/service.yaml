@@ -45,6 +45,11 @@ spec:
       {{- end }}
       protocol: TCP
       name: http
+    - port: 50051 # TODO(agamez) template it!
+      targetPort: grpc
+      nodePort: 30001 # TODO(agamez) template it!
+      protocol: TCP
+      name: grpc
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
     app.kubernetes.io/component: frontend
 {{- if .Values.pinnipedProxy.enabled }}

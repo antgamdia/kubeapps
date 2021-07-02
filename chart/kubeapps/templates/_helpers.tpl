@@ -80,6 +80,13 @@ http://{{ include "kubeapps.kubeappsapis.fullname" . }}:{{ .Values.kubeappsapis.
 {{- end -}}
 
 {{/*
+Create grpc_pass for the kubeappsapis
+*/}}
+{{- define "kubeapps.kubeappsapis.grpc_pass" -}}
+grpc://{{ include "kubeapps.kubeappsapis.fullname" . }}:{{ .Values.kubeappsapis.service.port }}
+{{- end -}}
+
+{{/*
 Create name for kubeappsapis based on the fullname
 */}}
 {{- define "kubeapps.kubeappsapis.fullname" -}}
