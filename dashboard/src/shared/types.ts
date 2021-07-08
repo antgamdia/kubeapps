@@ -65,14 +65,21 @@ export interface IChartVersionAttributes {
   created: string;
 }
 
-export interface IChart {
-  id: string;
-  attributes: IChartAttributes;
-  relationships: {
-    latestChartVersion: {
-      data: IChartVersionAttributes;
+export interface IAvailablePackagesSummary {
+  availablePackageRef: {
+    context: {
+      namespace: string;
+    };
+    identifier: string;
+    plugin: {
+      name: string;
+      version: string;
     };
   };
+  displayName: string;
+  iconUrl: string;
+  latestPkgVersion: string;
+  shortDescription: string;
 }
 
 export interface IChartListMeta {
@@ -80,7 +87,7 @@ export interface IChartListMeta {
 }
 
 export interface IReceiveChartsActionPayload {
-  items: IChart[];
+  items: IAvailablePackagesSummary[];
   page: number;
   totalPages: number;
 }
@@ -117,7 +124,7 @@ export interface IChartState {
     values?: string;
     schema?: jsonSchema.JSONSchema4;
   };
-  items: IChart[];
+  items: IAvailablePackagesSummary[];
   categories: IChartCategory[];
   size: number;
 }

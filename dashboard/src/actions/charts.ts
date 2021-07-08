@@ -107,9 +107,9 @@ export function fetchCharts(
       const response = await Chart.fetchCharts(cluster, namespace, repos, page, size, query);
       dispatch(
         receiveCharts({
-          items: response.data,
-          page,
-          totalPages: response.meta.totalPages,
+          items: response.availablePackagesSummaries,
+          page: 1,
+          totalPages: 1,
         }),
       );
     } catch (e) {

@@ -1,6 +1,6 @@
 import { JSONSchema4 } from "json-schema";
 import { axiosWithAuth } from "./AxiosInstance";
-import { IChart, IChartCategory, IChartListMeta, IChartVersion } from "./types";
+import { IAvailablePackagesSummary, IChartCategory, IChartVersion } from "./types";
 import * as URL from "./url";
 
 export default class Chart {
@@ -12,9 +12,9 @@ export default class Chart {
     size: number,
     query?: string,
   ) {
-    const { data } = await axiosWithAuth.get<{ data: IChart[]; meta: IChartListMeta }>(
-      URL.api.charts.list(cluster, namespace, repos, page, size, query),
-    );
+    const { data } = await axiosWithAuth.get<{
+      availablePackagesSummaries: IAvailablePackagesSummary[];
+    }>(URL.api.charts.list(cluster, "kubeapps", repos, page, size, query));
     return data;
   }
 
@@ -79,7 +79,7 @@ export default class Chart {
     const url = `${URL.api.charts.base(cluster, namespace)}/charts?name=${encodeURIComponent(
       name,
     )}&version=${encodeURIComponent(version)}&appversion=${appVersion}`;
-    const { data } = await axiosWithAuth.get<{ data: IChart[] }>(url);
+    const { data } = await axiosWithAuth.get<{ data: IAvailablePackagesSummary[] }>(url);
     return data.data;
   }
 }

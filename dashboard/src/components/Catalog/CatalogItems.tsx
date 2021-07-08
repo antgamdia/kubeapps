@@ -1,11 +1,10 @@
-import { trimStart } from "lodash";
 import { useMemo } from "react";
 import { getIcon } from "shared/Operators";
-import { IChart, IClusterServiceVersion } from "shared/types";
+import { IAvailablePackagesSummary, IClusterServiceVersion, IRepo } from "shared/types";
 import CatalogItem, { ICatalogItemProps } from "./CatalogItem";
 
 interface ICatalogItemsProps {
-  charts: IChart[];
+  charts: IAvailablePackagesSummary[];
   csvs: IClusterServiceVersion[];
   cluster: string;
   namespace: string;
@@ -23,25 +22,27 @@ export default function CatalogItems({
   isFetching,
   hasFinishedFetching,
 }: ICatalogItemsProps) {
+  console.log(charts);
   const chartItems: ICatalogItemProps[] = useMemo(
     () =>
       charts.map(c => {
-        return {
+        console.log(c);
+        const obj = {
           type: "chart",
-          id: `chart/${c.attributes.repo.name}/${c.id}`,
+          id: `chart/${c.availablePackageRef.identifier}`,
           item: {
-            id: c.id,
-            name: c.attributes.name,
-            icon: c.attributes.icon
-              ? `api/assetsvc/${trimStart(c.attributes.icon, "/")}`
-              : undefined,
-            version: c.relationships.latestChartVersion.data.app_version,
-            description: c.attributes.description,
-            repo: c.attributes.repo,
+            id: `chart/${c.availablePackageRef.identifier}/${c.latestPkgVersion}`,
+            name: c.displayName,
+            icon: c.iconUrl ? c.iconUrl : undefined,
+            version: c.latestPkgVersion,
+            description: c.shortDescription,
+            repo: { name: "NOT AVAILABLE" } as IRepo,
             cluster,
             namespace,
           },
         };
+        console.log(obj);
+        return obj;
       }),
     [charts, cluster, namespace],
   );

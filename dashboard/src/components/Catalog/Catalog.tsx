@@ -220,17 +220,17 @@ function Catalog(props: ICatalogProps) {
     .filter(
       () => filters[filterNames.TYPE].length === 0 || filters[filterNames.TYPE].includes("Charts"),
     )
-    .filter(() => filters[filterNames.OPERATOR_PROVIDER].length === 0)
-    .filter(
-      c =>
-        filters[filterNames.REPO].length === 0 ||
-        filters[filterNames.REPO].includes(c.attributes.repo.name),
-    )
-    .filter(
-      c =>
-        filters[filterNames.CATEGORY].length === 0 ||
-        filters[filterNames.CATEGORY].includes(categoryToReadable(c.attributes.category)),
-    );
+    .filter(() => filters[filterNames.OPERATOR_PROVIDER].length === 0);
+  // .filter(
+  //   c =>
+  //     filters[filterNames.REPO].length === 0 ||
+  //     filters[filterNames.REPO].includes(c.attributes.repo.name),
+  // )
+  // .filter(
+  //   c =>
+  //     filters[filterNames.CATEGORY].length === 0 ||
+  //     filters[filterNames.CATEGORY].includes(categoryToReadable(c.attributes.category)),
+  // );
   const filteredCSVs = csvs
     .filter(
       () =>

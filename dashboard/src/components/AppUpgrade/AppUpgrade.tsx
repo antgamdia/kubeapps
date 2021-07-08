@@ -109,8 +109,8 @@ function AppUpgrade({
     );
   }
 
-  const appRepoName = repoName || app.updateInfo.repository.name;
-  const repoNS = repoNamespace || app.updateInfo.repository.namespace;
+  const appRepoName = repoName; //|| app.updateInfo.repository.name;
+  const repoNS = repoNamespace; //|| app.updateInfo.repository.namespace;
   if (app && app.chart && app.chart.metadata && appRepoName) {
     return (
       <div>
@@ -120,7 +120,7 @@ function AppUpgrade({
           chartName={app.chart.metadata.name!}
           chartsIsFetching={chartsIsFetching}
           repo={appRepoName}
-          repoNamespace={repoNS}
+          repoNamespace={String(repoNS)}
           namespace={namespace}
           cluster={cluster}
           releaseName={releaseName}

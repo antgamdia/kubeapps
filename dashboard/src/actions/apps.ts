@@ -14,6 +14,7 @@ import {
   IChartUpdateInfo,
   IChartVersion,
   IRelease,
+  IRepo,
   IStoreState,
   RollbackError,
   UnprocessableEntity,
@@ -130,19 +131,17 @@ function getAppUpdateInfo(
       };
       if (chartsInfo.length > 0) {
         const sortedCharts = chartsInfo.sort((a, b) =>
-          semver.compare(
-            a.relationships.latestChartVersion.data.version,
-            b.relationships.latestChartVersion.data.version,
-          ),
+          semver.compare(a.latestPkgVersion, b.latestPkgVersion),
         );
-        const chartLatestVersion = sortedCharts[0].relationships.latestChartVersion.data.version;
-        const appLatestVersion = sortedCharts[0].relationships.latestChartVersion.data.app_version;
+        const appLatestVersion = sortedCharts[0].latestPkgVersion;
+        // TODO(agamez): MISSING FIELD IN API
+        const chartLatestVersion = sortedCharts[0].latestPkgVersion;
         // Initialize updateInfo with the latest chart found
         updateInfo = {
           upToDate: semver.gte(currentVersion, chartLatestVersion),
           chartLatestVersion,
           appLatestVersion,
-          repository: sortedCharts[0].attributes.repo,
+          repository: {} as IRepo,
         };
       }
       dispatch(receiveAppUpdateInfo({ releaseName, updateInfo }));
