@@ -1,3 +1,4 @@
+import { GetAvailablePackageSummariesResponse } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { JSONSchema4 } from "json-schema";
 import { ThunkAction } from "redux-thunk";
 import * as semver from "semver";
@@ -104,7 +105,14 @@ export function fetchCharts(
   return async dispatch => {
     dispatch(requestCharts(page));
     try {
-      const response = await Chart.fetchCharts(cluster, namespace, repos, page, size, query);
+      const response: GetAvailablePackageSummariesResponse = await Chart.fetchCharts(
+        cluster,
+        namespace,
+        repos,
+        page,
+        size,
+        query,
+      );
       dispatch(
         receiveCharts({
           items: response.availablePackagesSummaries,

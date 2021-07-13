@@ -1,10 +1,11 @@
+import { AvailablePackageSummary } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { useMemo } from "react";
 import { getIcon } from "shared/Operators";
-import { IAvailablePackagesSummary, IClusterServiceVersion, IRepo } from "shared/types";
+import { IClusterServiceVersion, IRepo } from "shared/types";
 import CatalogItem, { ICatalogItemProps } from "./CatalogItem";
 
 interface ICatalogItemsProps {
-  charts: IAvailablePackagesSummary[];
+  charts: AvailablePackageSummary[];
   csvs: IClusterServiceVersion[];
   cluster: string;
   namespace: string;
@@ -29,9 +30,9 @@ export default function CatalogItems({
         console.log(c);
         const obj = {
           type: "chart",
-          id: `chart/${c.availablePackageRef.identifier}`,
+          id: `chart/${c.availablePackageRef?.identifier}`,
           item: {
-            id: `chart/${c.availablePackageRef.identifier}/${c.latestPkgVersion}`,
+            id: `chart/${c.availablePackageRef?.identifier}/${c.latestPkgVersion}`,
             name: c.displayName,
             icon: c.iconUrl ? c.iconUrl : undefined,
             version: c.latestPkgVersion,
