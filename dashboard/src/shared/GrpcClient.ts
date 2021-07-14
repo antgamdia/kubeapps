@@ -10,7 +10,7 @@ export class GrpcClient {
   constructor() {
     this.authToken = Auth.getAuthToken() ?? "";
     // TODO(agamez): fetch this value dynamically
-    this.baseUrl = "http://localhost:50052";
+    this.baseUrl = "http://localhost:50051";
   }
 
   private GetClientConfig = () => {
