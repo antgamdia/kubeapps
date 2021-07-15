@@ -6,7 +6,7 @@ RUN yarn install --frozen-lockfile
 
 RUN mkdir /app/src
 COPY . /app
-# RUN yarn run prettier-check && yarn run ts-compile-check
+RUN yarn run prettier-check && yarn run ts-compile-check
 RUN yarn run build
 
 FROM bitnami/nginx:1.20-debian-10

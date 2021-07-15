@@ -96,8 +96,6 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.frontend.containerPort }}
-            - name: grpc
-              containerPort: 50051 # TODO(agamez) template it!
           {{- if .Values.frontend.resources }}
           resources: {{- toYaml .Values.frontend.resources | nindent 12 }}
           {{- end }}
