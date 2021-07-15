@@ -126,9 +126,7 @@ export const api = {
       size: number,
       query?: string,
     ) =>
-      `${api.charts.base(cluster, namespace)}/charts?page=${page}&size=${size}${
-        query ? "&q=" + query : ""
-      }${repos ? `&repos=${repos}` : ""}`,
+      `apis/plugins/helm/packages/v1alpha1/availablepackagesummaries?context.namespace=${namespace}&filterOptions.query=${query}&filterOptions.repositories=${repos}`,
     getChartCategories: (cluster: string, namespace: string) =>
       `${api.charts.base(cluster, namespace)}/charts/categories`,
     listVersions: (cluster: string, namespace: string, id: string) =>
@@ -215,4 +213,6 @@ export const api = {
     operatorIcon: (cluster: string, namespace: string, name: string) =>
       `api/v1/clusters/${cluster}/namespaces/${namespace}/operator/${name}/logo`,
   },
+
+  kubeappsapis: "/apis",
 };

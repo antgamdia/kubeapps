@@ -1,9 +1,13 @@
 import { JSONSchema4 } from "json-schema";
 import { axiosWithAuth } from "./AxiosInstance";
-import { IChart, IChartCategory, IChartListMeta, IChartVersion } from "./types";
+import { IAvailablePackagesSummary, IChartCategory, IChartVersion } from "./types";
 import * as URL from "./url";
+import { HelmPackagesServiceClientImpl } from "gen/kubeappsapis/plugins/helm/packages/v1alpha1/helm";
+import { GrpcClient } from "./GrpcClient";
 
 export default class Chart {
+  private static grpcClient = new GrpcClient().getGrpcClient();
+
   public static async fetchCharts(
     cluster: string,
     namespace: string,
@@ -12,10 +16,11 @@ export default class Chart {
     size: number,
     query?: string,
   ) {
-    const { data } = await axiosWithAuth.get<{ data: IChart[]; meta: IChartListMeta }>(
-      URL.api.charts.list(cluster, namespace, repos, page, size, query),
-    );
-    return data;
+    const client = new HelmPackagesServiceClientImpl(this.grpcClient);
+    return await client.GetAvailablePackageSummaries({
+      //TODO(agamez): add cluster when it is supported
+      context: { cluster: "", namespace: namespace },
+    });
   }
 
   public static async fetchChartCategories(cluster: string, namespace: string) {
@@ -79,7 +84,7 @@ export default class Chart {
     const url = `${URL.api.charts.base(cluster, namespace)}/charts?name=${encodeURIComponent(
       name,
     )}&version=${encodeURIComponent(version)}&appversion=${appVersion}`;
-    const { data } = await axiosWithAuth.get<{ data: IChart[] }>(url);
+    const { data } = await axiosWithAuth.get<{ data: IAvailablePackagesSummary[] }>(url);
     return data.data;
   }
 }
