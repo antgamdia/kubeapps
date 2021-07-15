@@ -1420,11 +1420,6 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@improbable-eng/grpc-web-node-http-transport@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@improbable-eng/grpc-web-node-http-transport/-/grpc-web-node-http-transport-0.14.0.tgz#3edf05360541b2d7ba799ec0144780a7a9a99383"
-  integrity sha512-NGZJgY8zTTWM//9oGdJZ+acmCgcgUcqxu3NV3GMFxw35D+3xkdEz599r9O7urg1Vv0+LzXDvfWEg7qg1Ec8x1w==
-
 "@improbable-eng/grpc-web@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@improbable-eng/grpc-web/-/grpc-web-0.14.0.tgz#a71c5af471dcef6a2810798f71f93ed8d6ac3817"
@@ -14179,10 +14174,10 @@ ts-proto-descriptors@^1.2.1:
     long "^4.0.0"
     protobufjs "^6.8.8"
 
-ts-proto@^1.82.0:
-  version "1.82.0"
-  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.82.0.tgz#9637dafd59f291f4cca8d507fc24ba490e0703ee"
-  integrity sha512-vo4QN4QhR0D4/+C/pSbRIVSV6U7dooNcuyW3SL9DvhKRQA4lnAbF5QBs77ge3JRi+aSZJm8MlzTNk7+e++fvvQ==
+ts-proto@^1.82.2:
+  version "1.82.2"
+  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.82.2.tgz#76231b577f81e4832587eaf44116575db341bdf2"
+  integrity sha512-Hceptz4oCnUTeGYbGepNNDg7drYOdv0M+m3LSv8V5hehsilsx5Ca8bhUAYGcQad+CDvbeUDM6PrzW4GGfJXi9A==
   dependencies:
     "@types/object-hash" "^1.3.0"
     dataloader "^1.4.0"
