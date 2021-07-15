@@ -107,8 +107,6 @@ func Serve(serveOpts ServeOptions) {
 
 	httpSrv.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if webrpcProxy.IsGrpcWebRequest(r) || webrpcProxy.IsAcceptableGrpcCorsRequest(r) || webrpcProxy.IsGrpcWebSocketRequest(r) {
-			//TODO: remove log
-			log.Info(fmt.Sprintf("handling grpweb request: %s", r.URL.String()))
 			webrpcProxy.ServeHTTP(w, r)
 		}
 	})

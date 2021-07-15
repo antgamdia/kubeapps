@@ -6,6 +6,8 @@ import { HelmPackagesServiceClientImpl } from "gen/kubeappsapis/plugins/helm/pac
 import { GrpcClient } from "./GrpcClient";
 
 export default class Chart {
+  private static grpcClient = new GrpcClient().getGrpcClient();
+
   public static async fetchCharts(
     cluster: string,
     namespace: string,
@@ -14,13 +16,11 @@ export default class Chart {
     size: number,
     query?: string,
   ) {
-    // const { data } = await axiosWithAuth.get<{
-    //   availablePackagesSummaries: IAvailablePackagesSummary[];
-    // }>(URL.api.charts.list(cluster, "kubeapps", repos, page, size, query));
-
-    const client = new HelmPackagesServiceClientImpl(new GrpcClient().getGrpcClient());
-
-    return await client.GetAvailablePackageSummaries({ context: { namespace: "default" } });
+    const client = new HelmPackagesServiceClientImpl(this.grpcClient);
+    return await client.GetAvailablePackageSummaries({
+      //TODO(agamez): add cluster when it is supported
+      context: { cluster: "", namespace: namespace },
+    });
   }
 
   public static async fetchChartCategories(cluster: string, namespace: string) {

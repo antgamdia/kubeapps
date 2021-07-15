@@ -213,4 +213,6 @@ export const api = {
     operatorIcon: (cluster: string, namespace: string, name: string) =>
       `api/v1/clusters/${cluster}/namespaces/${namespace}/operator/${name}/logo`,
   },
+
+  kubeappsapis: "/apis",
 };
