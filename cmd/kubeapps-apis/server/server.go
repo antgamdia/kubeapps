@@ -62,9 +62,6 @@ func Serve(serveOpts ServeOptions) {
 		addr:        listenAddr,
 		dialOptions: []grpc.DialOption{grpc.WithInsecure()},
 	}
-	httpSrv := &http.Server{
-		Handler: gwArgs.mux,
-	}
 
 	// Create the core.plugins server which handles registration of plugins,
 	// and register it for both grpc and http.
@@ -105,15 +102,34 @@ func Serve(serveOpts ServeOptions) {
 		grpcweb.WithWebsocketOriginFunc(func(req *http.Request) bool { return true }),
 	)
 
-	httpSrv.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if webrpcProxy.IsGrpcWebRequest(r) || webrpcProxy.IsAcceptableGrpcCorsRequest(r) || webrpcProxy.IsGrpcWebSocketRequest(r) {
-			webrpcProxy.ServeHTTP(w, r)
-		}
-	})
+	httpSrv := &http.Server{
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if webrpcProxy.IsGrpcWebRequest(r) || webrpcProxy.IsAcceptableGrpcCorsRequest(r) || webrpcProxy.IsGrpcWebSocketRequest(r) {
+				webrpcProxy.ServeHTTP(w, r)
+			} else {
+				gwArgs.mux.ServeHTTP(w, r)
+			}
+		}),
+	}
 
-	go grpcSrv.Serve(grpcLis)
-	go grpcSrv.Serve(grpcwebLis)
-	go httpSrv.Serve(httpLis)
+	go func() {
+		err := grpcSrv.Serve(grpcLis)
+		if err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+	go func() {
+		err := grpcSrv.Serve(grpcwebLis)
+		if err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+	go func() {
+		err := httpSrv.Serve(httpLis)
+		if err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
 
 	if serveOpts.UnsafeUseDemoSA {
 		log.Warning("Using the demo Service Account for authenticating the requests. This is not recommended except for development purposes. Set `kubeappsapis.unsafeUseDemoSA: false` to remove this warning")

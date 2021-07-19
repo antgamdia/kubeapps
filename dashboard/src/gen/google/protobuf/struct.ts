@@ -54,7 +54,7 @@ export interface Struct {
 
 export interface Struct_FieldsEntry {
   key: string;
-  value: Value | undefined;
+  value?: Value;
 }
 
 /**
@@ -75,9 +75,9 @@ export interface Value {
   /** Represents a boolean value. */
   boolValue: boolean | undefined;
   /** Represents a structured value. */
-  structValue: Struct | undefined;
+  structValue?: Struct | undefined;
   /** Represents a repeated `Value`. */
-  listValue: ListValue | undefined;
+  listValue?: ListValue | undefined;
 }
 
 /**

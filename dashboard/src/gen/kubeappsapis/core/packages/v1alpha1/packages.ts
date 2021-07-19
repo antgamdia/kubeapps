@@ -2,9 +2,9 @@
 import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import _m0 from "protobufjs/minimal";
-import { BrowserHeaders } from "browser-headers";
 import { Any } from "../../../../google/protobuf/any";
 import { Plugin } from "../../../../kubeappsapis/core/plugins/v1alpha1/plugins";
+import { BrowserHeaders } from "browser-headers";
 
 export const protobufPackage = "kubeappsapis.core.packages.v1alpha1";
 
@@ -15,15 +15,15 @@ export const protobufPackage = "kubeappsapis.core.packages.v1alpha1";
  */
 export interface GetAvailablePackageSummariesRequest {
   /** The context (cluster/namespace) for the request */
-  context: Context | undefined;
+  context?: Context;
   /** The filters used for the request */
-  filterOptions: FilterOptions | undefined;
+  filterOptions?: FilterOptions;
   /**
    * PaginationOptions
    *
    * Pagination options specifying where to start and how many results to include.
    */
-  paginationOptions: PaginationOptions | undefined;
+  paginationOptions?: PaginationOptions;
 }
 
 /**
@@ -36,7 +36,7 @@ export interface GetAvailablePackageDetailRequest {
    * The information required to uniquely
    * identify an available package
    */
-  availablePackageRef: AvailablePackageReference | undefined;
+  availablePackageRef?: AvailablePackageReference;
   /**
    * Optional specific version (or version reference) to request.
    * By default the latest version (or latest version matching the reference)
@@ -55,7 +55,7 @@ export interface GetAvailablePackageVersionsRequest {
    * The information required to uniquely
    * identify an available package
    */
-  availablePackageRef: AvailablePackageReference | undefined;
+  availablePackageRef?: AvailablePackageReference;
   /**
    * Optional version reference for which full version history is required.  By
    * default a summary of versions is returned as outlined in the response.
@@ -72,13 +72,13 @@ export interface GetAvailablePackageVersionsRequest {
  */
 export interface GetInstalledPackageSummariesRequest {
   /** The context (cluster/namespace) for the request. */
-  context: Context | undefined;
+  context?: Context;
   /**
    * PaginationOptions
    *
    * Pagination options specifying where to start and how many results to include.
    */
-  paginationOptions: PaginationOptions | undefined;
+  paginationOptions?: PaginationOptions;
 }
 
 /**
@@ -113,7 +113,7 @@ export interface GetAvailablePackageDetailResponse {
    *
    * List of AvailablePackageDetail
    */
-  availablePackageDetail: AvailablePackageDetail | undefined;
+  availablePackageDetail?: AvailablePackageDetail;
 }
 
 /**
@@ -182,7 +182,7 @@ export interface AvailablePackageSummary {
    *
    * A reference uniquely identifying the package.
    */
-  availablePackageRef: AvailablePackageReference | undefined;
+  availablePackageRef?: AvailablePackageReference;
   /**
    * Available package name
    *
@@ -228,7 +228,7 @@ export interface AvailablePackageDetail {
    *
    * A reference uniquely identifying the package.
    */
-  availablePackageRef: AvailablePackageReference | undefined;
+  availablePackageRef?: AvailablePackageReference;
   /**
    * Available package name
    *
@@ -296,7 +296,7 @@ export interface AvailablePackageDetail {
    *
    * Some additional information added by the plugin
    */
-  customDetail: Any | undefined;
+  customDetail?: Any;
 }
 
 /**
@@ -311,7 +311,7 @@ export interface InstalledPackageSummary {
    *
    * A reference uniquely identifying the package.
    */
-  installedPackageRef: InstalledPackageReference | undefined;
+  installedPackageRef?: InstalledPackageReference;
   /**
    * Name
    *
@@ -324,7 +324,7 @@ export interface InstalledPackageSummary {
    * The package version reference defines a version or constraint limiting
    * matching package versions.
    */
-  pkgVersionReference: VersionReference | undefined;
+  pkgVersionReference?: VersionReference;
   /**
    * CurrentPkgVersion
    *
@@ -406,7 +406,7 @@ export interface AvailablePackageReference {
    *
    * The context (cluster/namespace) for the package.
    */
-  context: Context | undefined;
+  context?: Context;
   /**
    * Available package identifier
    *
@@ -428,7 +428,7 @@ export interface AvailablePackageReference {
    * The plugin used to interact with this available package.
    * This field should be omitted when the request is in the context of a specific plugin.
    */
-  plugin: Plugin | undefined;
+  plugin?: Plugin;
 }
 
 /**
@@ -526,7 +526,7 @@ export interface InstalledPackageReference {
    *
    * The context (cluster/namespace) for the package.
    */
-  context: Context | undefined;
+  context?: Context;
   /**
    * The fully qualified identifier for the installed package
    * (ie. a unique name for the context).
@@ -536,7 +536,7 @@ export interface InstalledPackageReference {
    * The plugin used to identify and interact with the installed package.
    * This field can be omitted when the request is in the context of a specific plugin.
    */
-  plugin: Plugin | undefined;
+  plugin?: Plugin;
 }
 
 /**

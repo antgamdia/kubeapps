@@ -324,7 +324,7 @@ export interface HttpRule {
    * HTTP method unspecified for this rule. The wild-card rule is useful
    * for services that provide content to Web (HTML) clients.
    */
-  custom: CustomHttpPattern | undefined;
+  custom?: CustomHttpPattern | undefined;
   /**
    * The name of the request field whose value is mapped to the HTTP request
    * body, or `*` for mapping all request fields not captured by the path

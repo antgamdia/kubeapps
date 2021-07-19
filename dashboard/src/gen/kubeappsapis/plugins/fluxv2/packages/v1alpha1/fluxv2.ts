@@ -3,6 +3,7 @@ import Long from "long";
 import { grpc } from "@improbable-eng/grpc-web";
 import _m0 from "protobufjs/minimal";
 import {
+  Context,
   GetAvailablePackageSummariesRequest,
   GetAvailablePackageDetailRequest,
   GetAvailablePackageVersionsRequest,
@@ -11,10 +12,9 @@ import {
   GetAvailablePackageDetailResponse,
   GetAvailablePackageVersionsResponse,
   GetInstalledPackageSummariesResponse,
-  Context,
 } from "../../../../../kubeappsapis/core/packages/v1alpha1/packages";
-import { BrowserHeaders } from "browser-headers";
 import { Plugin } from "../../../../../kubeappsapis/core/plugins/v1alpha1/plugins";
+import { BrowserHeaders } from "browser-headers";
 
 export const protobufPackage = "kubeappsapis.plugins.fluxv2.packages.v1alpha1";
 
@@ -25,7 +25,7 @@ export const protobufPackage = "kubeappsapis.plugins.fluxv2.packages.v1alpha1";
  */
 export interface GetPackageRepositoriesRequest {
   /** The context (cluster/namespace) for the request */
-  context: Context | undefined;
+  context?: Context;
 }
 
 /**
@@ -71,7 +71,7 @@ export interface PackageRepository {
    *
    * The plugin used to interact with this package repository.
    */
-  plugin: Plugin | undefined;
+  plugin?: Plugin;
 }
 
 const baseGetPackageRepositoriesRequest: object = {};
