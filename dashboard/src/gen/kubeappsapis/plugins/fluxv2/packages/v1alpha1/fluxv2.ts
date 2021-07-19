@@ -6,9 +6,11 @@ import {
   GetAvailablePackageSummariesRequest,
   GetAvailablePackageDetailRequest,
   GetAvailablePackageVersionsRequest,
+  GetInstalledPackageSummariesRequest,
   GetAvailablePackageSummariesResponse,
   GetAvailablePackageDetailResponse,
   GetAvailablePackageVersionsResponse,
+  GetInstalledPackageSummariesResponse,
   Context,
 } from "../../../../../kubeappsapis/core/packages/v1alpha1/packages";
 import { BrowserHeaders } from "browser-headers";
@@ -338,6 +340,11 @@ export interface FluxV2PackagesService {
     request: DeepPartial<GetPackageRepositoriesRequest>,
     metadata?: grpc.Metadata,
   ): Promise<GetPackageRepositoriesResponse>;
+  /** GetInstalledPackageSummaries returns the installed packages managed by the 'fluxv2' plugin */
+  GetInstalledPackageSummaries(
+    request: DeepPartial<GetInstalledPackageSummariesRequest>,
+    metadata?: grpc.Metadata,
+  ): Promise<GetInstalledPackageSummariesResponse>;
 }
 
 export class FluxV2PackagesServiceClientImpl implements FluxV2PackagesService {
@@ -349,6 +356,7 @@ export class FluxV2PackagesServiceClientImpl implements FluxV2PackagesService {
     this.GetAvailablePackageDetail = this.GetAvailablePackageDetail.bind(this);
     this.GetAvailablePackageVersions = this.GetAvailablePackageVersions.bind(this);
     this.GetPackageRepositories = this.GetPackageRepositories.bind(this);
+    this.GetInstalledPackageSummaries = this.GetInstalledPackageSummaries.bind(this);
   }
 
   GetAvailablePackageSummaries(
@@ -391,6 +399,17 @@ export class FluxV2PackagesServiceClientImpl implements FluxV2PackagesService {
     return this.rpc.unary(
       FluxV2PackagesServiceGetPackageRepositoriesDesc,
       GetPackageRepositoriesRequest.fromPartial(request),
+      metadata,
+    );
+  }
+
+  GetInstalledPackageSummaries(
+    request: DeepPartial<GetInstalledPackageSummariesRequest>,
+    metadata?: grpc.Metadata,
+  ): Promise<GetInstalledPackageSummariesResponse> {
+    return this.rpc.unary(
+      FluxV2PackagesServiceGetInstalledPackageSummariesDesc,
+      GetInstalledPackageSummariesRequest.fromPartial(request),
       metadata,
     );
   }
@@ -480,6 +499,28 @@ export const FluxV2PackagesServiceGetPackageRepositoriesDesc: UnaryMethodDefinit
     deserializeBinary(data: Uint8Array) {
       return {
         ...GetPackageRepositoriesResponse.decode(data),
+        toObject() {
+          return this;
+        },
+      };
+    },
+  } as any,
+};
+
+export const FluxV2PackagesServiceGetInstalledPackageSummariesDesc: UnaryMethodDefinitionish = {
+  methodName: "GetInstalledPackageSummaries",
+  service: FluxV2PackagesServiceDesc,
+  requestStream: false,
+  responseStream: false,
+  requestType: {
+    serializeBinary() {
+      return GetInstalledPackageSummariesRequest.encode(this).finish();
+    },
+  } as any,
+  responseType: {
+    deserializeBinary(data: Uint8Array) {
+      return {
+        ...GetInstalledPackageSummariesResponse.decode(data),
         toObject() {
           return this;
         },
