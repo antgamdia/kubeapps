@@ -1,5 +1,11 @@
 import { RouterState } from "connected-react-router";
-import { AvailablePackageSummary } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+import {
+  AvailablePackageDetail,
+  AvailablePackageSummary,
+  GetAvailablePackageDetailResponse,
+  GetAvailablePackageSummariesResponse,
+  GetAvailablePackageVersionsResponse_PackageAppVersion,
+} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import * as jsonSchema from "json-schema";
 import { IOperatorsState } from "reducers/operators";
 import { IAuthState } from "../reducers/auth";
@@ -45,17 +51,17 @@ export interface IRepo {
   url: string;
 }
 
-export interface IChartVersion {
-  id: string;
-  attributes: IChartVersionAttributes;
-  relationships: {
-    chart: {
-      data: IChartAttributes;
-    };
-  };
-}
+// export interface GetAvailablePackageVersionsResponse_PackageAppVersion {
+//   id: string;
+//   attributes: GetAvailablePackageVersionsResponse_PackageAppVersionAttributes;
+//   relationships: {
+//     chart: {
+//       data: IChartAttributes;
+//     };
+//   };
+// }
 
-export interface IChartVersionAttributes {
+export interface GetAvailablePackageVersionsResponse_PackageAppVersionAttributes {
   version: string;
   app_version: string;
   created: string;
@@ -66,15 +72,14 @@ export interface IChart {
   attributes: IChartAttributes;
   relationships: {
     latestChartVersion: {
-      data: IChartVersionAttributes;
+      data: GetAvailablePackageVersionsResponse_PackageAppVersionAttributes;
     };
   };
 }
 
 export interface IReceiveChartsActionPayload {
-  items: AvailablePackageSummary[];
+  response: GetAvailablePackageSummariesResponse;
   page: number;
-  nextPageToken: string;
 }
 
 export interface IChartAttributes {
@@ -97,15 +102,15 @@ export interface IChartState {
   hasFinishedFetching: boolean;
   selected: {
     error?: FetchError | Error;
-    version?: IChartVersion;
-    versions: IChartVersion[];
+    version?: AvailablePackageDetail;
+    versions: GetAvailablePackageVersionsResponse_PackageAppVersion[];
     readme?: string;
     readmeError?: string;
     values?: string;
     schema?: any;
   };
   deployed: {
-    chartVersion?: IChartVersion;
+    chartVersion?: GetAvailablePackageDetailResponse;
     values?: string;
     schema?: jsonSchema.JSONSchema4;
   };

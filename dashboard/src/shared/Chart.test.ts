@@ -109,7 +109,7 @@ describe("App", () => {
     ].forEach(t => {
       it(t.description, async () => {
         expect(
-          await Chart.fetchChartVersions(t.args.cluster, t.args.namespace, t.args.id),
+          await Chart.getAvailablePackageVersions(t.args.cluster, t.args.namespace, t.args.id),
         ).toStrictEqual("ok");
         expect(moxios.requests.mostRecent().url).toStrictEqual(t.result);
       });

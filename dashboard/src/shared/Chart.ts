@@ -1,11 +1,18 @@
+import {
+  GetAvailablePackageDetailResponse,
+  GetAvailablePackageSummariesResponse,
+  GetAvailablePackageVersionsResponse,
+} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { JSONSchema4 } from "json-schema";
 import { axiosWithAuth } from "./AxiosInstance";
 import { KubeappsGrpcClient } from "./KubeappsGrpcClient";
-import { IChart, IChartVersion } from "./types";
+import { IChart } from "./types";
 import * as URL from "./url";
 
 export default class Chart {
+  // TODO(agamez): move to the core 'PackagesServiceClientImpl' when pagination is ready there
   private static client = new KubeappsGrpcClient().getHelmPackagesServiceClientImpl();
+
   public static async getAvailablePackageSummaries(
     cluster: string,
     namespace: string,
@@ -13,9 +20,7 @@ export default class Chart {
     page: number,
     size: number,
     query?: string,
-  ) {
-    // TODO(agamez): move to the core 'PackagesServiceClientImpl' when pagination is ready there
-
+  ): Promise<GetAvailablePackageSummariesResponse> {
     return await this.client.GetAvailablePackageSummaries({
       // TODO(agamez): add cluster when it is supported
       context: { cluster: "", namespace: namespace },
@@ -27,28 +32,57 @@ export default class Chart {
     });
   }
 
-  public static async fetchChartVersions(
+  // public static async fetchChartVersions(
+  //   cluster: string,
+  //   namespace: string,
+  //   id: string,
+  // ): Promise<void> {
+  //   const { data } = await axiosWithAuth.get<{ data: GetAvailablePackageVersionsResponse_PackageAppVersion[] }>(
+  //     URL.api.charts.listVersions(cluster, namespace, id),
+  //   );
+  //   return data.data;
+  // }
+
+  public static async getAvailablePackageVersions(
     cluster: string,
     namespace: string,
     id: string,
-  ): Promise<IChartVersion[]> {
-    const { data } = await axiosWithAuth.get<{ data: IChartVersion[] }>(
-      URL.api.charts.listVersions(cluster, namespace, id),
-    );
-    return data.data;
+  ): Promise<GetAvailablePackageVersionsResponse> {
+    return await this.client.GetAvailablePackageVersions({
+      availablePackageRef: {
+        // TODO(agamez): add cluster when it is supported
+        context: { cluster: "", namespace: namespace },
+        identifier: id,
+      },
+    });
   }
 
-  public static async getChartVersion(
+  public static async getAvailablePackageDetail(
     cluster: string,
     namespace: string,
     id: string,
-    version: string,
-  ) {
-    const { data } = await axiosWithAuth.get<{ data: IChartVersion }>(
-      URL.api.charts.getVersion(cluster, namespace, id, version),
-    );
-    return data.data;
+    version?: string,
+  ): Promise<GetAvailablePackageDetailResponse> {
+    return await this.client.GetAvailablePackageDetail({
+      pkgVersion: version,
+      availablePackageRef: {
+        context: { cluster: "", namespace: namespace },
+        identifier: id,
+      },
+    });
   }
+
+  // public static async getChartVersion(
+  //   cluster: string,
+  //   namespace: string,
+  //   id: string,
+  //   version: string,
+  // ) {
+  //   const { data } = await axiosWithAuth.get<{
+  //     data: GetAvailablePackageVersionsResponse_PackageAppVersion;
+  //   }>(URL.api.charts.getVersion(cluster, namespace, id, version));
+  //   return data.data;
+  // }
 
   public static async getReadme(cluster: string, namespace: string, id: string, version: string) {
     const { data } = await axiosWithAuth.get<string>(

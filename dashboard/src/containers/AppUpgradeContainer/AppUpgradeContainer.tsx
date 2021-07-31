@@ -7,7 +7,8 @@ import actions from "../../actions";
 
 import { JSONSchema4 } from "json-schema";
 import AppUpgrade from "../../components/AppUpgrade";
-import { IChartVersion, IStoreState } from "../../shared/types";
+import { IStoreState } from "../../shared/types";
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 interface IRouteProps {
   match: {
@@ -65,7 +66,7 @@ function mapDispatchToProps(dispatch: ThunkDispatch<IStoreState, null, Action>) 
     upgradeApp: (
       cluster: string,
       namespace: string,
-      version: IChartVersion,
+      version: GetAvailablePackageVersionsResponse_PackageAppVersion,
       chartNamespace: string,
       releaseName: string,
       values?: string,

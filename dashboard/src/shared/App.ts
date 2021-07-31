@@ -1,7 +1,8 @@
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import * as url from "shared/url";
 import { axiosWithAuth } from "./AxiosInstance";
 import { hapi } from "./hapi/release";
-import { IAppOverview, IChartVersion } from "./types";
+import { IAppOverview, IChartAttributes } from "./types";
 
 export const KUBEOPS_ROOT_URL = "api/kubeops/v1";
 
@@ -11,10 +12,10 @@ export class App {
     namespace: string,
     releaseName: string,
     chartNamespace: string,
-    chartVersion: IChartVersion,
+    chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
     values?: string,
   ) {
-    const chartAttrs = chartVersion.relationships.chart.data;
+    const chartAttrs = {} as IChartAttributes; // version.relationships.chart.data;
     const endpoint = url.kubeops.releases.list(cluster, namespace);
     const { data } = await axiosWithAuth.post(endpoint, {
       appRepositoryResourceName: chartAttrs.repo.name,
@@ -22,7 +23,7 @@ export class App {
       chartName: decodeURIComponent(chartAttrs.name),
       releaseName,
       values,
-      version: chartVersion.attributes.version,
+      version: chartVersion.pkgVersion,
     });
     return data;
   }
@@ -32,10 +33,10 @@ export class App {
     namespace: string,
     releaseName: string,
     chartNamespace: string,
-    chartVersion: IChartVersion,
+    chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
     values?: string,
   ) {
-    const chartAttrs = chartVersion.relationships.chart.data;
+    const chartAttrs = {} as IChartAttributes; // version.relationships.chart.data;
     const endpoint = url.kubeops.releases.get(cluster, namespace, releaseName);
     const { data } = await axiosWithAuth.put(endpoint, {
       appRepositoryResourceName: chartAttrs.repo.name,
@@ -43,7 +44,7 @@ export class App {
       chartName: decodeURIComponent(chartAttrs.name),
       releaseName,
       values,
-      version: chartVersion.attributes.version,
+      version: chartVersion.pkgVersion,
     });
     return data;
   }

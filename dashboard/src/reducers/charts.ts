@@ -33,10 +33,11 @@ const chartsSelectedReducer = (
         schema: action.payload.schema,
       };
     case getType(actions.charts.receiveChartVersions):
+      // console.log(action.payload.packageAppVersions);
       return {
         ...state,
         error: undefined,
-        versions: action.payload,
+        versions: action.payload.packageAppVersions,
       };
     case getType(actions.charts.selectReadme):
       return { ...state, readme: action.payload, readmeError: undefined };
@@ -62,13 +63,16 @@ const chartsReducer = (
       return { ...state, isFetching: true };
     case getType(actions.charts.receiveCharts): {
       const isLastPage =
-        action.payload.page >= parseInt(action.payload.nextPageToken) ||
-        action.payload.nextPageToken === "";
+        action.payload.page >= parseInt(action.payload.response.nextPageToken) ||
+        action.payload.response.nextPageToken === "";
       return {
         ...state,
         isFetching: false,
         hasFinishedFetching: isLastPage,
-        items: uniqBy([...state.items, ...action.payload.items], "availablePackageRef.identifier"),
+        items: uniqBy(
+          [...state.items, ...action.payload.response.availablePackageSummaries],
+          "availablePackageRef.identifier",
+        ),
       };
     }
     case getType(actions.charts.receiveChartCategories):
@@ -94,7 +98,7 @@ const chartsReducer = (
       return {
         ...state,
         isFetching: false,
-        deployed: { ...state.deployed, ...action.payload },
+        deployed: { ...state.deployed, ...action.payload.chartVersion },
       };
     case getType(actions.charts.resetRequestCharts):
       return {

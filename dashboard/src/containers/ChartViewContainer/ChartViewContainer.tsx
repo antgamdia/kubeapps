@@ -1,10 +1,11 @@
+import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { connect } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
 import actions from "../../actions";
 import ChartView from "../../components/ChartView";
-import { IChartVersion, IStoreState } from "../../shared/types";
+import { IStoreState } from "../../shared/types";
 
 interface IRouteProps {
   match: {
@@ -47,7 +48,7 @@ function mapDispatchToProps(
     getChartReadme: (cluster: string, namespace: string, version: string) =>
       dispatch(actions.charts.getChartReadme(cluster, namespace, chartID(params), version)),
     resetChartVersion: () => dispatch(actions.charts.resetChartVersion()),
-    selectChartVersion: (version: IChartVersion) =>
+    selectChartVersion: (version: AvailablePackageDetail) =>
       dispatch(actions.charts.selectChartVersion(version)),
   };
 }

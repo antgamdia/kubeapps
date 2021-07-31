@@ -1,15 +1,19 @@
-import { JSONSchema4 } from "json-schema";
+// import { JSONSchemaType } from "ajv";
+import {
+  AvailablePackageDetail,
+  GetAvailablePackageVersionsResponse,
+} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+// import { JSONSchema4 } from "json-schema";
 import { ThunkAction } from "redux-thunk";
-import * as semver from "semver";
+// import * as semver from "semver";
 import { ActionType, deprecated } from "typesafe-actions";
 
 import Chart from "../shared/Chart";
 import {
   FetchError,
-  IChartVersion,
   IReceiveChartsActionPayload,
   IStoreState,
-  NotFoundError,
+  // NotFoundError,
 } from "../shared/types";
 
 const { createAction } = deprecated;
@@ -29,7 +33,7 @@ export const receiveChartCategories = createAction("RECEIVE_CHART_CATEGORIES", r
 });
 
 export const receiveChartVersions = createAction("RECEIVE_CHART_VERSIONS", resolve => {
-  return (versions: IChartVersion[]) => resolve(versions);
+  return (versions: GetAvailablePackageVersionsResponse) => resolve(versions);
 });
 
 export const errorChart = createAction("ERROR_CHART", resolve => {
@@ -43,7 +47,7 @@ export const errorChartCatetories = createAction("ERROR_CHART_CATEGORIES", resol
 });
 
 export const selectChartVersion = createAction("SELECT_CHART_VERSION", resolve => {
-  return (chartVersion: IChartVersion, values?: string, schema?: JSONSchema4) =>
+  return (chartVersion: AvailablePackageDetail, values?: string, schema?: string) =>
     resolve({ chartVersion, values, schema });
 });
 
@@ -52,7 +56,7 @@ export const requestDeployedChartVersion = createAction("REQUEST_DEPLOYED_CHART_
 export const receiveDeployedChartVersion = createAction(
   "RECEIVE_DEPLOYED_CHART_VERSION",
   resolve => {
-    return (chartVersion: IChartVersion, values?: string, schema?: JSONSchema4) =>
+    return (chartVersion: AvailablePackageDetail, values?: string, schema?: string) =>
       resolve({ chartVersion, values, schema });
   },
 );
@@ -108,14 +112,15 @@ export function fetchCharts(
         size,
         query,
       );
+      // if (response) {
       dispatch(
         receiveCharts({
-          items: response.availablePackageSummaries,
+          response,
           page,
-          nextPageToken: response.nextPageToken,
         }),
       );
       dispatch(receiveChartCategories(response.categories));
+      // }
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
     }
@@ -126,38 +131,98 @@ export function fetchChartVersions(
   cluster: string,
   namespace: string,
   id: string,
-): ThunkAction<Promise<IChartVersion[]>, IStoreState, null, ChartsAction> {
+): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
   return async dispatch => {
     dispatch(requestCharts());
     try {
-      const versions = await Chart.fetchChartVersions(cluster, namespace, id);
-      if (versions) {
-        dispatch(receiveChartVersions(versions));
-      }
-      return versions;
+      const response = await Chart.getAvailablePackageVersions(cluster, namespace, id);
+      dispatch(receiveChartVersions(response));
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
-      return [];
     }
   };
 }
 
-async function getChart(cluster: string, namespace: string, id: string, version: string) {
-  let values = "";
-  let schema = {};
-  const chartVersion = await Chart.getChartVersion(cluster, namespace, id, version);
-  if (chartVersion) {
+// export function fetchChartVersionsAndSelectVersion(
+//   cluster: string,
+//   namespace: string,
+//   id: string,
+//   version?: string,
+// ): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
+//   return async dispatch => {
+//     // dispacha get versiones
+//     const versions = (await dispatch(fetchChartVersions(cluster, namespace, id),)) as IChartVersion[];
+//     // si hay versiones
+//     if (versions.length > 0) {
+//       // coge la ultima version
+//       let cv: IChartVersion = versions.sort((a, b) =>
+//         semver.compare(b.attributes.version, a.attributes.version),
+//       )[0];
+//       // si hay ultima version
+//       if (version) {
+//         const found = versions.find(v => v.attributes.version === version);
+//         if (!found) {
+//           throw new Error("could not find chart version");
+//         }
+//         cv = found;
+//       }
+//       // dispacha la ultima version
+//       dispatch(selectChartVersion(cv));
+//     } //no hay versiones
+//   };
+// }
+
+export function fetchChartVersionsAndSelectVersion(
+  cluster: string,
+  namespace: string,
+  id: string,
+  version?: string,
+): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
+  return async dispatch => {
     try {
-      values = await Chart.getValues(cluster, namespace, id, version);
-      schema = await Chart.getSchema(cluster, namespace, id, version);
-    } catch (e) {
-      if (e.constructor !== NotFoundError) {
-        throw e;
+      console.log("Porsi, fetchChartVersions");
+      dispatch(fetchChartVersions(cluster, namespace, id));
+      const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
+      if (response.availablePackageDetail?.pkgVersion) {
+        console.log("Con version, selectChartVersion");
+        dispatch(selectChartVersion(response.availablePackageDetail));
+      } else {
+        dispatch(errorChart(new FetchError("could not find chart version")));
       }
+    } catch (e) {
+      dispatch(errorChart(new FetchError(e.message)));
     }
-  }
-  return { chartVersion, values, schema };
+  };
 }
+
+// async function getChart(cluster: string, namespace: string, id: string, version: string) {
+//   let values = "";
+//   let schema = "";
+
+//   const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
+//   if (response.availablePackageDetail) {
+//     values = response.availablePackageDetail.defaultValues;
+//     schema = response.availablePackageDetail.valuesSchema;
+//   }
+//   return { response, values, schema };
+// }
+
+// async function getChart(cluster: string, namespace: string, id: string, version: string) {
+//   let values = "";
+//   let schema = {};
+//   const chartVersion = await Chart.getChartVersion(cluster, namespace, id, version);
+//   if (chartVersion) {
+//     try {
+//       values = await Chart.getValues(cluster, namespace, id, version);
+//       schema = await Chart.getSchema(cluster, namespace, id, version);
+//     } catch (e) {
+//       if (e.constructor !== NotFoundError) {
+//         throw e;
+//       }
+//     }
+//   }
+//   return { chartVersion, values, schema };
+// }
 
 export function getChartVersion(
   cluster: string,
@@ -168,10 +233,10 @@ export function getChartVersion(
   return async dispatch => {
     try {
       dispatch(requestChart());
-      const { chartVersion, values, schema } = await getChart(cluster, namespace, id, version);
-      if (chartVersion) {
-        dispatch(selectChartVersion(chartVersion, values, schema));
-      }
+      // const { chartVersion, values, schema } = await getChart(cluster, namespace, id, version);
+      // if (chartVersion) {
+      // dispatch(selectChartVersion(chartVersion, values, schema));
+      // }
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
     }
@@ -187,38 +252,18 @@ export function getDeployedChartVersion(
   return async dispatch => {
     try {
       dispatch(requestDeployedChartVersion());
-      const { chartVersion, values, schema } = await getChart(cluster, namespace, id, version);
-      if (chartVersion) {
-        dispatch(receiveDeployedChartVersion(chartVersion, values, schema));
+      const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
+      if (response.availablePackageDetail) {
+        dispatch(
+          receiveDeployedChartVersion(
+            response.availablePackageDetail,
+            response.availablePackageDetail.defaultValues,
+            response.availablePackageDetail.valuesSchema,
+          ),
+        );
       }
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
-    }
-  };
-}
-
-export function fetchChartVersionsAndSelectVersion(
-  cluster: string,
-  namespace: string,
-  id: string,
-  version?: string,
-): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-  return async dispatch => {
-    const versions = (await dispatch(
-      fetchChartVersions(cluster, namespace, id),
-    )) as IChartVersion[];
-    if (versions.length > 0) {
-      let cv: IChartVersion = versions.sort((a, b) =>
-        semver.compare(b.attributes.version, a.attributes.version),
-      )[0];
-      if (version) {
-        const found = versions.find(v => v.attributes.version === version);
-        if (!found) {
-          throw new Error("could not find chart version");
-        }
-        cv = found;
-      }
-      dispatch(selectChartVersion(cv));
     }
   };
 }

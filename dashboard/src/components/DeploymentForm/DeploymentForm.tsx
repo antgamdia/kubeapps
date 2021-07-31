@@ -2,7 +2,7 @@ import { RouterAction } from "connected-react-router";
 import { useEffect, useState } from "react";
 
 import { JSONSchema4 } from "json-schema";
-import { CreateError, FetchError, IChartState, IChartVersion } from "../../shared/types";
+import { CreateError, FetchError, IChartState } from "../../shared/types";
 import * as url from "../../shared/url";
 import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
@@ -15,6 +15,7 @@ import Column from "components/js/Column";
 import Row from "components/js/Row";
 import { useDispatch } from "react-redux";
 import "react-tabs/style/react-tabs.css";
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IDeploymentFormProps {
   chartNamespace: string;
@@ -27,14 +28,14 @@ export interface IDeploymentFormProps {
   deployChart: (
     targetCluster: string,
     targetNamespace: string,
-    version: IChartVersion,
+    version: GetAvailablePackageVersionsResponse_PackageAppVersion,
     chartNamespace: string,
     releaseName: string,
     values?: string,
     schema?: JSONSchema4,
   ) => Promise<boolean>;
   push: (location: string) => RouterAction;
-  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<IChartVersion[]>;
+  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<void>;
   getChartVersion: (cluster: string, namespace: string, id: string, chartVersion: string) => void;
   namespace: string;
   kubeappsNamespace: string;
@@ -125,14 +126,14 @@ function DeploymentForm({
   if (!version) {
     return <LoadingWrapper className="margin-t-xxl" loadingText={`Fetching ${chartID}...`} />;
   }
-  const chartAttrs = version.relationships.chart.data;
+  const chartAttrs = version;
   return (
     <section>
       <ChartHeader
         chartAttrs={chartAttrs}
         versions={selected.versions}
         onSelect={selectVersion}
-        selectedVersion={selected.version?.attributes.version}
+        selectedVersion={selected.version?.pkgVersion}
       />
       {isDeploying && (
         <h3 className="center" style={{ marginBottom: "1.2rem" }}>

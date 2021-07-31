@@ -1,30 +1,30 @@
 import ChartMaintainers from "components/ChartView/ChartMaintainers";
-import { IChartAttributes, IChartVersion } from "shared/types";
+import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 interface IChartSummaryProps {
-  version: IChartVersion;
-  chartAttrs: IChartAttributes;
+  version: AvailablePackageDetail;
+  chartAttrs: AvailablePackageDetail;
 }
 
-function isKubernetesCharts(repoURL: string) {
-  return (
-    repoURL === "https://kubernetes-charts.storage.googleapis.com" ||
-    repoURL === "https://kubernetes-charts-incubator.storage.googleapis.com"
-  );
-}
+// function isKubernetesCharts(repoURL: string) {
+//   return (
+//     repoURL === "https://kubernetes-charts.storage.googleapis.com" ||
+//     repoURL === "https://kubernetes-charts-incubator.storage.googleapis.com"
+//   );
+// }
 
 export default function ChartSummary({ version, chartAttrs }: IChartSummaryProps) {
   return (
     <div className="left-menu">
-      {version.attributes.app_version && (
+      {version.appVersion && (
         <section className="left-menu-subsection" aria-labelledby="chartinfo-versions">
           <h5 className="left-menu-subsection-title" id="chartinfo-versions">
             App Version
           </h5>
-          <div>{version.attributes.app_version}</div>
+          <div>{version.appVersion}</div>
         </section>
       )}
-      {chartAttrs.home && (
+      {/* {chartAttrs.home && (
         <section className="left-menu-subsection" aria-labelledby="chartinfo-versions">
           <h5 className="left-menu-subsection-title" id="chartinfo-versions">
             Home
@@ -35,7 +35,7 @@ export default function ChartSummary({ version, chartAttrs }: IChartSummaryProps
             </a>
           </div>
         </section>
-      )}
+      )} */}
       {chartAttrs.maintainers?.length > 0 && (
         <section className="left-menu-subsection" aria-labelledby="chartinfo-versions">
           <h5 className="left-menu-subsection-title" id="chartinfo-versions">
@@ -44,12 +44,12 @@ export default function ChartSummary({ version, chartAttrs }: IChartSummaryProps
           <div>
             <ChartMaintainers
               maintainers={chartAttrs.maintainers}
-              githubIDAsNames={isKubernetesCharts(chartAttrs.repo.url)}
+              // githubIDAsNames={isKubernetesCharts(chartAttrs.repo.url)}
             />
           </div>
         </section>
       )}
-      {chartAttrs.sources?.length > 0 && (
+      {/* {chartAttrs.sources?.length > 0 && (
         <section className="left-menu-subsection" aria-labelledby="chartinfo-versions">
           <h5 className="left-menu-subsection-title" id="chartinfo-versions">
             Related
@@ -66,7 +66,7 @@ export default function ChartSummary({ version, chartAttrs }: IChartSummaryProps
             </ul>
           </div>
         </section>
-      )}
+      )} */}
     </div>
   );
 }

@@ -12,11 +12,12 @@ import Column from "components/js/Column";
 import Row from "components/js/Row";
 import { useSelector } from "react-redux";
 import { deleteValue, setValue } from "../../shared/schema";
-import { IChartState, IChartVersion, IStoreState } from "../../shared/types";
+import { IChartState, IStoreState } from "../../shared/types";
 import * as url from "../../shared/url";
 import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import "./UpgradeForm.css";
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IUpgradeFormProps {
   appCurrentVersion: string;
@@ -34,14 +35,14 @@ export interface IUpgradeFormProps {
   upgradeApp: (
     cluster: string,
     namespace: string,
-    version: IChartVersion,
+    version: GetAvailablePackageVersionsResponse_PackageAppVersion,
     chartNamespace: string,
     releaseName: string,
     values?: string,
     schema?: JSONSchema4,
   ) => Promise<boolean>;
   push: (location: string) => RouterAction;
-  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<IChartVersion[]>;
+  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<void>;
   getChartVersion: (cluster: string, namespace: string, id: string, chartVersion: string) => void;
 }
 
@@ -121,8 +122,13 @@ function UpgradeForm({
   }, [deployed.values, modifications]);
 
   useEffect(() => {
-    if (deployed.chartVersion?.attributes.version) {
-      getChartVersion(cluster, repoNamespace, chartID, deployed.chartVersion.attributes.version);
+    if (deployed.chartVersion?.availablePackageDetail?.pkgVersion) {
+      getChartVersion(
+        cluster,
+        repoNamespace,
+        chartID,
+        deployed.chartVersion?.availablePackageDetail?.pkgVersion,
+      );
     }
   }, [getChartVersion, cluster, repoNamespace, chartID, deployed.chartVersion]);
 
@@ -178,7 +184,7 @@ function UpgradeForm({
     );
   }
 
-  const chartAttrs = version.relationships.chart.data;
+  const chartAttrs = version;
 
   /* eslint-disable jsx-a11y/label-has-associated-control */
   return (
@@ -189,8 +195,8 @@ function UpgradeForm({
           chartAttrs={chartAttrs}
           versions={selected.versions}
           onSelect={selectVersion}
-          currentVersion={deployed.chartVersion?.attributes.version}
-          selectedVersion={selected.version?.attributes.version}
+          currentVersion={deployed.chartVersion?.availablePackageDetail?.pkgVersion}
+          selectedVersion={selected.version?.pkgVersion}
         />
         {isDeploying && (
           <h3 className="center" style={{ marginBottom: "1.2rem" }}>
@@ -211,9 +217,9 @@ function UpgradeForm({
                   </label>
                   <ChartVersionSelector
                     versions={selected.versions}
-                    selectedVersion={selected.version?.attributes.version}
+                    selectedVersion={selected.version?.pkgVersion}
                     onSelect={selectVersion}
-                    currentVersion={deployed.chartVersion?.attributes.version}
+                    currentVersion={deployed.chartVersion?.availablePackageDetail?.pkgVersion}
                     chartAttrs={chartAttrs}
                   />
                 </div>

@@ -7,13 +7,13 @@ import {
   FetchError,
   IAppRepository,
   IChartState,
-  IChartVersion,
   IRelease,
   UpgradeError,
 } from "../../shared/types";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import SelectRepoForm from "../SelectRepoForm/SelectRepoForm";
 import UpgradeForm from "../UpgradeForm/UpgradeForm";
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IAppUpgradeProps {
   app?: IRelease;
@@ -30,13 +30,13 @@ export interface IAppUpgradeProps {
   upgradeApp: (
     cluster: string,
     namespace: string,
-    version: IChartVersion,
+    version: GetAvailablePackageVersionsResponse_PackageAppVersion,
     chartNamespace: string,
     releaseName: string,
     values?: string,
     schema?: JSONSchema4,
   ) => Promise<boolean>;
-  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<IChartVersion[]>;
+  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<void>;
   getAppWithUpdateInfo: (cluster: string, namespace: string, releaseName: string) => void;
   getChartVersion: (cluster: string, namespace: string, id: string, chartVersion: string) => void;
   getDeployedChartVersion: (

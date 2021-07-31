@@ -1,20 +1,21 @@
+import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { IServiceBroker } from "./ServiceCatalog";
-import { IChartVersion, IRepo } from "./types";
+import { IRepo } from "./types";
 
 export const app = {
   apps: {
     new: (
       cluster: string,
       namespace: string,
-      cv: IChartVersion,
+      cv: AvailablePackageDetail,
       version: string,
       globalNamespace: string,
     ) => {
-      const repoNamespace = cv.relationships.chart.data.repo.namespace;
+      const repoNamespace = "cv.relationships.chart.data.repo.namespace";
       const newSegment = globalNamespace !== repoNamespace ? "new" : "new-from-global";
-      return `/c/${cluster}/ns/${namespace}/apps/${newSegment}/${
-        cv.relationships.chart.data.repo.name
-      }/${encodeURIComponent(cv.relationships.chart.data.name)}/versions/${version}`;
+      return `/c/${cluster}/ns/${namespace}/apps/${newSegment}/${" cv.relationships.chart.data.repo.name"}/${encodeURIComponent(
+        "cv.relationships.chart.data.name",
+      )}/versions/${version}`;
     },
     list: (cluster: string, namespace: string) => `/c/${cluster}/ns/${namespace}/apps`,
     get: (cluster: string, namespace: string, releaseName: string) =>

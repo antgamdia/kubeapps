@@ -11,10 +11,11 @@ import Row from "components/js/Row";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { app } from "shared/url";
-import { IChartState, IChartVersion } from "../../shared/types";
+import { IChartState } from "../../shared/types";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import ChartHeader from "./ChartHeader";
 import ChartReadme from "./ChartReadme";
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IChartViewProps {
   chartID: string;
@@ -27,10 +28,14 @@ export interface IChartViewProps {
   kubeappsNamespace: string;
 }
 
-function callSelectChartVersion(ver: string, versions: IChartVersion[], dispatch: Dispatch) {
-  const cv = versions.find(v => v.attributes.version === ver);
+function callSelectChartVersion(
+  ver: string,
+  versions: GetAvailablePackageVersionsResponse_PackageAppVersion[],
+  dispatch: Dispatch,
+) {
+  const cv = versions.find(v => v.pkgVersion === ver);
   if (cv) {
-    dispatch(actions.charts.selectChartVersion(cv));
+    // dispatch(actions.charts.selectChartVersion(cv));
   }
 }
 
@@ -61,6 +66,7 @@ function ChartView({
   }, [cluster, chartNamespace, chartID, versionStr, dispatch]);
 
   useEffect(() => {
+    console.log("dddddd");
     callSelectChartVersion(versionStr || "", versions, dispatch);
   }, [versions, versionStr, dispatch]);
 
@@ -70,10 +76,21 @@ function ChartView({
   if (isFetching || !version) {
     return <LoadingWrapper loaded={false} />;
   }
-  const chartAttrs = version.relationships.chart.data;
+
+  // console.log("BEGIN");
+  // console.log(chartID);
+  // console.log(chartNamespace);
+  // console.log(versionStr);
+  // console.log(selected);
+  // console.log(isFetching);
+  // console.log(cluster);
+  // console.log(namespace);
+  // console.log(kubeappsNamespace);
+  // console.log("END");
+  const chartAttrs = version;
   const selectVersion = (event: React.ChangeEvent<HTMLSelectElement>) =>
     callSelectChartVersion(event.target.value, versions, dispatch);
-
+  // console.log(versions);
   return (
     <section>
       <div>
@@ -83,20 +100,14 @@ function ChartView({
           onSelect={selectVersion}
           deployButton={
             <Link
-              to={app.apps.new(
-                cluster,
-                namespace,
-                version,
-                version.attributes.version,
-                kubeappsNamespace,
-              )}
+              to={app.apps.new(cluster, namespace, version, version.pkgVersion, kubeappsNamespace)}
             >
               <CdsButton status="primary">
                 <CdsIcon shape="deploy" /> Deploy
               </CdsButton>
             </Link>
           }
-          selectedVersion={selected.version?.attributes.version}
+          selectedVersion={selected.version?.pkgVersion}
         />
       </div>
 
@@ -109,7 +120,7 @@ function ChartView({
             <ChartReadme
               readme={readme}
               error={readmeError}
-              version={version.attributes.version}
+              version={version.pkgVersion}
               cluster={cluster}
               namespace={chartNamespace}
               chartID={chartID}
@@ -120,7 +131,7 @@ function ChartView({
                   cluster,
                   namespace,
                   version,
-                  version.attributes.version,
+                  version.pkgVersion,
                   kubeappsNamespace,
                 )}
               >

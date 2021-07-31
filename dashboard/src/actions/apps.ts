@@ -1,3 +1,4 @@
+import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { JSONSchema4 } from "json-schema";
 import { ThunkAction } from "redux-thunk";
 import * as semver from "semver";
@@ -12,7 +13,6 @@ import {
   FetchError,
   IAppOverview,
   IChartUpdateInfo,
-  IChartVersion,
   IRelease,
   IStoreState,
   RollbackError,
@@ -257,7 +257,7 @@ export function fetchAppsWithUpdateInfo(
 export function deployChart(
   targetCluster: string,
   targetNamespace: string,
-  chartVersion: IChartVersion,
+  chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
   chartNamespace: string,
   releaseName: string,
   values?: string,
@@ -297,7 +297,7 @@ export function deployChart(
 export function upgradeApp(
   cluster: string,
   namespace: string,
-  chartVersion: IChartVersion,
+  chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
   chartNamespace: string,
   releaseName: string,
   values?: string,
