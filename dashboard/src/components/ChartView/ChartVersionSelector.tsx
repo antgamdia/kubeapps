@@ -20,7 +20,6 @@ export default function ChartVersionSelector({
   currentVersion,
   selectedVersion,
 }: IChartHeaderProps) {
-  console.log("Render ChartVersionSelector, selectedVersion " + selectedVersion);
   return (
     <div className="clr-select-wrapper">
       <select

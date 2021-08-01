@@ -1,15 +1,13 @@
 import Tooltip from "components/js/Tooltip";
 import PageHeader from "components/PageHeader/PageHeader";
-// import { trimStart } from "lodash";
-import React from "react";
-import placeholder from "../../placeholder.png";
-import ChartVersionSelector from "./ChartVersionSelector";
-
-import "./ChartHeader.css";
 import {
   AvailablePackageDetail,
   GetAvailablePackageVersionsResponse_PackageAppVersion,
 } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+import React from "react";
+import placeholder from "../../placeholder.png";
+import "./ChartHeader.css";
+import ChartVersionSelector from "./ChartVersionSelector";
 
 interface IChartHeaderProps {
   chartAttrs: AvailablePackageDetail;
@@ -30,7 +28,6 @@ export default function ChartHeader({
   deployButton,
   selectedVersion,
 }: IChartHeaderProps) {
-  console.log("Render ChartHeader");
   return (
     <PageHeader
       title={

@@ -33,7 +33,6 @@ const chartsSelectedReducer = (
         schema: action.payload.schema,
       };
     case getType(actions.charts.receiveChartVersions):
-      // console.log(action.payload.packageAppVersions);
       return {
         ...state,
         error: undefined,

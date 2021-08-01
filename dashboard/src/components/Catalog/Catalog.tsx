@@ -48,6 +48,7 @@ interface ICatalogProps {
   fetchRepos: (namespace: string, listGlobal?: boolean) => void;
   getCSVs: (cluster: string, namespace: string) => void;
   resetRequestCharts: () => void;
+  resetChartVersion: () => void;
   csvs: IClusterServiceVersion[];
 }
 
@@ -104,6 +105,7 @@ function Catalog(props: ICatalogProps) {
     fetchRepos,
     getCSVs,
     resetRequestCharts,
+    resetChartVersion,
     csvs,
     filter: propsFilter,
   } = props;
@@ -202,8 +204,8 @@ function Catalog(props: ICatalogProps) {
   useEffect(() => {
     setPage(0);
     resetRequestCharts();
-    dispatch(actions.charts.resetChartVersion());
-  }, [dispatch, resetRequestCharts, cluster, namespace, reposFilter, searchFilter]);
+    resetChartVersion();
+  }, [resetChartVersion, resetRequestCharts, cluster, namespace, reposFilter, searchFilter]);
 
   const setSearchFilter = (searchTerm: string) => {
     const newFilters = {

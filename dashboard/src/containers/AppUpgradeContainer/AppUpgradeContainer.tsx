@@ -54,13 +54,13 @@ function mapDispatchToProps(dispatch: ThunkDispatch<IStoreState, null, Action>) 
     checkChart: (cluster: string, namespace: string, repo: string, chartName: string) =>
       dispatch(actions.repos.checkChart(cluster, namespace, repo, chartName)),
     clearRepo: () => dispatch(actions.repos.clearRepo()),
-    fetchChartVersions: (cluster: string, namespace: string, id: string) =>
-      dispatch(actions.charts.fetchChartVersions(cluster, namespace, id)),
+    // fetchChartVersions: (cluster: string, namespace: string, id: string) =>
+    //   dispatch(actions.charts.fetchChartVersions(cluster, namespace, id)),
     fetchRepositories: (namespace: string) => dispatch(actions.repos.fetchRepos(namespace)),
     getAppWithUpdateInfo: (cluster: string, namespace: string, releaseName: string) =>
       dispatch(actions.apps.getAppWithUpdateInfo(cluster, namespace, releaseName)),
-    getChartVersion: (cluster: string, namespace: string, id: string, version: string) =>
-      dispatch(actions.charts.getChartVersion(cluster, namespace, id, version)),
+    // getChartVersion: (cluster: string, namespace: string, id: string, version: string) =>
+    //   dispatch(actions.charts.getChartVersion(cluster, namespace, id, version)),
     push: (location: string) => dispatch(push(location)),
     goBack: () => dispatch(goBack()),
     upgradeApp: (

@@ -1,20 +1,11 @@
-// import { JSONSchemaType } from "ajv";
 import {
   AvailablePackageDetail,
   GetAvailablePackageVersionsResponse,
 } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
-// import { JSONSchema4 } from "json-schema";
 import { ThunkAction } from "redux-thunk";
-// import * as semver from "semver";
 import { ActionType, deprecated } from "typesafe-actions";
-
 import Chart from "../shared/Chart";
-import {
-  FetchError,
-  IReceiveChartsActionPayload,
-  IStoreState,
-  // NotFoundError,
-} from "../shared/types";
+import { FetchError, IReceiveChartsActionPayload, IStoreState } from "../shared/types";
 
 const { createAction } = deprecated;
 
@@ -112,15 +103,8 @@ export function fetchCharts(
         size,
         query,
       );
-      // if (response) {
-      dispatch(
-        receiveCharts({
-          response,
-          page,
-        }),
-      );
+      dispatch(receiveCharts({ response, page }));
       dispatch(receiveChartCategories(response.categories));
-      // }
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
     }
@@ -143,60 +127,7 @@ export function fetchChartVersions(
   };
 }
 
-// export function fetchChartVersionsAndSelectVersion(
-//   cluster: string,
-//   namespace: string,
-//   id: string,
-//   version?: string,
-// ): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-//   return async dispatch => {
-//     // dispacha get versiones
-//     const versions = (await dispatch(fetchChartVersions(cluster, namespace, id),)) as IChartVersion[];
-//     // si hay versiones
-//     if (versions.length > 0) {
-//       // coge la ultima version
-//       let cv: IChartVersion = versions.sort((a, b) =>
-//         semver.compare(b.attributes.version, a.attributes.version),
-//       )[0];
-//       // si hay ultima version
-//       if (version) {
-//         const found = versions.find(v => v.attributes.version === version);
-//         if (!found) {
-//           throw new Error("could not find chart version");
-//         }
-//         cv = found;
-//       }
-//       // dispacha la ultima version
-//       dispatch(selectChartVersion(cv));
-//     } //no hay versiones
-//   };
-// }
-
-export function fetchChartVersionsAndSelectVersion(
-  cluster: string,
-  namespace: string,
-  id: string,
-  version?: string,
-): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-  return async dispatch => {
-    try {
-      if (!version || version === "") {
-        console.log("Porsi, fetchChartVersions, with version: " + version);
-        dispatch(fetchChartVersions(cluster, namespace, id));
-      }
-      const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
-      if (response.availablePackageDetail?.pkgVersion) {
-        dispatch(selectChartVersion(response.availablePackageDetail));
-      } else {
-        dispatch(errorChart(new FetchError("could not find chart version")));
-      }
-    } catch (e) {
-      dispatch(errorChart(new FetchError(e.message)));
-    }
-  };
-}
-
-export function fetchAndSelectVersion(
+export function fetchChartVersion(
   cluster: string,
   namespace: string,
   id: string,
@@ -215,35 +146,6 @@ export function fetchAndSelectVersion(
     }
   };
 }
-
-// async function getChart(cluster: string, namespace: string, id: string, version: string) {
-//   let values = "";
-//   let schema = "";
-
-//   const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
-//   if (response.availablePackageDetail) {
-//     values = response.availablePackageDetail.defaultValues;
-//     schema = response.availablePackageDetail.valuesSchema;
-//   }
-//   return { response, values, schema };
-// }
-
-// async function getChart(cluster: string, namespace: string, id: string, version: string) {
-//   let values = "";
-//   let schema = {};
-//   const chartVersion = await Chart.getChartVersion(cluster, namespace, id, version);
-//   if (chartVersion) {
-//     try {
-//       values = await Chart.getValues(cluster, namespace, id, version);
-//       schema = await Chart.getSchema(cluster, namespace, id, version);
-//     } catch (e) {
-//       if (e.constructor !== NotFoundError) {
-//         throw e;
-//       }
-//     }
-//   }
-//   return { chartVersion, values, schema };
-// }
 
 export function getChartVersion(
   cluster: string,
