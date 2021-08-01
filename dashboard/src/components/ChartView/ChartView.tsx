@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Dispatch } from "redux";
+// import { Dispatch } from "redux";
 
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
@@ -15,7 +15,7 @@ import { IChartState } from "../../shared/types";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import ChartHeader from "./ChartHeader";
 import ChartReadme from "./ChartReadme";
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+// import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IChartViewProps {
   chartID: string;
@@ -28,16 +28,22 @@ export interface IChartViewProps {
   kubeappsNamespace: string;
 }
 
-function callSelectChartVersion(
-  ver: string,
-  versions: GetAvailablePackageVersionsResponse_PackageAppVersion[],
-  dispatch: Dispatch,
-) {
-  const cv = versions.find(v => v.pkgVersion === ver);
-  if (cv) {
-    // dispatch(actions.charts.selectChartVersion(cv));
-  }
-}
+// function callSelectChartVersion(
+//   ver: string,
+//   // versions: GetAvailablePackageVersionsResponse_PackageAppVersion[],
+//   dispatch: Dispatch,
+//   cluster: any,
+//   chartNamespace: any,
+//   chartID: any,
+// ) {
+//   // const cv = versions.find(v => v.pkgVersion === ver);
+//   // if (cv) {
+//   dispatch(
+//     actions.charts.fetchChartVersionsAndSelectVersion(cluster, chartNamespace, chartID, ver),
+//   );
+//   // dispatch(actions.charts.selectChartVersion(cv));
+//   // }
+// }
 
 function ChartView({
   chartID,
@@ -51,24 +57,25 @@ function ChartView({
 }: IChartViewProps) {
   const dispatch = useDispatch();
   const { version, readme, error, readmeError, versions } = selected;
+
+  // useEffect(() => {
+  //   dispatch(actions.charts.fetchAndSelectVersion(cluster, chartNamespace, chartID, versionStr));
+  //   return () => {
+  //     dispatch(actions.charts.resetChartVersion());
+  //   };
+  // }, [cluster, chartNamespace, chartID, versionStr, dispatch]);
+
+  // Fetch the selected/latest version on the initial load
   useEffect(() => {
     dispatch(
-      actions.charts.fetchChartVersionsAndSelectVersion(
-        cluster,
-        chartNamespace,
-        chartID,
-        versionStr,
-      ),
+      actions.charts.fetchAndSelectVersion(cluster, chartNamespace, chartID, versionStr || ""),
     );
-    return () => {
-      dispatch(actions.charts.resetChartVersion());
-    };
-  }, [cluster, chartNamespace, chartID, versionStr, dispatch]);
+  }, [dispatch, chartID, chartNamespace, cluster, versionStr]);
 
+  // Fetch all versions
   useEffect(() => {
-    console.log("dddddd");
-    callSelectChartVersion(versionStr || "", versions, dispatch);
-  }, [versions, versionStr, dispatch]);
+    dispatch(actions.charts.fetchChartVersions(cluster, chartNamespace, chartID));
+  }, [dispatch, chartID, chartNamespace, cluster]);
 
   if (error) {
     return <Alert theme="danger">Unable to fetch chart: {error.message}</Alert>;
@@ -88,9 +95,14 @@ function ChartView({
   // console.log(kubeappsNamespace);
   // console.log("END");
   const chartAttrs = version;
-  const selectVersion = (event: React.ChangeEvent<HTMLSelectElement>) =>
-    callSelectChartVersion(event.target.value, versions, dispatch);
-  // console.log(versions);
+  const selectVersion = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("Select version: " + event.target.value);
+    // callSelectChartVersion(event.target.value, versions, dispatch);
+    dispatch(
+      actions.charts.fetchAndSelectVersion(cluster, chartNamespace, chartID, event.target.value),
+    );
+  };
+  console.log("Render ChartView");
   return (
     <section>
       <div>

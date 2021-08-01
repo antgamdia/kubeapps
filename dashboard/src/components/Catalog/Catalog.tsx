@@ -202,7 +202,8 @@ function Catalog(props: ICatalogProps) {
   useEffect(() => {
     setPage(0);
     resetRequestCharts();
-  }, [resetRequestCharts, cluster, namespace, reposFilter, searchFilter]);
+    dispatch(actions.charts.resetChartVersion());
+  }, [dispatch, resetRequestCharts, cluster, namespace, reposFilter, searchFilter]);
 
   const setSearchFilter = (searchTerm: string) => {
     const newFilters = {

@@ -1,4 +1,4 @@
-import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+// import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { connect } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
@@ -38,18 +38,18 @@ function mapDispatchToProps(
   { match: { params } }: IRouteProps,
 ) {
   return {
-    fetchChartVersionsAndSelectVersion: (
-      cluster: string,
-      namespace: string,
-      id: string,
-      version?: string,
-    ) =>
-      dispatch(actions.charts.fetchChartVersionsAndSelectVersion(cluster, namespace, id, version)),
+    // fetchChartVersionsAndSelectVersion: (
+    //   cluster: string,
+    //   namespace: string,
+    //   id: string,
+    //   version?: string,
+    // ) =>
+    //   dispatch(actions.charts.fetchChartVersionsAndSelectVersion(cluster, namespace, id, version)),
     getChartReadme: (cluster: string, namespace: string, version: string) =>
       dispatch(actions.charts.getChartReadme(cluster, namespace, chartID(params), version)),
-    resetChartVersion: () => dispatch(actions.charts.resetChartVersion()),
-    selectChartVersion: (version: AvailablePackageDetail) =>
-      dispatch(actions.charts.selectChartVersion(version)),
+    // resetChartVersion: () => dispatch(actions.charts.resetChartVersion()),
+    // selectChartVersion: (version: AvailablePackageDetail) =>
+    //   dispatch(actions.charts.selectChartVersion(version)),
   };
 }
 

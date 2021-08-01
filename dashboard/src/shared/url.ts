@@ -11,10 +11,13 @@ export const app = {
       version: string,
       globalNamespace: string,
     ) => {
-      const repoNamespace = "cv.relationships.chart.data.repo.namespace";
+      const repoNamespace = cv.availablePackageRef?.context?.namespace;
       const newSegment = globalNamespace !== repoNamespace ? "new" : "new-from-global";
-      return `/c/${cluster}/ns/${namespace}/apps/${newSegment}/${" cv.relationships.chart.data.repo.name"}/${encodeURIComponent(
-        "cv.relationships.chart.data.name",
+      // TODO(agamez): get the repo name once available
+      // https://github.com/kubeapps/kubeapps/issues/3165#issuecomment-884574732
+      const repoName = cv.availablePackageRef?.identifier.split("/")[0] ?? globalNamespace;
+      return `/c/${cluster}/ns/${namespace}/apps/${newSegment}/${repoName}/${encodeURIComponent(
+        repoName,
       )}/versions/${version}`;
     },
     list: (cluster: string, namespace: string) => `/c/${cluster}/ns/${namespace}/apps`,

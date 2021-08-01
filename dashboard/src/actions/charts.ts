@@ -180,11 +180,32 @@ export function fetchChartVersionsAndSelectVersion(
 ): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
   return async dispatch => {
     try {
-      console.log("Porsi, fetchChartVersions");
-      dispatch(fetchChartVersions(cluster, namespace, id));
+      if (!version || version === "") {
+        console.log("Porsi, fetchChartVersions, with version: " + version);
+        dispatch(fetchChartVersions(cluster, namespace, id));
+      }
       const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
       if (response.availablePackageDetail?.pkgVersion) {
-        console.log("Con version, selectChartVersion");
+        dispatch(selectChartVersion(response.availablePackageDetail));
+      } else {
+        dispatch(errorChart(new FetchError("could not find chart version")));
+      }
+    } catch (e) {
+      dispatch(errorChart(new FetchError(e.message)));
+    }
+  };
+}
+
+export function fetchAndSelectVersion(
+  cluster: string,
+  namespace: string,
+  id: string,
+  version?: string,
+): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
+  return async dispatch => {
+    try {
+      const response = await Chart.getAvailablePackageDetail(cluster, namespace, id, version);
+      if (response.availablePackageDetail?.pkgVersion) {
         dispatch(selectChartVersion(response.availablePackageDetail));
       } else {
         dispatch(errorChart(new FetchError("could not find chart version")));

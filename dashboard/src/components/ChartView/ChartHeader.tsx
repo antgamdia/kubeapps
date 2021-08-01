@@ -30,7 +30,7 @@ export default function ChartHeader({
   deployButton,
   selectedVersion,
 }: IChartHeaderProps) {
-  // console.log(versions);
+  console.log("Render ChartHeader");
   return (
     <PageHeader
       title={
