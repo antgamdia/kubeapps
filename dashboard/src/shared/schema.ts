@@ -3,7 +3,6 @@
 // that are used in this package
 import Ajv, { ErrorObject } from "ajv";
 import * as jsonpatch from "fast-json-patch";
-import * as jsonSchema from "json-schema";
 import { isEmpty, set } from "lodash";
 import YAML from "yaml";
 import { IBasicFormParam } from "./types";
@@ -18,7 +17,7 @@ nullOptions.nullStr = "";
 // It returns a key:value map for easier handling.
 export function retrieveBasicFormParams(
   defaultValues: string,
-  schema?: jsonSchema.JSONSchema4,
+  schema?: any,
   parentPath?: string,
 ): IBasicFormParam[] {
   let params: IBasicFormParam[] = [];
@@ -37,7 +36,9 @@ export function retrieveBasicFormParams(
           path: itemPath,
           type,
           value,
-          enum: properties[propertyKey].enum?.map(item => item?.toString() ?? ""),
+          enum: properties[propertyKey].enum?.map(
+            (item: { toString: () => any }) => item?.toString() ?? "",
+          ),
           children:
             properties[propertyKey].type === "object"
               ? retrieveBasicFormParams(defaultValues, properties[propertyKey], `${itemPath}/`)
@@ -149,7 +150,7 @@ export function getValue(values: string, path: string, defaultValue?: any) {
 
 export function validate(
   values: string,
-  schema: jsonSchema.JSONSchema4,
+  schema: string,
 ): { valid: boolean; errors: ErrorObject[] | null | undefined } {
   const ajv = new Ajv({ strict: false });
   const valid = ajv.validate(schema, YAML.parse(values));

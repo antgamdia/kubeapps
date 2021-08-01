@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-import actions from "../../actions";
 import Catalog from "../../components/Catalog";
 import { IStoreState } from "../../shared/types";
 
@@ -26,23 +25,7 @@ function mapStateToProps(
 }
 
 function mapDispatchToProps(dispatch: ThunkDispatch<IStoreState, null, Action>) {
-  return {
-    fetchCharts: (
-      cluster: string,
-      namespace: string,
-      repos: string,
-      page: number,
-      size: number,
-      query?: string,
-    ) => dispatch(actions.charts.fetchCharts(cluster, namespace, repos, page, size, query)),
-    fetchRepos: (namespace: string, listGlobal?: boolean) =>
-      dispatch(actions.repos.fetchRepos(namespace, listGlobal)),
-    resetRequestCharts: () => dispatch(actions.charts.resetRequestCharts()),
-    resetChartVersion: () => dispatch(actions.charts.resetChartVersion()),
-    pushSearchFilter: (filter: string) => dispatch(actions.shared.pushSearchFilter(filter)),
-    getCSVs: (cluster: string, namespace: string) =>
-      dispatch(actions.operators.getCSVs(cluster, namespace)),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Catalog);

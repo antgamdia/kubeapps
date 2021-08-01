@@ -1,13 +1,8 @@
-import { push } from "connected-react-router";
 import { connect } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-
-import { JSONSchema4 } from "json-schema";
-import actions from "../../actions";
 import DeploymentForm from "../../components/DeploymentForm";
 import { IStoreState } from "../../shared/types";
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 interface IRouteProps {
   match: {
@@ -41,31 +36,25 @@ function mapStateToProps(
 
 function mapDispatchToProps(dispatch: ThunkDispatch<IStoreState, null, Action>) {
   return {
-    deployChart: (
-      targetCluster: string,
-      targetNamespace: string,
-      version: GetAvailablePackageVersionsResponse_PackageAppVersion,
-      chartNamespace: string,
-      releaseName: string,
-      values?: string,
-      schema?: JSONSchema4,
-    ) =>
-      dispatch(
-        actions.apps.deployChart(
-          targetCluster,
-          targetNamespace,
-          version,
-          chartNamespace,
-          releaseName,
-          values,
-          schema,
-        ),
-      ),
-    // fetchChartVersions: (cluster: string, namespace: string, id: string) =>
-    //   dispatch(actions.charts.fetchChartVersions(cluster, namespace, id)),
-    // getChartVersion: (cluster: string, namespace: string, id: string, version: string) =>
-    //   dispatch(actions.charts.getChartVersion(cluster, namespace, id, version)),
-    push: (location: string) => dispatch(push(location)),
+    // deployChart: (
+    //   targetCluster: string,
+    //   targetNamespace: string,
+    //   availablePackageDetail: AvailablePackageDetail,
+    //   releaseName: string,
+    //   values?: string,
+    //   schema?: any,
+    // ) =>
+    //   dispatch(
+    //     actions.apps.deployChart(
+    //       targetCluster,
+    //       targetNamespace,
+    //       availablePackageDetail,
+    //       releaseName,
+    //       values,
+    //       schema,
+    //     ),
+    //   ),
+    // push: (location: string) => dispatch(push(location)),
   };
 }
 

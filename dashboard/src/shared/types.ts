@@ -6,7 +6,6 @@ import {
   GetAvailablePackageSummariesResponse,
   GetAvailablePackageVersionsResponse_PackageAppVersion,
 } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
-import * as jsonSchema from "json-schema";
 import { IOperatorsState } from "reducers/operators";
 import { IAuthState } from "../reducers/auth";
 import { IClustersState } from "../reducers/cluster";
@@ -102,7 +101,10 @@ export interface IChartState {
   hasFinishedFetching: boolean;
   selected: {
     error?: FetchError | Error;
-    version?: AvailablePackageDetail;
+    // TODO(agamez): rename this attribute later
+    availablePackageDetail?: AvailablePackageDetail;
+    pkgVersion?: string;
+    appVersion?: string;
     versions: GetAvailablePackageVersionsResponse_PackageAppVersion[];
     readme?: string;
     readmeError?: string;
@@ -112,7 +114,7 @@ export interface IChartState {
   deployed: {
     chartVersion?: GetAvailablePackageDetailResponse;
     values?: string;
-    schema?: jsonSchema.JSONSchema4;
+    schema?: any;
   };
   items: AvailablePackageSummary[];
   categories: string[];
@@ -572,7 +574,7 @@ export interface IKubeState {
 
 export interface IBasicFormParam {
   path: string;
-  type?: jsonSchema.JSONSchema4TypeName | jsonSchema.JSONSchema4TypeName[];
+  type?: any; //jsonSchema.JSONSchema4TypeName | jsonSchema.JSONSchema4TypeName[];
   value?: any;
   title?: string;
   minimum?: number;

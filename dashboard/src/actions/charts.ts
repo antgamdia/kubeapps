@@ -38,8 +38,7 @@ export const errorChartCatetories = createAction("ERROR_CHART_CATEGORIES", resol
 });
 
 export const selectChartVersion = createAction("SELECT_CHART_VERSION", resolve => {
-  return (chartVersion: AvailablePackageDetail, values?: string, schema?: string) =>
-    resolve({ chartVersion, values, schema });
+  return (selectedPackage: AvailablePackageDetail) => resolve({ selectedPackage });
 });
 
 export const requestDeployedChartVersion = createAction("REQUEST_DEPLOYED_CHART_VERSION");
@@ -47,7 +46,7 @@ export const requestDeployedChartVersion = createAction("REQUEST_DEPLOYED_CHART_
 export const receiveDeployedChartVersion = createAction(
   "RECEIVE_DEPLOYED_CHART_VERSION",
   resolve => {
-    return (chartVersion: AvailablePackageDetail, values?: string, schema?: string) =>
+    return (chartVersion: AvailablePackageDetail, values?: string, schema?: any) =>
       resolve({ chartVersion, values, schema });
   },
 );
@@ -147,25 +146,6 @@ export function fetchChartVersion(
   };
 }
 
-export function getChartVersion(
-  cluster: string,
-  namespace: string,
-  id: string,
-  version: string,
-): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-  return async dispatch => {
-    try {
-      dispatch(requestChart());
-      // const { chartVersion, values, schema } = await getChart(cluster, namespace, id, version);
-      // if (chartVersion) {
-      // dispatch(selectChartVersion(chartVersion, values, schema));
-      // }
-    } catch (e) {
-      dispatch(errorChart(new FetchError(e.message)));
-    }
-  };
-}
-
 export function getDeployedChartVersion(
   cluster: string,
   namespace: string,
@@ -191,18 +171,18 @@ export function getDeployedChartVersion(
   };
 }
 
-export function getChartReadme(
-  cluster: string,
-  namespace: string,
-  id: string,
-  version: string,
-): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-  return async dispatch => {
-    try {
-      const readme = await Chart.getReadme(cluster, namespace, id, version);
-      dispatch(selectReadme(readme));
-    } catch (e) {
-      dispatch(errorReadme(e.toString()));
-    }
-  };
-}
+// export function getChartReadme(
+//   cluster: string,
+//   namespace: string,
+//   id: string,
+//   version: string,
+// ): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
+//   return async dispatch => {
+//     try {
+//       const readme = await Chart.getReadme(cluster, namespace, id, version);
+//       dispatch(selectReadme(readme));
+//     } catch (e) {
+//       dispatch(errorReadme(e.toString()));
+//     }
+//   };
+// }

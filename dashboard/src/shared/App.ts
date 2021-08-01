@@ -1,4 +1,7 @@
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+import {
+  AvailablePackageDetail,
+  GetAvailablePackageVersionsResponse_PackageAppVersion,
+} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import * as url from "shared/url";
 import { axiosWithAuth } from "./AxiosInstance";
 import { hapi } from "./hapi/release";
@@ -11,19 +14,21 @@ export class App {
     cluster: string,
     namespace: string,
     releaseName: string,
-    chartNamespace: string,
-    chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
+    availablePackageDetail: AvailablePackageDetail,
     values?: string,
   ) {
-    const chartAttrs = {} as IChartAttributes; // version.relationships.chart.data;
+    // TODO(agamez): get the repo name once available
+    // https://github.com/kubeapps/kubeapps/issues/3165#issuecomment-884574732
     const endpoint = url.kubeops.releases.list(cluster, namespace);
     const { data } = await axiosWithAuth.post(endpoint, {
-      appRepositoryResourceName: chartAttrs.repo.name,
-      appRepositoryResourceNamespace: chartNamespace,
-      chartName: decodeURIComponent(chartAttrs.name),
+      appRepositoryResourceName:
+        availablePackageDetail.availablePackageRef?.identifier.split("/")[0],
+      appRepositoryResourceNamespace:
+        availablePackageDetail.availablePackageRef?.context?.namespace,
+      chartName: decodeURIComponent(availablePackageDetail.name),
       releaseName,
       values,
-      version: chartVersion.pkgVersion,
+      version: availablePackageDetail.pkgVersion,
     });
     return data;
   }

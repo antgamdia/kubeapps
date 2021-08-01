@@ -1,5 +1,7 @@
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
-import { JSONSchema4 } from "json-schema";
+import {
+  AvailablePackageDetail,
+  GetAvailablePackageVersionsResponse_PackageAppVersion,
+} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { ThunkAction } from "redux-thunk";
 import * as semver from "semver";
 import { ActionType, deprecated } from "typesafe-actions";
@@ -115,34 +117,38 @@ function getAppUpdateInfo(
   return async (dispatch, getState) => {
     dispatch(requestAppUpdateInfo());
     try {
-      const chartsInfo = await Chart.listWithFilters(
+      const { availablePackageDetail } = await Chart.getAvailablePackageDetail(
         cluster,
         namespace,
         chartName,
-        currentVersion,
-        appVersion,
       );
+      const repoName = availablePackageDetail?.availablePackageRef?.identifier?.split("/")[0] ?? "";
+      const repoNamespace = availablePackageDetail?.availablePackageRef?.context?.namespace ?? "";
       let updateInfo: IChartUpdateInfo = {
         upToDate: true,
-        repository: { name: "", url: "", namespace: "" },
+        repository: {
+          name: repoName,
+          namespace: repoNamespace,
+          url: "",
+        },
         chartLatestVersion: "",
         appLatestVersion: "",
       };
-      if (chartsInfo.length > 0) {
-        const sortedCharts = chartsInfo.sort((a, b) =>
-          semver.compare(
-            a.relationships.latestChartVersion.data.version,
-            b.relationships.latestChartVersion.data.version,
-          ),
-        );
-        const chartLatestVersion = sortedCharts[0].relationships.latestChartVersion.data.version;
-        const appLatestVersion = sortedCharts[0].relationships.latestChartVersion.data.app_version;
+      if (availablePackageDetail) {
+        // const sortedCharts = chartsInfo.sort((a, b) =>
+        //   semver.compare(
+        //     a.relationships.latestChartVersion.data.version,
+        //     b.relationships.latestChartVersion.data.version,
+        //   ),
+        // );
+        const chartLatestVersion = availablePackageDetail.pkgVersion;
+        const appLatestVersion = availablePackageDetail.appVersion;
         // Initialize updateInfo with the latest chart found
         updateInfo = {
+          ...updateInfo,
           upToDate: semver.gte(currentVersion, chartLatestVersion),
           chartLatestVersion,
           appLatestVersion,
-          repository: sortedCharts[0].attributes.repo,
         };
       }
       dispatch(receiveAppUpdateInfo({ releaseName, updateInfo }));
@@ -257,37 +263,34 @@ export function fetchAppsWithUpdateInfo(
 export function deployChart(
   targetCluster: string,
   targetNamespace: string,
-  chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
-  chartNamespace: string,
+  availablePackageDetail: AvailablePackageDetail,
   releaseName: string,
   values?: string,
-  schema?: JSONSchema4,
+  schema?: any,
 ): ThunkAction<Promise<boolean>, IStoreState, null, AppsAction> {
   return async (dispatch, getState) => {
     dispatch(requestDeployApp());
     try {
-      if (values && schema) {
-        const validation = validate(values, schema);
-        if (!validation.valid) {
-          const errorText =
-            validation.errors &&
-            validation.errors.map(e => `  - ${e.instancePath}: ${e.message}`).join("\n");
-          throw new UnprocessableEntity(
-            `The given values don't match the required format. The following errors were found:\n${errorText}`,
-          );
-        }
-      }
-      await App.create(
-        targetCluster,
-        targetNamespace,
-        releaseName,
-        chartNamespace,
-        chartVersion,
-        values,
-      );
+      // if (values && schema) {
+      //   const validation = validate(values, schema);
+      //   if (!validation.valid) {
+      //     const errorText =
+      //       validation.errors &&
+      //       validation.errors.map(e => `  - ${e.instancePath}: ${e.message}`).join("\n");
+      //     throw new UnprocessableEntity(
+      //       `The given values don't match the required format. The following errors were found:\n${errorText}`,
+      //     );
+      //   }
+      // }
+
+      await App.create(targetCluster, targetNamespace, releaseName, availablePackageDetail, values);
       dispatch(receiveDeployApp());
+      console.log("OK");
+
       return true;
     } catch (e) {
+      console.log(e);
+
       dispatch(errorApp(new CreateError(e.message)));
       return false;
     }
@@ -301,7 +304,7 @@ export function upgradeApp(
   chartNamespace: string,
   releaseName: string,
   values?: string,
-  schema?: JSONSchema4,
+  schema?: any,
 ): ThunkAction<Promise<boolean>, IStoreState, null, AppsAction> {
   return async (dispatch, getState) => {
     dispatch(requestUpgradeApp());

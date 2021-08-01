@@ -1,14 +1,8 @@
-import { goBack, push } from "connected-react-router";
 import { connect } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-
-import actions from "../../actions";
-
-import { JSONSchema4 } from "json-schema";
 import AppUpgrade from "../../components/AppUpgrade";
 import { IStoreState } from "../../shared/types";
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 interface IRouteProps {
   match: {
@@ -50,42 +44,7 @@ function mapStateToProps(
 }
 
 function mapDispatchToProps(dispatch: ThunkDispatch<IStoreState, null, Action>) {
-  return {
-    checkChart: (cluster: string, namespace: string, repo: string, chartName: string) =>
-      dispatch(actions.repos.checkChart(cluster, namespace, repo, chartName)),
-    clearRepo: () => dispatch(actions.repos.clearRepo()),
-    // fetchChartVersions: (cluster: string, namespace: string, id: string) =>
-    //   dispatch(actions.charts.fetchChartVersions(cluster, namespace, id)),
-    fetchRepositories: (namespace: string) => dispatch(actions.repos.fetchRepos(namespace)),
-    getAppWithUpdateInfo: (cluster: string, namespace: string, releaseName: string) =>
-      dispatch(actions.apps.getAppWithUpdateInfo(cluster, namespace, releaseName)),
-    // getChartVersion: (cluster: string, namespace: string, id: string, version: string) =>
-    //   dispatch(actions.charts.getChartVersion(cluster, namespace, id, version)),
-    push: (location: string) => dispatch(push(location)),
-    goBack: () => dispatch(goBack()),
-    upgradeApp: (
-      cluster: string,
-      namespace: string,
-      version: GetAvailablePackageVersionsResponse_PackageAppVersion,
-      chartNamespace: string,
-      releaseName: string,
-      values?: string,
-      schema?: JSONSchema4,
-    ) =>
-      dispatch(
-        actions.apps.upgradeApp(
-          cluster,
-          namespace,
-          version,
-          chartNamespace,
-          releaseName,
-          values,
-          schema,
-        ),
-      ),
-    getDeployedChartVersion: (cluster: string, namespace: string, id: string, version: string) =>
-      dispatch(actions.charts.getDeployedChartVersion(cluster, namespace, id, version)),
-  };
+  return {};
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppUpgrade);

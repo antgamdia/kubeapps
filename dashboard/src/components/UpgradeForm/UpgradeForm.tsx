@@ -1,23 +1,23 @@
-import { RouterAction } from "connected-react-router";
-import * as jsonpatch from "fast-json-patch";
-import { JSONSchema4 } from "json-schema";
-import { useEffect, useState } from "react";
-import YAML from "yaml";
-
-import ChartSummary from "components/Catalog/ChartSummary";
+import actions from "actions";
+import AvailablePackageDetailExcerpt from "components/Catalog/AvailablePackageDetailExcerpt";
 import ChartHeader from "components/ChartView/ChartHeader";
 import ChartVersionSelector from "components/ChartView/ChartVersionSelector";
 import Alert from "components/js/Alert";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
-import { useSelector } from "react-redux";
+import { push } from "connected-react-router";
+import * as jsonpatch from "fast-json-patch";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import YAML from "yaml";
 import { deleteValue, setValue } from "../../shared/schema";
 import { IChartState, IStoreState } from "../../shared/types";
 import * as url from "../../shared/url";
 import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import "./UpgradeForm.css";
-import { GetAvailablePackageVersionsResponse_PackageAppVersion } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IUpgradeFormProps {
   appCurrentVersion: string;
@@ -32,18 +32,6 @@ export interface IUpgradeFormProps {
   error?: Error;
   selected: IChartState["selected"];
   deployed: IChartState["deployed"];
-  upgradeApp: (
-    cluster: string,
-    namespace: string,
-    version: GetAvailablePackageVersionsResponse_PackageAppVersion,
-    chartNamespace: string,
-    releaseName: string,
-    values?: string,
-    schema?: JSONSchema4,
-  ) => Promise<boolean>;
-  push: (location: string) => RouterAction;
-  fetchChartVersions: (cluster: string, namespace: string, id: string) => Promise<void>;
-  getChartVersion: (cluster: string, namespace: string, id: string, chartVersion: string) => void;
 }
 
 function applyModifications(mods: jsonpatch.Operation[], values: string) {
@@ -75,10 +63,6 @@ function UpgradeForm({
   error,
   selected,
   deployed,
-  upgradeApp,
-  push,
-  fetchChartVersions,
-  getChartVersion,
 }: IUpgradeFormProps) {
   const [appValues, setAppValues] = useState(appCurrentValues || "");
   const [isDeploying, setIsDeploying] = useState(false);
@@ -86,10 +70,12 @@ function UpgradeForm({
   const [modifications, setModifications] = useState(
     undefined as undefined | jsonpatch.Operation[],
   );
+  const dispatch: ThunkDispatch<IStoreState, null, Action> = useDispatch();
+
   const [deployedValues, setDeployedValues] = useState("");
 
   const chartID = `${repo}/${chartName}`;
-  const { version } = selected;
+  const { availablePackageDetail, versions, schema, values, pkgVersion } = selected;
 
   const {
     apps: { isFetching: appsFetching },
@@ -98,8 +84,8 @@ function UpgradeForm({
   const isFetching = appsFetching || chartsFetching;
 
   useEffect(() => {
-    fetchChartVersions(cluster, repoNamespace, chartID);
-  }, [fetchChartVersions, cluster, repoNamespace, chartID]);
+    actions.charts.fetchChartVersions(cluster, repoNamespace, chartID);
+  }, [dispatch, cluster, repoNamespace, chartID]);
 
   useEffect(() => {
     if (deployed.values && !modifications) {
@@ -123,24 +109,26 @@ function UpgradeForm({
 
   useEffect(() => {
     if (deployed.chartVersion?.availablePackageDetail?.pkgVersion) {
-      getChartVersion(
-        cluster,
-        repoNamespace,
-        chartID,
-        deployed.chartVersion?.availablePackageDetail?.pkgVersion,
+      dispatch(
+        actions.charts.fetchChartVersion(
+          cluster,
+          repoNamespace,
+          chartID,
+          deployed.chartVersion?.availablePackageDetail?.pkgVersion,
+        ),
       );
     }
-  }, [getChartVersion, cluster, repoNamespace, chartID, deployed.chartVersion]);
+  }, [dispatch, cluster, repoNamespace, chartID, deployed.chartVersion]);
 
   useEffect(() => {
-    if (!valuesModified && selected.values) {
+    if (!valuesModified && values) {
       // Apply modifications to the new selected version
       const newAppValues = modifications?.length
-        ? applyModifications(modifications, selected.values)
-        : selected.values;
+        ? applyModifications(modifications, values)
+        : values;
       setAppValues(newAppValues);
     }
-  }, [selected.values, modifications, valuesModified]);
+  }, [values, modifications, valuesModified]);
 
   const setValuesModifiedTrue = () => {
     setValuesModified(true);
@@ -151,30 +139,34 @@ function UpgradeForm({
   };
 
   const selectVersion = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    getChartVersion(cluster, repoNamespace, chartID, e.currentTarget.value);
+    dispatch(
+      actions.charts.fetchChartVersion(cluster, repoNamespace, chartID, e.currentTarget.value),
+    );
   };
 
   const handleDeploy = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsDeploying(true);
-    if (selected.version) {
-      const deployedSuccess = await upgradeApp(
-        cluster,
-        namespace,
-        selected.version,
-        repoNamespace,
-        releaseName,
-        appValues,
-        selected.schema,
+    if (availablePackageDetail) {
+      const deployedSuccess = await dispatch(
+        actions.apps.upgradeApp(
+          cluster,
+          namespace,
+          availablePackageDetail,
+          repoNamespace,
+          releaseName,
+          appValues,
+          schema,
+        ),
       );
       setIsDeploying(false);
       if (deployedSuccess) {
-        push(url.app.apps.get(cluster, namespace, releaseName));
+        dispatch(push(url.app.apps.get(cluster, namespace, releaseName)));
       }
     }
   };
 
-  if (selected.versions.length === 0 || !version) {
+  if (versions.length === 0 || !availablePackageDetail) {
     return (
       <LoadingWrapper
         className="margin-t-xxl"
@@ -184,19 +176,17 @@ function UpgradeForm({
     );
   }
 
-  const chartAttrs = version;
-
   /* eslint-disable jsx-a11y/label-has-associated-control */
   return (
     <section>
       <LoadingWrapper loaded={!isFetching}>
         <ChartHeader
           releaseName={releaseName}
-          chartAttrs={chartAttrs}
-          versions={selected.versions}
+          chartAttrs={availablePackageDetail}
+          versions={versions}
           onSelect={selectVersion}
           currentVersion={deployed.chartVersion?.availablePackageDetail?.pkgVersion}
-          selectedVersion={selected.version?.pkgVersion}
+          selectedVersion={pkgVersion}
         />
         {isDeploying && (
           <h3 className="center" style={{ marginBottom: "1.2rem" }}>
@@ -207,7 +197,7 @@ function UpgradeForm({
           {error && <Alert theme="danger">An error occurred: {error.message}</Alert>}
           <Row>
             <Column span={3}>
-              <ChartSummary version={version} chartAttrs={chartAttrs} />
+              <AvailablePackageDetailExcerpt pkg={availablePackageDetail} />
             </Column>
             <Column span={9}>
               <form onSubmit={handleDeploy}>
@@ -216,11 +206,11 @@ function UpgradeForm({
                     Upgrade to Version
                   </label>
                   <ChartVersionSelector
-                    versions={selected.versions}
-                    selectedVersion={selected.version?.pkgVersion}
+                    versions={versions}
+                    selectedVersion={pkgVersion}
                     onSelect={selectVersion}
                     currentVersion={deployed.chartVersion?.availablePackageDetail?.pkgVersion}
-                    chartAttrs={chartAttrs}
+                    chartAttrs={availablePackageDetail}
                   />
                 </div>
                 <DeploymentFormBody

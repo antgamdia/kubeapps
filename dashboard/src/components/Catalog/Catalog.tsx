@@ -34,21 +34,9 @@ interface ICatalogProps {
   charts: IChartState;
   repo: string;
   filter: ParsedQs;
-  fetchCharts: (
-    cluster: string,
-    namespace: string,
-    repos: string,
-    page: number,
-    size: number,
-    query?: string,
-  ) => void;
   cluster: string;
   namespace: string;
   kubeappsNamespace: string;
-  fetchRepos: (namespace: string, listGlobal?: boolean) => void;
-  getCSVs: (cluster: string, namespace: string) => void;
-  resetRequestCharts: () => void;
-  resetChartVersion: () => void;
   csvs: IClusterServiceVersion[];
 }
 
@@ -99,13 +87,13 @@ function Catalog(props: ICatalogProps) {
       size,
       isFetching,
     },
-    fetchCharts,
+    // fetchCharts,
     cluster,
     namespace,
-    fetchRepos,
-    getCSVs,
-    resetRequestCharts,
-    resetChartVersion,
+    // fetchRepos,
+    // getCSVs,
+    // resetRequestCharts,
+    // resetChartVersion,
     csvs,
     filter: propsFilter,
   } = props;
@@ -135,8 +123,8 @@ function Catalog(props: ICatalogProps) {
   const searchFilter = propsFilter[filterNames.SEARCH]?.toString().replace(tmpStrRegex, ",") || "";
   const reposFilter = filters[filterNames.REPO]?.join(",") || "";
   useEffect(() => {
-    fetchCharts(cluster, namespace, reposFilter, page, size, searchFilter);
-  }, [fetchCharts, page, size, cluster, namespace, reposFilter, searchFilter]);
+    dispatch(actions.charts.fetchCharts(cluster, namespace, reposFilter, page, size, searchFilter));
+  }, [dispatch, page, size, cluster, namespace, reposFilter, searchFilter]);
 
   // hasLoadedFirstPage is used to not bump the current page until the first page is fully
   // requested first
@@ -189,23 +177,23 @@ function Catalog(props: ICatalogProps) {
   useEffect(() => {
     if (!supportedCluster || namespace === kubeappsNamespace) {
       // Global namespace or other cluster, show global repos only
-      fetchRepos(kubeappsNamespace);
+      dispatch(actions.repos.fetchRepos(kubeappsNamespace));
       return;
     }
     // In other case, fetch global and namespace repos
-    fetchRepos(namespace, true);
-  }, [fetchRepos, supportedCluster, namespace, kubeappsNamespace]);
+    dispatch(actions.repos.fetchRepos(namespace, true));
+  }, [dispatch, supportedCluster, namespace, kubeappsNamespace]);
 
   useEffect(() => {
-    getCSVs(cluster, namespace);
-  }, [getCSVs, cluster, namespace]);
+    dispatch(actions.operators.getCSVs(cluster, namespace));
+  }, [dispatch, cluster, namespace]);
 
   // detect changes in cluster/ns/repos/search and reset the current chart list
   useEffect(() => {
     setPage(0);
-    resetRequestCharts();
-    resetChartVersion();
-  }, [resetChartVersion, resetRequestCharts, cluster, namespace, reposFilter, searchFilter]);
+    dispatch(actions.charts.resetRequestCharts());
+    dispatch(actions.charts.resetChartVersion());
+  }, [dispatch, cluster, namespace, reposFilter, searchFilter]);
 
   const setSearchFilter = (searchTerm: string) => {
     const newFilters = {
@@ -268,7 +256,7 @@ function Catalog(props: ICatalogProps) {
 
   const forceRetry = () => {
     dispatch(actions.charts.clearErrorChart());
-    fetchCharts(cluster, namespace, reposFilter, page, size, searchFilter);
+    dispatch(actions.charts.fetchCharts(cluster, namespace, reposFilter, page, size, searchFilter));
   };
 
   const increaseRequestedPage = () => {

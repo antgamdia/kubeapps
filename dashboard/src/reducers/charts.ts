@@ -28,9 +28,12 @@ const chartsSelectedReducer = (
         ...state,
         error: undefined,
         readmeError: undefined,
-        version: action.payload.chartVersion,
-        values: action.payload.values,
-        schema: action.payload.schema,
+        availablePackageDetail: action.payload.selectedPackage,
+        pkgVersion: action.payload.selectedPackage.pkgVersion,
+        appVersion: action.payload.selectedPackage.appVersion,
+        readme: action.payload.selectedPackage.readme,
+        values: action.payload.selectedPackage.defaultValues,
+        schema: action.payload.selectedPackage.valuesSchema,
       };
     case getType(actions.charts.receiveChartVersions):
       return {

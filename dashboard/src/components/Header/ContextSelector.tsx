@@ -6,6 +6,7 @@ import { CdsModal, CdsModalActions, CdsModalContent, CdsModalHeader } from "@cds
 import actions from "actions";
 import Alert from "components/js/Alert";
 import Column from "components/js/Column";
+import { push } from "connected-react-router";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as ReactRouter from "react-router";
@@ -19,7 +20,6 @@ import "./ContextSelector.css";
 
 function ContextSelector() {
   const location = ReactRouter.useLocation();
-  const history = ReactRouter.useHistory();
   const dispatch: ThunkDispatch<IStoreState, null, Action> = useDispatch();
   const { clusters } = useSelector((state: IStoreState) => state);
   const currentCluster = clusters.clusters[clusters.currentCluster];
@@ -65,10 +65,12 @@ function ContextSelector() {
     const nsRegex = /^\/c\/([^/]*)\/ns\/[^/]*\//;
     if (nsRegex.test(location.pathname)) {
       // Change the namespace in the route
-      history.push(
-        location.pathname
-          .replace(nsRegex, `/c/${cluster}/ns/${namespace}/`)
-          .concat(location.search),
+      dispatch(
+        push(
+          location.pathname
+            .replace(nsRegex, `/c/${cluster}/ns/${namespace}/`)
+            .concat(location.search),
+        ),
       );
     }
     setOpen(false);
@@ -83,7 +85,7 @@ function ContextSelector() {
     if (created) {
       closeNewNSModal();
       dispatch(actions.namespace.setNamespace(cluster, newNS));
-      history.push(app.apps.list(cluster, newNS));
+      dispatch(push(app.apps.list(cluster, newNS)));
       setOpen(false);
     }
   };

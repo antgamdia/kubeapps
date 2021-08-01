@@ -7,17 +7,18 @@ export const app = {
     new: (
       cluster: string,
       namespace: string,
-      cv: AvailablePackageDetail,
+      availablePackageDetail: AvailablePackageDetail,
       version: string,
       globalNamespace: string,
     ) => {
-      const repoNamespace = cv.availablePackageRef?.context?.namespace;
+      const repoNamespace = availablePackageDetail.availablePackageRef?.context?.namespace;
       const newSegment = globalNamespace !== repoNamespace ? "new" : "new-from-global";
       // TODO(agamez): get the repo name once available
       // https://github.com/kubeapps/kubeapps/issues/3165#issuecomment-884574732
-      const repoName = cv.availablePackageRef?.identifier.split("/")[0] ?? globalNamespace;
+      const repoName =
+        availablePackageDetail.availablePackageRef?.identifier.split("/")[0] ?? globalNamespace;
       return `/c/${cluster}/ns/${namespace}/apps/${newSegment}/${repoName}/${encodeURIComponent(
-        repoName,
+        availablePackageDetail.name,
       )}/versions/${version}`;
     },
     list: (cluster: string, namespace: string) => `/c/${cluster}/ns/${namespace}/apps`,
