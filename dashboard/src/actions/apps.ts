@@ -120,7 +120,9 @@ function getAppUpdateInfo(
       const { availablePackageDetail } = await Chart.getAvailablePackageDetail(
         cluster,
         namespace,
-        chartName,
+        // TODO(agamez): remove this strictly temporary hardcoded value once GetInstalledPackageDetail has been implemented
+        // it has been added for avoiding further changes in this PR, so it can still work even if it's limited to the bitnami
+        `bitnami/${chartName}`,
       );
       const repoName = availablePackageDetail?.availablePackageRef?.identifier?.split("/")[0] ?? "";
       const repoNamespace = availablePackageDetail?.availablePackageRef?.context?.namespace ?? "";
