@@ -29,10 +29,6 @@ export const errorChart = createAction("ERROR_CHART", resolve => {
 
 export const clearErrorChart = createAction("CLEAR_ERROR_CHART");
 
-export const errorChartCatetories = createAction("ERROR_CHART_CATEGORIES", resolve => {
-  return (err: Error) => resolve(err);
-});
-
 export const selectChartVersion = createAction("SELECT_CHART_VERSION", resolve => {
   return (selectedPackage: AvailablePackageDetail) => resolve({ selectedPackage });
 });
@@ -64,7 +60,6 @@ const allActions = [
   requestChart,
   errorChart,
   clearErrorChart,
-  errorChartCatetories,
   receiveCharts,
   receiveChartVersions,
   selectChartVersion,

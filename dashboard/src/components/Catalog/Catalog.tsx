@@ -7,9 +7,10 @@ import Column from "components/js/Column";
 import Row from "components/js/Row";
 import { push } from "connected-react-router";
 import { flatten, get, intersection, isEqual, trimStart, uniq, without } from "lodash";
-import { ParsedQs } from "qs";
+import qs, { ParsedQs } from "qs";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import * as ReactRouter from "react-router";
 import { Link } from "react-router-dom";
 import { app } from "shared/url";
 import { IChartState, IClusterServiceVersion, IStoreState } from "../../shared/types";
@@ -77,37 +78,39 @@ export function filtersToQuery(filters: any) {
   return query;
 }
 
+interface IRouteParams {
+  cluster: string;
+  namespace: string;
+}
+
 function Catalog(props: ICatalogProps) {
   const {
     charts: {
       hasFinishedFetching,
       selected: { error },
-      items: charts,
+      items: availablePackages,
       categories,
       size,
-      isFetching,
+      isFetching: isFetchingCharts,
     },
-    // fetchCharts,
-    cluster,
-    namespace,
-    // fetchRepos,
-    // getCSVs,
-    // resetRequestCharts,
-    // resetChartVersion,
-    csvs,
-    filter: propsFilter,
-  } = props;
-
-  const {
+    operators,
     repos: { repos },
     config: { kubeappsCluster, kubeappsNamespace },
   } = useSelector((state: IStoreState) => state);
-
+  const { cluster, namespace } = ReactRouter.useParams() as IRouteParams;
+  const location = ReactRouter.useLocation();
   const dispatch = useDispatch();
+
   const [filters, setFilters] = React.useState(initialFilterState());
   const [page, setPage] = React.useState(0);
+  const [hasRequestedFirstPage, setHasRequestedFirstPage] = React.useState(false);
+  const [hasLoadedFirstPage, setHasLoadedFirstPage] = React.useState(false);
+
+  const isFetching = isFetchingCharts || availablePackages.length === 0;
+  const csvs = operators.csvs;
 
   useEffect(() => {
+    const propsFilter = qs.parse(location.search, { ignoreQueryPrefix: true });
     const newFilters = {};
     Object.keys(propsFilter).forEach(filter => {
       const filterValue = propsFilter[filter]?.toString() || "";
@@ -117,10 +120,10 @@ function Catalog(props: ICatalogProps) {
       ...initialFilterState(),
       ...newFilters,
     });
-  }, [propsFilter]);
+  }, [location.search]);
 
   // Only one search filter can be set
-  const searchFilter = propsFilter[filterNames.SEARCH]?.toString().replace(tmpStrRegex, ",") || "";
+  const searchFilter = filters[filterNames.SEARCH]?.toString().replace(tmpStrRegex, ",") || "";
   const reposFilter = filters[filterNames.REPO]?.join(",") || "";
   useEffect(() => {
     dispatch(actions.charts.fetchCharts(cluster, namespace, reposFilter, page, size, searchFilter));
@@ -128,8 +131,6 @@ function Catalog(props: ICatalogProps) {
 
   // hasLoadedFirstPage is used to not bump the current page until the first page is fully
   // requested first
-  const [hasRequestedFirstPage, setHasRequestedFirstPage] = React.useState(false);
-  const [hasLoadedFirstPage, setHasLoadedFirstPage] = React.useState(false);
   useEffect(() => {
     if (isFetching) {
       setHasRequestedFirstPage(true);
@@ -204,7 +205,7 @@ function Catalog(props: ICatalogProps) {
     pushFilters(newFilters);
   };
 
-  const filteredCharts = charts
+  const filteredCharts = availablePackages
     .filter(
       () => filters[filterNames.TYPE].length === 0 || filters[filterNames.TYPE].includes("Charts"),
     )
@@ -324,7 +325,7 @@ function Catalog(props: ICatalogProps) {
       {isEqual(filters, initialFilterState()) &&
       hasFinishedFetching &&
       searchFilter.length === 0 &&
-      charts.length === 0 &&
+      availablePackages.length === 0 &&
       csvs.length === 0 ? (
         <div className="empty-catalog">
           <CdsIcon shape="bundle" />
