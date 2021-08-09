@@ -71,14 +71,13 @@ const chartsReducer = (
         ...state,
         isFetching: false,
         hasFinishedFetching: isLastPage,
+        categories: action.payload.response.categories,
         items: uniqBy(
           [...state.items, ...action.payload.response.availablePackageSummaries],
           "availablePackageRef.identifier",
         ),
       };
     }
-    case getType(actions.charts.receiveChartCategories):
-      return { ...state, categories: action.payload };
     case getType(actions.charts.receiveChartVersions):
       return {
         ...state,

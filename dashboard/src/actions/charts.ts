@@ -19,10 +19,6 @@ export const receiveCharts = createAction("RECEIVE_CHARTS", resolve => {
   return (payload: IReceiveChartsActionPayload) => resolve(payload);
 });
 
-export const receiveChartCategories = createAction("RECEIVE_CHART_CATEGORIES", resolve => {
-  return (categories: string[]) => resolve(categories);
-});
-
 export const receiveChartVersions = createAction("RECEIVE_CHART_VERSIONS", resolve => {
   return (versions: GetAvailablePackageVersionsResponse) => resolve(versions);
 });
@@ -70,7 +66,6 @@ const allActions = [
   clearErrorChart,
   errorChartCatetories,
   receiveCharts,
-  receiveChartCategories,
   receiveChartVersions,
   selectChartVersion,
   requestDeployedChartVersion,
@@ -103,7 +98,6 @@ export function fetchCharts(
         query,
       );
       dispatch(receiveCharts({ response, page }));
-      dispatch(receiveChartCategories(response.categories));
     } catch (e) {
       dispatch(errorChart(new FetchError(e.message)));
     }
