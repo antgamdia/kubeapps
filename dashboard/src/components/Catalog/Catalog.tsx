@@ -91,7 +91,7 @@ function Catalog(props: ICatalogProps) {
       items: availablePackages,
       categories,
       size,
-      isFetching: isFetchingCharts,
+      isFetching,
     },
     operators,
     repos: { repos },
@@ -106,7 +106,6 @@ function Catalog(props: ICatalogProps) {
   const [hasRequestedFirstPage, setHasRequestedFirstPage] = React.useState(false);
   const [hasLoadedFirstPage, setHasLoadedFirstPage] = React.useState(false);
 
-  const isFetching = isFetchingCharts || availablePackages.length === 0;
   const csvs = operators.csvs;
 
   useEffect(() => {

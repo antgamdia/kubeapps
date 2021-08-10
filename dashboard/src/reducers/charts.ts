@@ -107,7 +107,6 @@ const chartsReducer = (
         hasFinishedFetching: false,
         items: [],
       };
-    case getType(actions.charts.resetChartVersion):
     case getType(actions.charts.selectReadme):
     case getType(actions.charts.errorReadme):
     case getType(actions.charts.errorChart):
@@ -118,6 +117,7 @@ const chartsReducer = (
         items: state.items,
         selected: chartsSelectedReducer(state.selected, action),
       };
+    case getType(actions.charts.resetChartVersion):
     case getType(actions.charts.clearErrorChart):
       return {
         ...state,
