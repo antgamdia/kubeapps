@@ -84,7 +84,7 @@ function UpgradeForm({
   const isFetching = appsFetching || chartsFetching;
 
   useEffect(() => {
-    actions.charts.fetchChartVersions(cluster, repoNamespace, chartID);
+    dispatch(actions.charts.fetchChartVersions(cluster, repoNamespace, chartID));
   }, [dispatch, cluster, repoNamespace, chartID]);
 
   useEffect(() => {
@@ -108,16 +108,14 @@ function UpgradeForm({
   }, [deployed.values, modifications]);
 
   useEffect(() => {
-    if (deployed.chartVersion?.availablePackageDetail?.pkgVersion) {
-      dispatch(
-        actions.charts.fetchChartVersion(
-          cluster,
-          repoNamespace,
-          chartID,
-          deployed.chartVersion?.availablePackageDetail?.pkgVersion,
-        ),
-      );
-    }
+    dispatch(
+      actions.charts.fetchChartVersion(
+        cluster,
+        repoNamespace,
+        chartID,
+        deployed.chartVersion?.availablePackageDetail?.pkgVersion,
+      ),
+    );
   }, [dispatch, cluster, repoNamespace, chartID, deployed.chartVersion]);
 
   useEffect(() => {
