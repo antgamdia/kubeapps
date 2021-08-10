@@ -1,3 +1,4 @@
+import { JSONSchemaType } from "ajv";
 import { uniqBy } from "lodash";
 import { getType } from "typesafe-actions";
 
@@ -33,7 +34,7 @@ const chartsSelectedReducer = (
         appVersion: action.payload.selectedPackage.appVersion,
         readme: action.payload.selectedPackage.readme,
         values: action.payload.selectedPackage.defaultValues,
-        schema: action.payload.selectedPackage.valuesSchema,
+        schema: JSON.parse(action.payload.selectedPackage.valuesSchema) as JSONSchemaType<any>,
       };
     case getType(actions.charts.receiveChartVersions):
       return {

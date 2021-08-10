@@ -1,3 +1,4 @@
+import { JSONSchemaType } from "ajv";
 import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { ThunkAction } from "redux-thunk";
 import * as semver from "semver";
@@ -258,22 +259,22 @@ export function deployChart(
   availablePackageDetail: AvailablePackageDetail,
   releaseName: string,
   values?: string,
-  schema?: any,
+  schema?: JSONSchemaType<any>,
 ): ThunkAction<Promise<boolean>, IStoreState, null, AppsAction> {
   return async (dispatch, getState) => {
     dispatch(requestDeployApp());
     try {
-      // if (values && schema) {
-      //   const validation = validate(values, schema);
-      //   if (!validation.valid) {
-      //     const errorText =
-      //       validation.errors &&
-      //       validation.errors.map(e => `  - ${e.instancePath}: ${e.message}`).join("\n");
-      //     throw new UnprocessableEntity(
-      //       `The given values don't match the required format. The following errors were found:\n${errorText}`,
-      //     );
-      //   }
-      // }
+      if (values && schema) {
+        const validation = validate(values, schema);
+        if (!validation.valid) {
+          const errorText =
+            validation.errors &&
+            validation.errors.map(e => `  - ${e.instancePath}: ${e.message}`).join("\n");
+          throw new UnprocessableEntity(
+            `The given values don't match the required format. The following errors were found:\n${errorText}`,
+          );
+        }
+      }
 
       await App.create(targetCluster, targetNamespace, releaseName, availablePackageDetail, values);
       dispatch(receiveDeployApp());
@@ -296,7 +297,7 @@ export function upgradeApp(
   chartNamespace: string,
   releaseName: string,
   values?: string,
-  schema?: any,
+  schema?: JSONSchemaType<any>,
 ): ThunkAction<Promise<boolean>, IStoreState, null, AppsAction> {
   return async (dispatch, getState) => {
     dispatch(requestUpgradeApp());

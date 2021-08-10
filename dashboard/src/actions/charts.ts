@@ -38,7 +38,7 @@ export const requestDeployedChartVersion = createAction("REQUEST_DEPLOYED_CHART_
 export const receiveDeployedChartVersion = createAction(
   "RECEIVE_DEPLOYED_CHART_VERSION",
   resolve => {
-    return (chartVersion: AvailablePackageDetail, values?: string, schema?: any) =>
+    return (chartVersion: AvailablePackageDetail, values?: string, schema?: string) =>
       resolve({ chartVersion, values, schema });
   },
 );

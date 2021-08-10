@@ -1,3 +1,4 @@
+import { JSONSchemaType } from "ajv";
 import { RouterState } from "connected-react-router";
 import {
   AvailablePackageDetail,
@@ -70,12 +71,12 @@ export interface IChartState {
     readme?: string;
     readmeError?: string;
     values?: string;
-    schema?: any;
+    schema?: JSONSchemaType<any>;
   };
   deployed: {
     chartVersion?: GetAvailablePackageDetailResponse;
     values?: string;
-    schema?: any;
+    schema?: JSONSchemaType<any>;
   };
   items: AvailablePackageSummary[];
   categories: string[];
@@ -474,7 +475,7 @@ export interface IKubeState {
 
 export interface IBasicFormParam {
   path: string;
-  type?: any; //jsonSchema.JSONSchema4TypeName | jsonSchema.JSONSchema4TypeName[];
+  type?: "string" | "number" | "integer" | "boolean" | "object" | "array" | "null" | "any";
   value?: any;
   title?: string;
   minimum?: number;

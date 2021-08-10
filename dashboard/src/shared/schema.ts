@@ -1,12 +1,11 @@
-// WARN: yaml doesn't have updated definitions for TypeScript
-// In particular, it doesn't contain definitions for `get` and `set`
-// that are used in this package
-import Ajv, { ErrorObject } from "ajv";
+import Ajv, { ErrorObject, JSONSchemaType } from "ajv";
 import * as jsonpatch from "fast-json-patch";
 import { isEmpty, set } from "lodash";
 import YAML from "yaml";
 import { nullOptions } from "yaml/types";
 import { IBasicFormParam } from "./types";
+
+const ajv = new Ajv({ strict: false });
 
 // Avoid to explicitly add "null" when an element is not defined
 nullOptions.nullStr = "";
@@ -16,10 +15,11 @@ nullOptions.nullStr = "";
 // It returns a key:value map for easier handling.
 export function retrieveBasicFormParams(
   defaultValues: string,
-  schema?: any,
+  schema?: JSONSchemaType<any>,
   parentPath?: string,
 ): IBasicFormParam[] {
   let params: IBasicFormParam[] = [];
+
   if (schema && schema.properties) {
     const properties = schema.properties!;
     Object.keys(properties).forEach(propertyKey => {
@@ -149,9 +149,8 @@ export function getValue(values: string, path: string, defaultValue?: any) {
 
 export function validate(
   values: string,
-  schema: string,
+  schema: JSONSchemaType<any>,
 ): { valid: boolean; errors: ErrorObject[] | null | undefined } {
-  const ajv = new Ajv({ strict: false });
   const valid = ajv.validate(schema, YAML.parse(values));
   return { valid: !!valid, errors: ajv.errors };
 }
