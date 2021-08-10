@@ -115,39 +115,52 @@ function getAppUpdateInfo(
   return async (dispatch, getState) => {
     dispatch(requestAppUpdateInfo());
     try {
-      const { availablePackageDetail } = await Chart.getAvailablePackageDetail(
+      // TODO(agamez): remove workaround value once GetInstalledPackageDetail has been implemented
+      // it is fetching the summaries if any matching elements exists. If so, gather its details.
+      const { availablePackageSummaries } = await Chart.getAvailablePackageSummaries(
         cluster,
         namespace,
-        // TODO(agamez): remove this strictly temporary hardcoded value once GetInstalledPackageDetail has been implemented
-        // it has been added for avoiding further changes in this PR, so it can still work even if it's limited to the bitnami
-        `bitnami/${chartName}`,
+        "",
+        0,
+        1,
+        chartName,
       );
-      const repoName = availablePackageDetail?.availablePackageRef?.identifier?.split("/")[0] ?? "";
-      const repoNamespace = availablePackageDetail?.availablePackageRef?.context?.namespace ?? "";
-      let updateInfo: IChartUpdateInfo = {
-        upToDate: true,
-        repository: {
-          name: repoName,
-          namespace: repoNamespace,
-          url: "",
-        },
-        chartLatestVersion: "",
-        appLatestVersion: "",
-      };
+      if (availablePackageSummaries[0]) {
+        const { availablePackageDetail } = await Chart.getAvailablePackageDetail(
+          cluster,
+          availablePackageSummaries[0].availablePackageRef?.context?.namespace || namespace,
+          availablePackageSummaries[0].availablePackageRef?.identifier || chartName,
+        );
 
-      if (availablePackageDetail) {
-        // The server response already contains the latest version
-        const chartLatestVersion = availablePackageDetail.pkgVersion;
-        const appLatestVersion = availablePackageDetail.appVersion;
-        // Initialize updateInfo with the latest chart found
-        updateInfo = {
-          ...updateInfo,
-          upToDate: semver.gte(currentVersion, chartLatestVersion),
-          chartLatestVersion,
-          appLatestVersion,
+        const repoName =
+          availablePackageDetail?.availablePackageRef?.identifier?.split("/")[0] ?? "";
+        const repoNamespace = availablePackageDetail?.availablePackageRef?.context?.namespace ?? "";
+        let updateInfo: IChartUpdateInfo = {
+          upToDate: true,
+          repository: {
+            name: repoName,
+            namespace: repoNamespace,
+            url: "",
+          },
+          chartLatestVersion: "",
+          appLatestVersion: "",
         };
+
+        if (availablePackageDetail) {
+          // The server response already contains the latest version
+          console.log(availablePackageDetail);
+          const chartLatestVersion = availablePackageDetail.pkgVersion;
+          const appLatestVersion = availablePackageDetail.appVersion;
+          // Initialize updateInfo with the latest chart found
+          updateInfo = {
+            ...updateInfo,
+            upToDate: semver.gte(currentVersion, chartLatestVersion),
+            chartLatestVersion,
+            appLatestVersion,
+          };
+        }
+        dispatch(receiveAppUpdateInfo({ releaseName, updateInfo }));
       }
-      dispatch(receiveAppUpdateInfo({ releaseName, updateInfo }));
     } catch (e) {
       const updateInfo: IChartUpdateInfo = {
         error: e,

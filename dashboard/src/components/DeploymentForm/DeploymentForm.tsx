@@ -83,7 +83,7 @@ export default function DeploymentForm() {
       const deployed = await dispatch(
         actions.apps.deployChart(
           cluster,
-          chartNamespace,
+          namespace,
           availablePackageDetail,
           releaseName,
           appValues,
