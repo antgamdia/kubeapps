@@ -1,10 +1,9 @@
-import Tabs from "components/Tabs";
-import { useEffect, useState } from "react";
-
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
 import Alert from "components/js/Alert";
+import Tabs from "components/Tabs";
 import { isEqual } from "lodash";
+import { useEffect, useState } from "react";
 import { parseValues, retrieveBasicFormParams, setValue } from "../../shared/schema";
 import { DeploymentEvent, IBasicFormParam, IChartState } from "../../shared/types";
 import { getValueFromEvent } from "../../shared/utils";

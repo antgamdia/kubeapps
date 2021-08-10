@@ -5,6 +5,7 @@ interface AvailablePackageDetailExcerptProps {
   pkg: AvailablePackageDetail;
 }
 
+/* TODO(agamez): https://github.com/kubeapps/kubeapps/issues/3165#issuecomment-882943900 */
 // function isKubernetesCharts(repoURL: string) {
 //   return (
 //     repoURL === "https://kubernetes-charts.storage.googleapis.com" ||

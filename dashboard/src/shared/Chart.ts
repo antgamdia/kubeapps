@@ -57,38 +57,4 @@ export default class Chart {
       },
     });
   }
-  // public static async getReadme(cluster: string, namespace: string, id: string, version: string) {
-  //   const { data } = await axiosWithAuth.get<string>(
-  //     URL.api.charts.getReadme(cluster, namespace, id, version),
-  //   );
-  //   return data;
-  // }
-
-  // public static async getValues(cluster: string, namespace: string, id: string, version: string) {
-  //   const { data } = await axiosWithAuth.get<string>(
-  //     URL.api.charts.getValues(cluster, namespace, id, version),
-  //   );
-  //   return data;
-  // }
-
-  // public static async getSchema(cluster: string, namespace: string, id: string, version: string) {
-  //   const { data } = await axiosWithAuth.get<JSONSchema4>(
-  //     URL.api.charts.getSchema(cluster, namespace, id, version),
-  //   );
-  //   return data;
-  // }
-
-  // public static async listWithFilters(
-  //   cluster: string,
-  //   namespace: string,
-  //   name: string,
-  //   version: string,
-  //   appVersion: string,
-  // ) {
-  //   const url = `${URL.api.charts.base(cluster, namespace)}/charts?name=${encodeURIComponent(
-  //     name,
-  //   )}&version=${encodeURIComponent(version)}&appversion=${appVersion}`;
-  //   const { data } = await axiosWithAuth.get<{ data: IChart[] }>(url);
-  //   return data.data;
-  // }
 }

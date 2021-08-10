@@ -159,19 +159,3 @@ export function getDeployedChartVersion(
     }
   };
 }
-
-// export function getChartReadme(
-//   cluster: string,
-//   namespace: string,
-//   id: string,
-//   version: string,
-// ): ThunkAction<Promise<void>, IStoreState, null, ChartsAction> {
-//   return async dispatch => {
-//     try {
-//       const readme = await Chart.getReadme(cluster, namespace, id, version);
-//       dispatch(selectReadme(readme));
-//     } catch (e) {
-//       dispatch(errorReadme(e.toString()));
-//     }
-//   };
-// }

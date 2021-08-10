@@ -50,17 +50,7 @@ export interface IRepo {
   url: string;
 }
 
-// export interface GetAvailablePackageVersionsResponse_PackageAppVersion {
-//   id: string;
-//   attributes: GetAvailablePackageVersionsResponse_PackageAppVersionAttributes;
-//   relationships: {
-//     chart: {
-//       data: IChartAttributes;
-//     };
-//   };
-// }
-
-export interface GetAvailablePackageVersionsResponse_PackageAppVersionAttributes {
+export interface IChartVersionAttributes {
   version: string;
   app_version: string;
   created: string;
@@ -71,7 +61,7 @@ export interface IChart {
   attributes: IChartAttributes;
   relationships: {
     latestChartVersion: {
-      data: GetAvailablePackageVersionsResponse_PackageAppVersionAttributes;
+      data: IChartVersionAttributes;
     };
   };
 }

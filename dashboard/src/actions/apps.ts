@@ -136,13 +136,9 @@ function getAppUpdateInfo(
         chartLatestVersion: "",
         appLatestVersion: "",
       };
+
       if (availablePackageDetail) {
-        // const sortedCharts = chartsInfo.sort((a, b) =>
-        //   semver.compare(
-        //     a.relationships.latestChartVersion.data.version,
-        //     b.relationships.latestChartVersion.data.version,
-        //   ),
-        // );
+        // The server response already contains the latest version
         const chartLatestVersion = availablePackageDetail.pkgVersion;
         const appLatestVersion = availablePackageDetail.appVersion;
         // Initialize updateInfo with the latest chart found
@@ -176,12 +172,9 @@ export function getAppWithUpdateInfo(
     try {
       const app = await dispatch(getApp(cluster, namespace, releaseName));
       if (
-        app &&
-        app.chart &&
-        app.chart.metadata &&
-        app.chart.metadata.name &&
-        app.chart.metadata.version &&
-        app.chart.metadata.appVersion
+        app?.chart?.metadata?.name &&
+        app?.chart?.metadata?.version &&
+        app?.chart?.metadata?.appVersion
       ) {
         dispatch(
           getAppUpdateInfo(

@@ -101,7 +101,7 @@ export default function ChartView() {
               </CdsButton>
             </Link>
           }
-          selectedVersion={availablePackageDetail?.pkgVersion}
+          selectedVersion={pkgVersion}
         />
       </div>
 

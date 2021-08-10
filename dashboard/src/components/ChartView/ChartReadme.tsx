@@ -17,11 +17,6 @@ interface IChartReadmeProps {
 }
 
 function ChartReadme({ chartID, error, cluster, namespace, readme, version }: IChartReadmeProps) {
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(actions.charts.getChartReadme(cluster, namespace, chartID, version));
-  // }, [dispatch, cluster, namespace, chartID, version]);
-
   if (error) {
     if (error.toLocaleLowerCase().includes("not found")) {
       return (
