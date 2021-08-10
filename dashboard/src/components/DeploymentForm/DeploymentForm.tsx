@@ -51,20 +51,16 @@ export default function DeploymentForm() {
   const [valuesModified, setValuesModified] = useState(false);
 
   useEffect(() => {
-    console.log("fetchChartVersions");
-    console.log(cluster, chartNamespace, chartID);
     dispatch(actions.charts.fetchChartVersions(cluster, chartNamespace, chartID));
   }, [dispatch, cluster, chartNamespace, chartID]);
 
   useEffect(() => {
-    console.log("valuesModified?");
     if (!valuesModified) {
       setAppValues(values || "");
     }
   }, [values, valuesModified]);
 
   useEffect(() => {
-    console.log("getChartVersion?");
     dispatch(actions.charts.fetchChartVersion(cluster, chartNamespace, chartID, chartVersion!));
   }, [cluster, chartNamespace, chartID, chartVersion, dispatch]);
 
@@ -81,7 +77,6 @@ export default function DeploymentForm() {
   };
 
   const handleDeploy = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("handleDeploy");
     e.preventDefault();
     setDeploying(true);
     if (availablePackageDetail) {
@@ -103,7 +98,6 @@ export default function DeploymentForm() {
   };
 
   const selectVersion = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("selectVersion");
     dispatch(
       push(
         url.app.apps.new(

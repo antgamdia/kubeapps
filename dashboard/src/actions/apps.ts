@@ -278,12 +278,9 @@ export function deployChart(
 
       await App.create(targetCluster, targetNamespace, releaseName, availablePackageDetail, values);
       dispatch(receiveDeployApp());
-      console.log("OK");
 
       return true;
     } catch (e) {
-      console.log(e);
-
       dispatch(errorApp(new CreateError(e.message)));
       return false;
     }
