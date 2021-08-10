@@ -34,7 +34,10 @@ const chartsSelectedReducer = (
         appVersion: action.payload.selectedPackage.appVersion,
         readme: action.payload.selectedPackage.readme,
         values: action.payload.selectedPackage.defaultValues,
-        schema: JSON.parse(action.payload.selectedPackage.valuesSchema) as JSONSchemaType<any>,
+        schema:
+          action.payload.selectedPackage.valuesSchema !== ""
+            ? (JSON.parse(action.payload.selectedPackage.valuesSchema) as JSONSchemaType<any>)
+            : ({} as JSONSchemaType<any>),
       };
     case getType(actions.charts.receiveChartVersions):
       return {
