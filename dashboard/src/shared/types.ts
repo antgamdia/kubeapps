@@ -21,7 +21,9 @@ class CustomError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
+
 export class ForbiddenError extends CustomError {}
+
 export class UnauthorizedError extends CustomError {}
 
 export class NotFoundError extends CustomError {}
@@ -50,40 +52,9 @@ export interface IRepo {
   url: string;
 }
 
-export interface IChartVersionAttributes {
-  version: string;
-  app_version: string;
-  created: string;
-}
-
-export interface IChart {
-  id: string;
-  attributes: IChartAttributes;
-  relationships: {
-    latestChartVersion: {
-      data: IChartVersionAttributes;
-    };
-  };
-}
-
 export interface IReceiveChartsActionPayload {
   response: GetAvailablePackageSummariesResponse;
   page: number;
-}
-
-export interface IChartAttributes {
-  name: string;
-  description: string;
-  home?: string;
-  icon?: string;
-  keywords: string[];
-  maintainers: Array<{
-    name: string;
-    email?: string;
-  }>;
-  repo: IRepo;
-  sources: string[];
-  category: string;
 }
 
 export interface IChartState {
@@ -119,13 +90,6 @@ export interface IChartUpdateInfo {
   error?: Error;
 }
 
-export interface IDeployment {
-  metadata: {
-    name: string;
-    namespace: string;
-  };
-}
-
 export interface IServiceSpec {
   ports: IPort[];
   clusterIP: string;
@@ -149,9 +113,11 @@ export interface IPort {
 export interface IHTTPIngressPath {
   path: string;
 }
+
 export interface IIngressHTTP {
   paths: IHTTPIngressPath[];
 }
+
 export interface IIngressRule {
   host: string;
   http: IIngressHTTP;
@@ -197,37 +163,12 @@ export interface IResource {
   metadata: IResourceMetadata;
 }
 
-export interface IOwnerReference {
-  apiVersion: string;
-  blockOwnerDeletion: boolean;
-  kind: string;
-  name: string;
-  uid: string;
-}
-
 export interface ISecret {
   apiVersion: string;
   kind: string;
   type: string;
   data: { [s: string]: string };
   metadata: IResourceMetadata;
-}
-
-export interface IDeploymentStatus {
-  replicas: number;
-  updatedReplicas: number;
-  availableReplicas: number;
-}
-
-export interface IStatefulsetStatus {
-  replicas: number;
-  updatedReplicas: number;
-  readyReplicas: number;
-}
-
-export interface IDaemonsetStatus {
-  currentNumberScheduled: number;
-  numberReady: number;
 }
 
 export interface IRelease extends hapi.release.Release {
@@ -456,15 +397,6 @@ export interface ICreateAppRepositoryResponse {
   appRepository: IAppRepository;
 }
 
-export type IAppRepositoryList = IK8sList<
-  IAppRepository,
-  {
-    continue: string;
-    resourceVersion: string;
-    selfLink: string;
-  }
->;
-
 export interface IAppRepositoryKey {
   name: string;
   namespace: string;
@@ -498,28 +430,6 @@ interface IStatusCause {
   field: string;
   message: string;
   reason: string;
-}
-
-export interface IRouterPathname {
-  router: {
-    location: {
-      pathname: string;
-    };
-  };
-}
-
-export interface IRuntimeVersion {
-  name: string;
-  version: string;
-  runtimeImage: string;
-  initImage: string;
-}
-
-export interface IRuntime {
-  ID: string;
-  versions: IRuntimeVersion[];
-  depName: string;
-  fileNameSuffix: string;
 }
 
 export interface IRBACRole {

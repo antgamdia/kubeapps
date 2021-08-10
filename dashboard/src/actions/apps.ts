@@ -1,7 +1,4 @@
-import {
-  AvailablePackageDetail,
-  GetAvailablePackageVersionsResponse_PackageAppVersion,
-} from "gen/kubeappsapis/core/packages/v1alpha1/packages";
+import { AvailablePackageDetail } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { ThunkAction } from "redux-thunk";
 import * as semver from "semver";
 import { ActionType, deprecated } from "typesafe-actions";
@@ -295,7 +292,7 @@ export function deployChart(
 export function upgradeApp(
   cluster: string,
   namespace: string,
-  chartVersion: GetAvailablePackageVersionsResponse_PackageAppVersion,
+  chartVersion: AvailablePackageDetail,
   chartNamespace: string,
   releaseName: string,
   values?: string,

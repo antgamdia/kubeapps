@@ -1,7 +1,7 @@
+import { Maintainer } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import React from "react";
-import { IChartAttributes } from "../../shared/types";
 interface IAvailablePackageMaintainersProps {
-  maintainers: IChartAttributes["maintainers"];
+  maintainers: Maintainer[];
   githubIDAsNames?: boolean;
 }
 
