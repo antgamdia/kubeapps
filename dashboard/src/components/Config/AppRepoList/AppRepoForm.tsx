@@ -1,7 +1,6 @@
 import { CdsButton } from "@cds/react/button";
 import { CdsCheckbox } from "@cds/react/checkbox";
 import { CdsControlMessage, CdsFormGroup } from "@cds/react/forms";
-
 import { CdsInput } from "@cds/react/input";
 import { CdsRadio, CdsRadioGroup } from "@cds/react/radio";
 import { CdsTextarea } from "@cds/react/textarea";
@@ -16,7 +15,6 @@ import { toFilterRule, toParams } from "shared/jq";
 import { IAppRepository, IAppRepositoryFilter, ISecret, IStoreState } from "../../../shared/types";
 import AppRepoAddDockerCreds from "./AppRepoAddDockerCreds";
 import "./AppRepoForm.css";
-
 interface IAppRepoFormProps {
   onSubmit: (
     name: string,

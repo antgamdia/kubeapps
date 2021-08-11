@@ -1,6 +1,7 @@
 import Ajv, { ErrorObject, JSONSchemaType } from "ajv";
 import * as jsonpatch from "fast-json-patch";
 import { isEmpty, set } from "lodash";
+// TODO(agamez): check if we can replace this package by js-yaml or vice-versa
 import YAML from "yaml";
 import { nullOptions } from "yaml/types";
 import { IBasicFormParam } from "./types";

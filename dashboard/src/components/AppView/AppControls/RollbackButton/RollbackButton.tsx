@@ -6,15 +6,15 @@ import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { IStoreState } from "shared/types";
 import RollbackDialog from "./RollbackDialog";
-import { hapi } from "../../../../shared/hapi/release";
 import StatusAwareButton from "../StatusAwareButton";
+import { InstalledPackageStatus } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 
 export interface IRollbackButtonProps {
   cluster: string;
   namespace: string;
   releaseName: string;
   revision: number;
-  releaseStatus: hapi.release.IStatus | undefined | null;
+  releaseStatus: InstalledPackageStatus | undefined | null;
 }
 
 function RollbackButton({

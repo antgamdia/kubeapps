@@ -69,7 +69,7 @@ function AppList() {
   }, [allNS, currentNamespace]);
 
   useEffect(() => {
-    dispatch(actions.apps.fetchAppsWithUpdateInfo(cluster, namespace));
+    dispatch(actions.apps.fetchApps(cluster, namespace));
     dispatch(actions.operators.getResources(cluster, namespace));
   }, [dispatch, cluster, namespace]);
 

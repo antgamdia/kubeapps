@@ -1,19 +1,17 @@
-import { assignWith, get } from "lodash";
-
-import { useEffect, useState } from "react";
-import YAML from "yaml";
-import placeholder from "../../placeholder.png";
-
 import actions from "actions";
 import Alert from "components/js/Alert";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
 import PageHeader from "components/PageHeader/PageHeader";
+import * as yaml from "js-yaml";
+import { assignWith } from "lodash";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as ReactRouter from "react-router";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import ApplicationStatus from "../../containers/ApplicationStatusContainer";
+import placeholder from "../../placeholder.png";
 import ResourceRef from "../../shared/ResourceRef";
 import {
   DeleteError,
@@ -25,9 +23,9 @@ import {
 } from "../../shared/types";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import AccessURLTable from "./AccessURLTable/AccessURLTable";
-import UpgradeButton from "./AppControls/UpgradeButton/UpgradeButton";
 import DeleteButton from "./AppControls/DeleteButton/DeleteButton";
 import RollbackButton from "./AppControls/RollbackButton/RollbackButton";
+import UpgradeButton from "./AppControls/UpgradeButton/UpgradeButton";
 import AppNotes from "./AppNotes";
 import AppSecrets from "./AppSecrets";
 import AppValues from "./AppValues/AppValues";
@@ -141,11 +139,12 @@ export default function AppView() {
     kube: { kinds },
   } = useSelector((state: IStoreState) => state);
   useEffect(() => {
-    dispatch(actions.apps.getAppWithUpdateInfo(cluster, namespace, releaseName));
+    dispatch(actions.apps.getApp(cluster, namespace, releaseName));
   }, [cluster, dispatch, namespace, releaseName]);
 
   useEffect(() => {
-    if (!app?.manifest) {
+    // TODO(agamez): replace "manifest" with the proper object property once available
+    if (!app || !app["manifest"]) {
       return;
     }
 
@@ -154,13 +153,19 @@ export default function AppView() {
       return;
     }
 
-    let parsedManifest: IResource[] = YAML.parseAllDocuments(app.manifest).map(
-      (doc: YAML.Document) => doc.toJSON(),
-    );
+    let parsedManifest: IResource[] = yaml
+      // TODO(agamez): replace "manifest" with the proper object property once available
+      .loadAll(app["manifest"])
+      .map((doc: any) => JSON.parse(doc));
     // Filter out elements in the manifest that does not comply
     // with { kind: foo }
     parsedManifest = parsedManifest.filter(r => r && r.kind);
-    const parsedRefs = parseResources(parsedManifest, kinds, cluster, app.namespace);
+    const parsedRefs = parseResources(
+      parsedManifest,
+      kinds,
+      cluster,
+      app.installedPackageRef?.context?.namespace || "",
+    );
     if (Object.values(parsedRefs).some(ref => ref.length)) {
       // Avoid setting refs if the manifest is empty
       setResourceRefs(parsedRefs);
@@ -183,7 +188,8 @@ export default function AppView() {
   }
   const { services, ingresses, deployments, statefulsets, daemonsets, secrets, otherResources } =
     resourceRefs;
-  const icon = get(app, "chart.metadata.icon", placeholder);
+  // TODO(agamez): get icon from installedPackageDetails once available
+  const icon = placeholder;
   return (
     <section>
       <PageHeader
@@ -197,22 +203,23 @@ export default function AppView() {
             cluster={cluster}
             namespace={namespace}
             releaseName={releaseName}
-            releaseStatus={app?.info?.status}
+            releaseStatus={app?.status}
           />,
           <RollbackButton
             key="rollback-button"
             cluster={cluster}
             namespace={namespace}
             releaseName={releaseName}
-            revision={app?.version || 0}
-            releaseStatus={app?.info?.status}
+            // TODO(agamez): add revision or sth once we figure out how to handle rollbacks
+            revision={0}
+            releaseStatus={app?.status}
           />,
           <DeleteButton
             key="delete-button"
             cluster={cluster}
             namespace={namespace}
             releaseName={releaseName}
-            releaseStatus={app?.info?.status}
+            releaseStatus={app?.status}
           />,
         ]}
       />
@@ -222,7 +229,7 @@ export default function AppView() {
         ) : (
           <Alert theme="danger">An error occurred: {error.message}</Alert>
         ))}
-      {!app || !app.info ? (
+      {!app || !app?.status?.userReason ? (
         <LoadingWrapper loadingText={`Loading ${releaseName}...`} />
       ) : (
         <Row>
@@ -236,22 +243,35 @@ export default function AppView() {
                   deployRefs={deployments}
                   statefulsetRefs={statefulsets}
                   daemonsetRefs={daemonsets}
-                  info={app.info}
+                  info={app}
                 />
                 <AccessURLTable serviceRefs={services} ingressRefs={ingresses} />
                 <AppSecrets secretRefs={secrets} />
               </div>
             </div>
             <div className="appview-separator">
-              <AppNotes notes={app.info && app.info.status && app.info.status.notes} />
+              <AppNotes notes={app?.postInstallationNotes} />
             </div>
+            <>
+              {Object.keys(resourceRefs).every(r => resourceRefs[r].length > 0) && (
+                <div className="appview-separator">
+                  <ResourceTabs
+                    {...{
+                      deployments,
+                      statefulsets,
+                      daemonsets,
+                      secrets,
+                      services,
+                      otherResources,
+                    }}
+                  />
+                </div>
+              )}
+            </>
             <div className="appview-separator">
-              <ResourceTabs
-                {...{ deployments, statefulsets, daemonsets, secrets, services, otherResources }}
+              <AppValues
+                values={app?.valuesApplied ? yaml.dump(JSON.parse(app.valuesApplied)) : ""}
               />
-            </div>
-            <div className="appview-separator">
-              <AppValues values={(app.config && app.config.raw) || ""} />
             </div>
           </Column>
         </Row>

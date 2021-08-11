@@ -47,12 +47,23 @@ export default function ResourceTabs({
       <ResourceTable resourceRefs={otherResources} key="otherResources" id="otherResources" />,
     );
   }
+  const hasResources =
+    deployments.length > 0 &&
+    statefulsets.length > 0 &&
+    daemonsets.length > 0 &&
+    services.length > 0 &&
+    secrets.length > 0 &&
+    otherResources.length > 0;
   return (
-    <section aria-labelledby="resources-table">
-      <h5 className="section-title" id="resources-table">
-        Application Resources
-      </h5>
-      <Tabs id="resource-table-tabs" columns={columns} data={data} />
-    </section>
+    <>
+      {hasResources && (
+        <section aria-labelledby="resources-table">
+          <h5 className="section-title" id="resources-table">
+            Application Resources
+          </h5>
+          <Tabs id="resource-table-tabs" columns={columns} data={data} />
+        </section>
+      )}
+    </>
   );
 }

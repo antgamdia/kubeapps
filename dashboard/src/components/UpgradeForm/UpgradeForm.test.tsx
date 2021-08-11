@@ -23,7 +23,7 @@ const versions = [
 const defaultProps = {
   appCurrentVersion: "1.0.0",
   appCurrentValues: "foo: bar",
-  chartName: "my-chart",
+  packageId: "my-chart",
   chartsIsFetching: false,
   namespace: "default",
   cluster: "default",
@@ -97,7 +97,7 @@ it("fetches the available versions", () => {
   expect(fetchChartVersions).toHaveBeenCalledWith(
     defaultProps.cluster,
     defaultProps.repoNamespace,
-    `${defaultProps.repo}/${defaultProps.chartName}`,
+    `${defaultProps.repo}/${defaultProps.packageId}`,
   );
 });
 
@@ -127,7 +127,7 @@ it("fetches the current chart version even if there is already one in the state"
   expect(getChartVersion).toHaveBeenCalledWith(
     defaultProps.cluster,
     defaultProps.repoNamespace,
-    `${defaultProps.repo}/${defaultProps.chartName}`,
+    `${defaultProps.repo}/${defaultProps.packageId}`,
     deployed.chartVersion.attributes.version,
   );
 });
@@ -280,9 +280,9 @@ describe("when receiving new props", () => {
     bar1: value1
 `,
       deployedValues: `foo:
-  - foo1: 
+  - foo1:
     bar1: value1
-  - foo2: 
+  - foo2:
     bar2: value2
 `,
       newDefaultValues: `foo:
@@ -290,9 +290,9 @@ describe("when receiving new props", () => {
       bar1: value1
 `,
       result: `foo:
-  - foo1: 
+  - foo1:
     bar1: value1
-  - foo2: 
+  - foo2:
     bar2: value2
 `,
     },
@@ -305,7 +305,7 @@ describe("when receiving new props", () => {
     bar2: value2
 `,
       deployedValues: `foo:
-  - foo1: 
+  - foo1:
     bar1: value1
 `,
       newDefaultValues: `foo:
@@ -315,7 +315,7 @@ describe("when receiving new props", () => {
     bar2: value2
 `,
       result: `foo:
-  - foo1: 
+  - foo1:
     bar1: value1
 `,
     },

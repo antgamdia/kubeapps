@@ -6,13 +6,14 @@ import {
   GetAvailablePackageDetailResponse,
   GetAvailablePackageSummariesResponse,
   GetAvailablePackageVersionsResponse_PackageAppVersion,
+  InstalledPackageDetail,
+  InstalledPackageSummary,
 } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { IOperatorsState } from "reducers/operators";
 import { IAuthState } from "../reducers/auth";
 import { IClustersState } from "../reducers/cluster";
 import { IConfigState } from "../reducers/config";
 import { IAppRepositoryState } from "../reducers/repos";
-import { hapi } from "./hapi/release";
 
 class CustomError extends Error {
   // The constructor is defined so we can later on compare the returned object
@@ -81,14 +82,6 @@ export interface IChartState {
   items: AvailablePackageSummary[];
   categories: string[];
   size: number;
-}
-
-export interface IChartUpdateInfo {
-  upToDate: boolean;
-  chartLatestVersion: string;
-  appLatestVersion: string;
-  repository: IRepo;
-  error?: Error;
 }
 
 export interface IServiceSpec {
@@ -170,10 +163,6 @@ export interface ISecret {
   type: string;
   data: { [s: string]: string };
   metadata: IResourceMetadata;
-}
-
-export interface IRelease extends hapi.release.Release {
-  updateInfo?: IChartUpdateInfo;
 }
 
 export interface IPackageManifestChannel {
@@ -306,10 +295,9 @@ export interface IAppRepositoryFilter {
 export interface IAppState {
   isFetching: boolean;
   error?: FetchError | CreateError | UpgradeError | RollbackError | DeleteError;
-  // currently items are always Helm releases
-  items: IRelease[];
-  listOverview?: IAppOverview[];
-  selected?: IRelease;
+  items: InstalledPackageDetail[];
+  listOverview?: InstalledPackageSummary[];
+  selected?: InstalledPackageDetail;
 }
 
 export interface IStoreState {
@@ -439,18 +427,6 @@ export interface IRBACRole {
   clusterWide?: boolean;
   resource: string;
   verbs: string[];
-}
-
-export interface IAppOverview {
-  releaseName: string;
-  namespace: string;
-  version: string;
-  icon?: string;
-  status: string;
-  chart: string;
-  chartMetadata: hapi.chart.Metadata;
-  // UpdateInfo is internally populated
-  updateInfo?: IChartUpdateInfo;
 }
 
 export interface IKubeItem<T> {
