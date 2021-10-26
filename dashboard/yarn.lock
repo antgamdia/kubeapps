@@ -1157,7 +1157,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.3.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.15.4", "@babel/runtime@^7.3.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
   integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
@@ -2381,7 +2381,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-redux@^7.1.16":
+"@types/react-redux@^7.1.20":
   version "7.1.20"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.20.tgz#42f0e61ababb621e12c66c96dda94c58423bd7df"
   integrity sha512-q42es4c8iIeTgcnB+yJgRTTzftv3eYYvCZOh1Ckn2eX/3o5TdsQYKUWpLoLuGlcY/p+VAhV9IOEZJcWk/vfkXw==
@@ -2391,10 +2391,10 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
-"@types/react-router-dom@*", "@types/react-router-dom@^5.3.1":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.1.tgz#76700ccce6529413ec723024b71f01fc77a4a980"
-  integrity sha512-UvyRy73318QI83haXlaMwmklHHzV9hjl3u71MmM6wYNu0hOVk9NLTa0vGukf8zXUqnwz4O06ig876YSPpeK28A==
+"@types/react-router-dom@*", "@types/react-router-dom@^5.3.2":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.2.tgz#ebd8e145cf056db5c66eb1dac63c72f52e8542ee"
+  integrity sha512-ELEYRUie2czuJzaZ5+ziIp9Hhw+juEw8b7C11YNA4QdLCVbQ3qLi2l4aq8XnlqM7V31LZX8dxUuFUCrzHm6sqQ==
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -3357,10 +3357,10 @@ axios@^0.21.1:
   dependencies:
     follow-redirects "^1.14.0"
 
-axios@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.23.0.tgz#b0fa5d0948a8d1d75e3d5635238b6c4625b05149"
-  integrity sha512-NmvAE4i0YAv5cKq8zlDoPd1VLKAqX5oLuZKs8xkJa4qi6RGn0uhCYFjWtHHC9EM/MwOwYWOs53W+V0aqEXq1sg==
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
   dependencies:
     follow-redirects "^1.14.4"
 
@@ -6735,7 +6735,7 @@ globby@11.0.1:
     merge2 "^1.3.0"
     slash "^3.0.0"
 
-globby@^11.0.3:
+globby@^11.0.3, globby@^11.0.4:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/globby/-/globby-11.0.4.tgz#2cbaff77c2f2a62e71e9b2813a67b97a3a3001a5"
   integrity sha512-9O4MVG9ioZJ08ffbcyVYyLOJLk5JQ688pJ4eMGLpdWLHq/Wr1D9BlriLQyL0E+jbkuePVZXYFj47QM/v093wHg==
@@ -11504,6 +11504,14 @@ postcss-selector-parser@^6.0.0, postcss-selector-parser@^6.0.2, postcss-selector
     cssesc "^3.0.0"
     util-deprecate "^1.0.2"
 
+postcss-sorting@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/postcss-sorting/-/postcss-sorting-5.0.1.tgz#10d5d0059eea8334dacc820c0121864035bc3f11"
+  integrity sha512-Y9fUFkIhfrm6i0Ta3n+89j56EFqaNRdUKqXyRp6kvTcSXnmgEjaVowCXH+JBe9+YKWqd4nc28r2sgwnzJalccA==
+  dependencies:
+    lodash "^4.17.14"
+    postcss "^7.0.17"
+
 postcss-svgo@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/postcss-svgo/-/postcss-svgo-4.0.3.tgz#343a2cdbac9505d416243d496f724f38894c941e"
@@ -12074,7 +12082,7 @@ react-intl@^5.20.13:
     intl-messageformat "9.9.4"
     tslib "^2.1.0"
 
-react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
@@ -12130,17 +12138,17 @@ react-redux@=4.4.10:
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
 
-react-redux@^7.2.5:
-  version "7.2.5"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.5.tgz#213c1b05aa1187d9c940ddfc0b29450957f6a3b8"
-  integrity sha512-Dt29bNyBsbQaysp6s/dN0gUodcq+dVKKER8Qv82UrpeygwYeX1raTtil7O/fftw/rFqzaf6gJhDZRkkZnn6bjg==
+react-redux@^7.2.6:
+  version "7.2.6"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.6.tgz#49633a24fe552b5f9caf58feb8a138936ddfe9aa"
+  integrity sha512-10RPdsz0UUrRL1NZE0ejTkucnclYSgXp5q+tB5SWx2qeG2ZJQJyymgAhwKy73yiL/13btfB6fPr+rgbMAaZIAQ==
   dependencies:
-    "@babel/runtime" "^7.12.1"
-    "@types/react-redux" "^7.1.16"
+    "@babel/runtime" "^7.15.4"
+    "@types/react-redux" "^7.1.20"
     hoist-non-react-statics "^3.3.2"
     loose-envify "^1.4.0"
     prop-types "^15.7.2"
-    react-is "^16.13.1"
+    react-is "^17.0.2"
 
 react-refresh@^0.8.3:
   version "0.8.3"
@@ -12455,10 +12463,10 @@ redux-mock-store@^1.5.4:
   dependencies:
     lodash.isplainobject "^4.0.6"
 
-redux-thunk@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
-  integrity sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw==
+redux-thunk@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.4.0.tgz#ac89e1d6b9bdb9ee49ce69a69071be41bbd82d67"
+  integrity sha512-/y6ZKQNU/0u8Bm7ROLq9Pt/7lU93cT0IucYMrubo89ENjxPa7i8pqLKu6V4X7/TvYovQ6x01unTeyeZ9lgXiTA==
 
 redux@=3.7.2:
   version "3.7.2"
@@ -13594,7 +13602,7 @@ string-width@^3.0.0, string-width@^3.1.0:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^5.1.0"
 
-string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.2, string-width@^4.2.3:
+string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -13771,6 +13779,13 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
+stylelint-config-idiomatic-order@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/stylelint-config-idiomatic-order/-/stylelint-config-idiomatic-order-8.1.0.tgz#7ca7fa92eb79369948dd4977499466c844ace21d"
+  integrity sha512-iTPY6JjbkIdzy+21x3a1xi/tG33zKhLJb6lZl1xg6jZrXjgIYelnRZ5xVtbcEP9rElxZq/Zu1eGthfvI+ri+YQ==
+  dependencies:
+    stylelint-order "^3.1.1"
+
 stylelint-config-prettier@^9.0.3:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/stylelint-config-prettier/-/stylelint-config-prettier-9.0.3.tgz#0dccebeff359dcc393c9229184408b08964d561c"
@@ -13805,6 +13820,15 @@ stylelint-config-standard@^23.0.0:
   dependencies:
     stylelint-config-recommended "^6.0.0"
 
+stylelint-order@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/stylelint-order/-/stylelint-order-3.1.1.tgz#ba9ea6844d1482f97f31204e7c9605c7b792c294"
+  integrity sha512-4gP/r8j/6JGZ/LL41b2sYtQqfwZl4VSqTp7WeIwI67v/OXNQ08dnn64BGXNwAUSgb2+YIvIOxQaMzqMyQMzoyQ==
+  dependencies:
+    lodash "^4.17.15"
+    postcss "^7.0.17"
+    postcss-sorting "^5.0.1"
+
 stylelint-scss@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/stylelint-scss/-/stylelint-scss-4.0.0.tgz#4901ced92b9c68e37649799a39defbd5f2ac5bcd"
@@ -13816,10 +13840,10 @@ stylelint-scss@^4.0.0:
     postcss-selector-parser "^6.0.6"
     postcss-value-parser "^4.1.0"
 
-stylelint@^14.0.0:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-14.0.0.tgz#0dc9655bc81378ac9937e6ea2f32704e9c2f92f9"
-  integrity sha512-//4Po+WlWImVaro2BiNJZMamBo0Enekb+3fp5cYYN5r08kaPTHlxM8bCi/yvnPl7G+zqyLqjZU+O22vr/SDW0w==
+stylelint@^14.0.1:
+  version "14.0.1"
+  resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-14.0.1.tgz#88e6c8bd3be61e666225ddb871826321f16661f6"
+  integrity sha512-ZcAkmFLVCultmwkQUjxKzxW/o5+CzNmDk6TPJj/d4Y7ipTGGrewIWmNm+InjdSr04PR5/yynsAJeYJY/wisdMg==
   dependencies:
     balanced-match "^2.0.0"
     cosmiconfig "^7.0.1"
@@ -13830,7 +13854,7 @@ stylelint@^14.0.0:
     file-entry-cache "^6.0.1"
     get-stdin "^8.0.0"
     global-modules "^2.0.0"
-    globby "^11.0.3"
+    globby "^11.0.4"
     globjoin "^0.1.4"
     html-tags "^3.1.0"
     ignore "^5.1.8"
@@ -13852,8 +13876,8 @@ stylelint@^14.0.0:
     postcss-value-parser "^4.1.0"
     resolve-from "^5.0.0"
     specificity "^0.4.1"
-    string-width "^4.2.2"
-    strip-ansi "^6.0.0"
+    string-width "^4.2.3"
+    strip-ansi "^6.0.1"
     style-search "^0.1.0"
     svg-tags "^1.0.0"
     table "^6.7.2"
@@ -14308,10 +14332,10 @@ ts-proto-descriptors@^1.2.1:
     long "^4.0.0"
     protobufjs "^6.8.8"
 
-ts-proto@^1.83.1:
-  version "1.83.1"
-  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.83.1.tgz#763cf86264d7e1836dec7319ecd71994fca17fe5"
-  integrity sha512-pAB7FKIqMKjTnakvMyBB7VeIeXPl+3YPWGfp03laSRf7tGTtrt8xV9jyrLB1WU5vSzusYbz57kBCt4lqbZULqw==
+ts-proto@^1.83.2:
+  version "1.83.2"
+  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.83.2.tgz#956af1c7a97addd0e25af5ebd0c28b7af0729802"
+  integrity sha512-A3uHkPSN0mDtw0NeC3+1QNHwoMt8u1uZEatK4nFq8ItQKgbRq4uS6mvC1LVizgGboLVNaYqeSRij8GX/PmwPuQ==
   dependencies:
     "@types/object-hash" "^1.3.0"
     dataloader "^1.4.0"
