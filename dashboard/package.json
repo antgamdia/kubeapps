@@ -67,7 +67,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.0",
     "remark-gfm": "^3.0.0",
-    "swagger-ui-react": "^3.52.5",
+    "swagger-ui-react": "^4.0.0",
     "typesafe-actions": "^5.1.0",
     "yaml": "^1.10.2"
   },
@@ -100,7 +100,7 @@
     "eslint-plugin-redos": "^1.2.0",
     "jest-enzyme": "^7.1.2",
     "jest-plugin-context": "^2.9.0",
-    "mock-socket": "^9.0.6",
+    "mock-socket": "^9.0.7",
     "moxios": "^0.4.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.3.11",
@@ -113,10 +113,10 @@
     "stylelint": "^14.0.1",
     "stylelint-config-idiomatic-order": "^8.1.0",
     "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-standard-scss": "^2.0.0",
+    "stylelint-config-standard-scss": "^2.0.1",
     "stylelint-scss": "^4.0.0",
     "ts-jest": "^27.0.7",
-    "ts-proto": "^1.83.3",
+    "ts-proto": "^1.85.0",
     "typescript": "^4.4.4"
   },
   "resolutions": {
