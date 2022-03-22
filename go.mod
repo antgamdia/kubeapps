@@ -47,14 +47,14 @@ require (
 	github.com/cppforlife/go-cli-ui v0.0.0-20200716203538-1e47f820817f
 	github.com/disintegration/imaging v1.6.2
 	github.com/distribution/distribution v2.8.1+incompatible
-	github.com/fluxcd/helm-controller/api v0.17.2
-	github.com/fluxcd/pkg/apis/meta v0.10.2
+	github.com/fluxcd/helm-controller/api v0.18.0
+	github.com/fluxcd/pkg/apis/meta v0.12.1
 	github.com/fluxcd/source-controller/api v0.21.2
-	github.com/go-redis/redis/v8 v8.11.4
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redismock/v8 v8.0.6
 	github.com/google/go-cmp v0.5.7
 	github.com/gorilla/mux v1.8.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/heptiolabs/healthcheck v0.0.0-20211123025425-613501dd5deb
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/itchyny/gojq v0.12.7
@@ -78,10 +78,10 @@ require (
 	github.com/vmware-tanzu/carvel-vendir v0.26.0
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106
+	google.golang.org/genproto v0.0.0-20220317150908-0efb43f6373e
 	google.golang.org/grpc v1.45.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/protobuf v1.28.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	helm.sh/helm/v3 v3.8.1
 	k8s.io/api v0.23.4
@@ -90,7 +90,7 @@ require (
 	k8s.io/apiserver v0.23.4
 	k8s.io/cli-runtime v0.23.4
 	k8s.io/client-go v0.23.4
-	k8s.io/klog/v2 v2.50.2
+	k8s.io/klog/v2 v2.60.1
 	k8s.io/kubectl v0.23.4
 	k8s.io/kubernetes v1.22.8
 	oras.land/oras-go v1.1.0
@@ -131,8 +131,7 @@ require (
 	github.com/fatih/camelcase v1.0.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fluxcd/pkg/apis/acl v0.0.3 // indirect
-	github.com/fluxcd/pkg/apis/kustomize v0.3.1 // indirect
-	github.com/fluxcd/pkg/runtime v0.12.5 // indirect
+	github.com/fluxcd/pkg/apis/kustomize v0.3.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/fvbommel/sortorder v1.0.1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
