@@ -11,7 +11,7 @@ import { IBasicFormParam } from "./types";
 
 const ajv = new Ajv({ strict: false });
 
-const toStringOptions: ToStringOptions = {
+export const toStringOptions: ToStringOptions = {
   defaultKeyType: "PLAIN",
   defaultStringType: Scalar.QUOTE_DOUBLE, // Preserving double quotes in scalars (see https://github.com/vmware-tanzu/kubeapps/issues/3621)
   nullStr: "", // Avoid to explicitly add "null" when an element is not defined
@@ -97,7 +97,7 @@ function unescapePath(path: string[]): string[] {
   return path.map(p => jsonpatch.unescapePathComponent(p));
 }
 
-function parsePath(path: string): string[] {
+export function parsePath(path: string): string[] {
   return unescapePath(splitPath(path));
 }
 

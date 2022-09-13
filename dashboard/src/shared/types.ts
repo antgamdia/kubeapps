@@ -99,6 +99,16 @@ export class DeleteError extends CustomError {}
 
 export type DeploymentEvent = "install" | "upgrade";
 
+// https://json-schema.org/understanding-json-schema/reference/type.html
+export type JSONSchemaBasicType =
+  | "string"
+  | "number"
+  | "integer"
+  | "object"
+  | "array"
+  | "boolean"
+  | "null";
+
 export interface IReceivePackagesActionPayload {
   response: GetAvailablePackageSummariesResponse;
   paginationToken: string;

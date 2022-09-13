@@ -14,6 +14,7 @@ import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import AdvancedDeploymentForm from "./AdvancedDeploymentForm";
 import BasicDeploymentForm from "./BasicDeploymentForm/BasicDeploymentForm";
+import { parseToYAMLNodes } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
 import DifferentialSelector from "./DifferentialSelector";
 import DifferentialTab from "./DifferentialTab";
 
@@ -33,36 +34,57 @@ function DeploymentFormBody({
   deploymentEvent,
   packageId,
   packageVersion,
-  deployedValues,
+  deployedValues: valuesFromTheDeployedPackage,
   packagesIsFetching,
   selected,
-  appValues,
-  setValues,
+  appValues: valuesFromTheParentContainer,
+  setValues: setValuesFromTheParentContainer,
   setValuesModified,
 }: IDeploymentFormBodyProps) {
   const [basicFormParameters, setBasicFormParameters] = useState([] as IBasicFormParam[]);
   const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
   const [defaultValues, setDefaultValues] = useState("");
 
-  const { availablePackageDetail, versions, schema, values, pkgVersion, error } = selected;
+  const {
+    availablePackageDetail,
+    versions,
+    schema: schemaFromTheAvailablePackage,
+    values: valuesFromTheAvailablePackage,
+    pkgVersion,
+    error,
+  } = selected;
 
+  const valuesFromTheAvailablePackageNodes = parseToYAMLNodes(valuesFromTheAvailablePackage || "");
+
+  // setBasicFormParameters when basicFormParameters changes
   useEffect(() => {
-    const params = retrieveBasicFormParams(appValues, schema);
+    const params = retrieveBasicFormParams(
+      valuesFromTheParentContainer,
+      schemaFromTheAvailablePackage,
+    );
     if (!isEqual(params, basicFormParameters)) {
       setBasicFormParameters(params);
     }
-  }, [setBasicFormParameters, schema, appValues, basicFormParameters]);
+  }, [
+    setBasicFormParameters,
+    schemaFromTheAvailablePackage,
+    valuesFromTheParentContainer,
+    basicFormParameters,
+  ]);
 
+  // setDefaultValues when defaultValues changes
   useEffect(() => {
-    setDefaultValues(values || "");
-  }, [values]);
+    setDefaultValues(valuesFromTheAvailablePackage || "");
+  }, [valuesFromTheAvailablePackage]);
 
   const handleValuesChange = (value: string) => {
-    setValues(value);
+    setValuesFromTheParentContainer(value);
     setValuesModified();
   };
   const refreshBasicParameters = () => {
-    setBasicFormParameters(retrieveBasicFormParams(appValues, schema));
+    setBasicFormParameters(
+      retrieveBasicFormParams(valuesFromTheParentContainer, schemaFromTheAvailablePackage),
+    );
   };
 
   const handleBasicFormParamChange = (param: IBasicFormParam) => {
@@ -77,13 +99,18 @@ function DeploymentFormBody({
         basicFormParameters.map(p => (p.path === param.path ? { ...param, value } : p)),
       );
       // Change raw values
-      setValues(setValue(appValues, param.path, value));
+      setValuesFromTheParentContainer(setValue(valuesFromTheParentContainer, param.path, value));
     };
   };
 
   // The basic form should be rendered if there are params to show
   const shouldRenderBasicForm = () => {
     return Object.keys(basicFormParameters).length > 0;
+  };
+
+  const shouldRenderBasicFormFunction = (schema: any) => {
+    console.log("shouldRenderBasicForm");
+    return Object.keys(schema?.properties).length > 0;
   };
 
   const closeRestoreDefaultValuesModal = () => {
@@ -95,9 +122,11 @@ function DeploymentFormBody({
   };
 
   const restoreDefaultValues = () => {
-    if (values) {
-      setValues(values);
-      setBasicFormParameters(retrieveBasicFormParams(values, schema));
+    if (valuesFromTheAvailablePackage) {
+      setValuesFromTheParentContainer(valuesFromTheAvailablePackage);
+      setBasicFormParameters(
+        retrieveBasicFormParams(valuesFromTheAvailablePackage, schemaFromTheAvailablePackage),
+      );
     }
     setRestoreModalOpen(false);
   };
@@ -122,13 +151,13 @@ function DeploymentFormBody({
       key="differential-selector"
       deploymentEvent={deploymentEvent}
       defaultValues={defaultValues}
-      deployedValues={deployedValues || ""}
-      appValues={appValues}
+      deployedValues={valuesFromTheDeployedPackage || ""}
+      appValues={valuesFromTheParentContainer}
     />,
   ] as Array<string | JSX.Element | JSX.Element[]>;
   const tabData = [
     <AdvancedDeploymentForm
-      appValues={appValues}
+      appValues={valuesFromTheParentContainer}
       handleValuesChange={handleValuesChange}
       key="advanced-deployment-form"
     >
@@ -140,8 +169,8 @@ function DeploymentFormBody({
       key="differential-selector"
       deploymentEvent={deploymentEvent}
       defaultValues={defaultValues}
-      deployedValues={deployedValues || ""}
-      appValues={appValues}
+      deployedValues={valuesFromTheDeployedPackage || ""}
+      appValues={valuesFromTheParentContainer}
     />,
   ];
   if (shouldRenderBasicForm()) {
@@ -155,8 +184,10 @@ function DeploymentFormBody({
         deploymentEvent={deploymentEvent}
         params={basicFormParameters}
         handleBasicFormParamChange={handleBasicFormParamChange}
-        appValues={appValues}
+        appValues={valuesFromTheParentContainer}
         handleValuesChange={handleValuesChange}
+        schemaFromTheAvailablePackage={selected.schema}
+        valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
       />,
     );
   }
