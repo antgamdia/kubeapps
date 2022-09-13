@@ -104,12 +104,7 @@ function DeploymentFormBody({
   };
 
   // The basic form should be rendered if there are params to show
-  const shouldRenderBasicForm = () => {
-    return Object.keys(basicFormParameters).length > 0;
-  };
-
-  const shouldRenderBasicFormFunction = (schema: any) => {
-    console.log("shouldRenderBasicForm");
+  const shouldRenderBasicForm = (schema: any) => {
     return Object.keys(schema?.properties).length > 0;
   };
 
@@ -173,7 +168,7 @@ function DeploymentFormBody({
       appValues={valuesFromTheParentContainer}
     />,
   ];
-  if (shouldRenderBasicForm()) {
+  if (shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
     tabColumns.unshift(
       <span role="presentation" onClick={refreshBasicParameters}>
         Form

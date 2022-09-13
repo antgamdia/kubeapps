@@ -1,8 +1,10 @@
 // Copyright 2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsInput } from "@cds/react/input";
 import { InputHTMLAttributes, useEffect, useState } from "react";
 
+/* eslint-disable jsx-a11y/label-has-associated-control */
 export default function DebouncedInput({
   value: initialValue,
   onChange,
@@ -25,7 +27,12 @@ export default function DebouncedInput({
     }, debounce);
 
     return () => clearTimeout(timeout);
-  }, [value]);
+  }, [debounce, onChange, value]);
 
-  return <input {...props} value={value} onChange={e => setValue(e.target.value)} />;
+  return (
+    <CdsInput>
+      <label>{props.title || "input"}</label>
+      <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+    </CdsInput>
+  );
 }

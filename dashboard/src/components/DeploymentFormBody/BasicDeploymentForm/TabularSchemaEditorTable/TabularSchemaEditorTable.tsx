@@ -1,6 +1,10 @@
 // Copyright 2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsButton } from "@cds/react/button";
+import { CdsControlMessage, CdsFormGroup } from "@cds/react/forms";
+import { CdsInput } from "@cds/react/input";
+import { CdsSelect } from "@cds/react/select";
 import {
   ColumnFiltersState,
   ExpandedState,
@@ -36,10 +40,6 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-
     filterFns: {
       fuzzy: fuzzyFilter,
     },
@@ -48,247 +48,188 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
       globalFilter,
       expanded,
     },
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
-    getSortedRowModel: getSortedRowModel(),
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
-
-    onExpandedChange: setExpanded,
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getSubRows: row => row.properties,
-    getExpandedRowModel: getExpandedRowModel(),
+    globalFilterFn: fuzzyFilter,
+    onColumnFiltersChange: setColumnFilters,
+    onExpandedChange: setExpanded,
+    onGlobalFilterChange: setGlobalFilter,
     debugTable: true,
   });
 
+  const paginationButtons = (
+    <>
+      <div style={{ marginTop: "1em" }}>
+        <CdsButton
+          style={{ marginRight: "0.5em" }}
+          action="solid"
+          status="primary"
+          type="button"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<<"}
+        </CdsButton>
+        <CdsButton
+          style={{ marginRight: "0.5em" }}
+          action="solid"
+          status="primary"
+          type="button"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<"}
+        </CdsButton>
+
+        <CdsButton action="flat" type="button" status="neutral" style={{ marginRight: "0.5em" }}>
+          <span>
+            Page{" "}
+            <strong>
+              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            </strong>
+          </span>
+        </CdsButton>
+        <CdsButton
+          style={{ marginRight: "0.5em" }}
+          action="solid"
+          status="primary"
+          type="button"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {">"}
+        </CdsButton>
+        <CdsButton
+          action="solid"
+          status="primary"
+          type="button"
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          {">>"}
+        </CdsButton>
+      </div>
+    </>
+  );
+
+  const topButtons = (
+    <>
+      <div style={{ marginTop: "1em" }}>
+        <DebouncedInput
+          title="Param search"
+          value={globalFilter ?? ""}
+          onChange={value => setGlobalFilter(String(value))}
+          placeholder="Type anything to search in all columns..."
+        />
+      </div>
+      {paginationButtons}
+    </>
+  );
+  const bottomButtons = (
+    <>
+      {paginationButtons}
+
+      <CdsSelect>
+        <label htmlFor="page-size">Page size</label>
+        <select
+          id="page-size"
+          value={table.getState().pagination.pageSize}
+          onChange={e => {
+            table.setPageSize(Number(e.target.value));
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </CdsSelect>
+    </>
+  );
+
+  const tableHeader = table
+    .getHeaderGroups()
+    .map((headerGroup: { id: Key | null | undefined; headers: any[] }) => (
+      <tr key={headerGroup.id}>
+        {headerGroup.headers.map(
+          (header: {
+            id: Key | null | undefined;
+            isPlaceholder: any;
+            column: { columnDef: { header: any } };
+            getContext: () => any;
+          }) => (
+            <th key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(header.column.columnDef.header, header.getContext())}
+            </th>
+          ),
+        )}
+      </tr>
+    ));
+
+  const tableBody = table
+    .getRowModel()
+    .rows.map((row: { id: Key | null | undefined; getVisibleCells: () => any[] }) => (
+      <tr key={row.id}>
+        {row
+          .getVisibleCells()
+          .map(
+            (cell: {
+              id: Key | null | undefined;
+              column: { columnDef: { cell: any } };
+              getContext: () => any;
+            }) => (
+              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+            ),
+          )}
+      </tr>
+    ));
+
+  const tableFooter = table
+    .getFooterGroups()
+    .map((footerGroup: { id: Key | null | undefined; headers: any[] }) => (
+      <tr key={footerGroup.id}>
+        {footerGroup.headers.map(
+          (header: {
+            id: Key | null | undefined;
+            isPlaceholder: any;
+            column: { columnDef: { footer: any } };
+            getContext: () => any;
+          }) => (
+            <th key={header.id}>
+              {header.isPlaceholder
+                ? null
+                : flexRender(header.column.columnDef.footer, header.getContext())}
+            </th>
+          ),
+        )}
+      </tr>
+    ));
+
+  const tableObject = (
+    <>
+      <table className="table table-valign-center">
+        <thead>{tableHeader}</thead>
+        <tbody>{tableBody}</tbody>
+        <tfoot>{tableFooter}</tfoot>
+      </table>
+    </>
+  );
+
   return (
     <>
-      <div className="p-2">
-        <div>
-          <DebouncedInput
-            value={globalFilter ?? ""}
-            onChange={value => setGlobalFilter(String(value))}
-            className="p-2 font-lg shadow border border-block"
-            placeholder="Search all columns..."
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.setPageIndex(0);
-            }}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.previousPage();
-            }}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.nextPage();
-            }}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.setPageIndex(table.getPageCount() - 1);
-            }}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </button>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </strong>
-          </span>
-          <span className="flex items-center gap-1">
-            | Go to page:
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={e => {
-                e.preventDefault();
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                table.setPageIndex(page);
-              }}
-              className="border p-1 rounded w-16"
-            />
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        <table className="table table-valign-center">
-          <thead>
-            {table
-              .getHeaderGroups()
-              .map((headerGroup: { id: Key | null | undefined; headers: any[] }) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(
-                    (header: {
-                      id: Key | null | undefined;
-                      isPlaceholder: any;
-                      column: { columnDef: { header: any } };
-                      getContext: () => any;
-                    }) => (
-                      <th key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ),
-                  )}
-                </tr>
-              ))}
-          </thead>
-          <tbody>
-            {table
-              .getRowModel()
-              .rows.map((row: { id: Key | null | undefined; getVisibleCells: () => any[] }) => (
-                <tr key={row.id}>
-                  {row
-                    .getVisibleCells()
-                    .map(
-                      (cell: {
-                        id: Key | null | undefined;
-                        column: { columnDef: { cell: any } };
-                        getContext: () => any;
-                      }) => (
-                        <td key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ),
-                    )}
-                </tr>
-              ))}
-          </tbody>
-          <tfoot>
-            {table
-              .getFooterGroups()
-              .map((footerGroup: { id: Key | null | undefined; headers: any[] }) => (
-                <tr key={footerGroup.id}>
-                  {footerGroup.headers.map(
-                    (header: {
-                      id: Key | null | undefined;
-                      isPlaceholder: any;
-                      column: { columnDef: { footer: any } };
-                      getContext: () => any;
-                    }) => (
-                      <th key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.footer, header.getContext())}
-                      </th>
-                    ),
-                  )}
-                </tr>
-              ))}
-          </tfoot>
-        </table>
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.setPageIndex(0);
-            }}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.previousPage();
-            }}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.nextPage();
-            }}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={e => {
-              e.preventDefault();
-              table.setPageIndex(table.getPageCount() - 1);
-            }}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </button>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </strong>
-          </span>
-          <span className="flex items-center gap-1">
-            | Go to page:
-            <input
-              type="number"
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={e => {
-                e.preventDefault();
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                table.setPageIndex(page);
-              }}
-              className="border p-1 rounded w-16"
-            />
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="h-4" />
-      </div>
+      {topButtons}
+      {tableObject}
+      {bottomButtons}
     </>
   );
 }

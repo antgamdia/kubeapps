@@ -1,6 +1,8 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsButton } from "@cds/react/button";
+import { CdsIcon } from "@cds/react/icon";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 import { FormEvent, useEffect, useState } from "react";
 import { DeploymentEvent, IBasicFormParam } from "shared/types";
@@ -45,60 +47,9 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   const columns = [
     columnHelper.accessor((row: IBasicFormParam2) => row.key, {
       id: "key",
-      // cell: (info: CellContext<IBasicFormParam2, any>) => info.getValue() || "no key",
-      cell: ({ row, getValue }) => (
-        <div
-          style={{
-            // Since rows are flattened by default,
-            // we can use the row.depth property
-            // and paddingLeft to visually indicate the depth
-            // of the row
-            paddingLeft: `${row.depth * 2}rem`,
-          }}
-        >
-          <>
-            <IndeterminateCheckbox
-              {...{
-                checked: row.getIsSelected(),
-                indeterminate: row.getIsSomeSelected(),
-                onChange: row.getToggleSelectedHandler(),
-              }}
-            />{" "}
-            {row.getCanExpand() ? (
-              <button
-                {...{
-                  onClick: row.getToggleExpandedHandler(),
-                  style: { cursor: "pointer" },
-                }}
-              >
-                {row.getIsExpanded() ? "👇" : "👉"}
-              </button>
-            ) : (
-              "🔵"
-            )}{" "}
-            {getValue()}
-          </>
-        </div>
-      ),
-      header: ({ table }) => (
-        <>
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
-          />{" "}
-          <button
-            {...{
-              onClick: table.getToggleAllRowsExpandedHandler(),
-            }}
-          >
-            {table.getIsAllRowsExpanded() ? "👇" : "👉"}
-          </button>{" "}
-          Key
-        </>
-      ),
+      cell: (info: CellContext<IBasicFormParam2, any>) =>
+        renderConfigKey(info.row.original, info.row),
+      header: info => renderConfigKeyHeader(info.table),
       // filterFn: "fuzzy",
       sortingFn: fuzzySort,
     }),
@@ -159,8 +110,64 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
 export default BasicDeploymentForm;
 
 /// DELETE FROM HERE
+export function renderConfigKeyHeader(table: any) {
+  return (
+    <>
+      <CdsButton
+        type="button"
+        onClick={table.getToggleAllRowsExpandedHandler()}
+        action="flat"
+        status="primary"
+      >
+        {table.getIsAllRowsExpanded() ? (
+          <CdsIcon shape="eye-hide" size="sm" solid={true} />
+        ) : (
+          <CdsIcon shape="eye" size="sm" solid={true} />
+        )}
+      </CdsButton>
+      Key
+    </>
+  );
+}
+
+export function renderConfigKey(value: IBasicFormParam2, row: any) {
+  return (
+    <div
+      style={{
+        // Since rows are flattened by default,
+        // we can use the row.depth property
+        // and paddingLeft to visually indicate the depth
+        // of the row
+        paddingLeft: `${row.depth * 2}rem`,
+        textAlign: "left",
+      }}
+    >
+      <>
+        {row.getCanExpand() ? (
+          <CdsButton
+            type="button"
+            onClick={row.getToggleExpandedHandler()}
+            action="flat"
+            status="primary"
+            size="sm"
+          >
+            {row.getIsExpanded() ? (
+              <CdsIcon shape="eye-hide" size="sm" solid={true} />
+            ) : (
+              <CdsIcon shape="eye" size="sm" solid={true} />
+            )}
+          </CdsButton>
+        ) : (
+          ""
+        )}
+        <br />
+        {value.key}
+      </>
+    </div>
+  );
+}
 export function renderConfigType(value: IBasicFormParam2) {
-  return <span className={value.hasProperties ? "headerRow" : ""}>{value.type}</span>;
+  return <span className={value.hasProperties ? "headerRow" : ""}>{value?.type}</span>;
 }
 
 export function renderConfigDescription(value: IBasicFormParam2) {
