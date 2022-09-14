@@ -101,7 +101,7 @@ export function parsePath(path: string): string[] {
   return unescapePath(splitPath(path));
 }
 
-function parsePathAndValue(doc: YAML.Document, path: string, value?: any) {
+export function parsePathAndValue(doc: YAML.Document, path: string, value?: any) {
   if (isEmpty(doc.contents)) {
     // If the doc is empty we have an special case
     return { value: set({}, path.replace(/^\//, ""), value), splittedPath: [] };

@@ -85,6 +85,7 @@ export default function DeploymentForm() {
   } as AvailablePackageReference);
 
   useEffect(() => {
+    console.log("deploymentform.tsx useEffect 1");
     // Get the package details
     dispatch(
       actions.availablepackages.fetchAndSelectAvailablePackageDetail(
@@ -98,6 +99,7 @@ export default function DeploymentForm() {
   }, [dispatch, packageReference, packageVersion]);
 
   useEffect(() => {
+    console.log("deploymentform.tsx useEffect 2");
     // Populate the service account list if the plugin requires it
     if (getPluginsRequiringSA().includes(pluginObj.name)) {
       // We assume the user has enough permissions to do that. Fallback to a simple input maybe?
@@ -111,6 +113,7 @@ export default function DeploymentForm() {
   }, [dispatch, targetCluster, targetNamespace, pluginObj.name]);
 
   useEffect(() => {
+    console.log("deploymentform.tsx useEffect 3");
     if (!valuesModified) {
       setAppValues(selectedPackage.values || "");
     }
@@ -118,14 +121,17 @@ export default function DeploymentForm() {
   }, [selectedPackage.values, valuesModified]);
 
   const handleValuesChange = (value: string) => {
+    console.log("deploymentform.tsx handleValuesChange");
     setAppValues(value);
   };
 
   const setValuesModifiedTrue = () => {
+    console.log("deploymentform.tsx setValuesModifiedTrue");
     setValuesModified(true);
   };
 
   const handleReleaseNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("deploymentform.tsx setValuesModifiedTrue");
     setReleaseName(e.target.value);
   };
 

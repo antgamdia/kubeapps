@@ -5,16 +5,22 @@ import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
 import Alert from "components/js/Alert";
 import Tabs from "components/Tabs";
-import { isEqual } from "lodash";
-import { useEffect, useState } from "react";
-import { parseValues, retrieveBasicFormParams, setValue } from "../../shared/schema";
-import { DeploymentEvent, IBasicFormParam, IPackageState } from "../../shared/types";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import YAML from "yaml";
+import { toStringOptions } from "../../shared/schema";
+import { DeploymentEvent, IPackageState } from "../../shared/types";
 import { getValueFromEvent } from "../../shared/utils";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 import AdvancedDeploymentForm from "./AdvancedDeploymentForm";
 import BasicDeploymentForm from "./BasicDeploymentForm/BasicDeploymentForm";
-import { parseToYAMLNodes } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
+import {
+  extractParamsFromSchema,
+  parseToYAMLNodes,
+  setValueee,
+  updateCurrentConfigByKey,
+} from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
+import { IBasicFormParam2 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempType";
 import DifferentialSelector from "./DifferentialSelector";
 import DifferentialTab from "./DifferentialTab";
 
@@ -41,10 +47,6 @@ function DeploymentFormBody({
   setValues: setValuesFromTheParentContainer,
   setValuesModified,
 }: IDeploymentFormBodyProps) {
-  const [basicFormParameters, setBasicFormParameters] = useState([] as IBasicFormParam[]);
-  const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
-  const [defaultValues, setDefaultValues] = useState("");
-
   const {
     availablePackageDetail,
     versions,
@@ -54,54 +56,131 @@ function DeploymentFormBody({
     error,
   } = selected;
 
-  const valuesFromTheAvailablePackageNodes = parseToYAMLNodes(valuesFromTheAvailablePackage || "");
+  // Component state
+  const [paramsFromComponentState, setParamsFromComponentState] = useState(
+    [] as IBasicFormParam2[],
+  );
+  const [valuesFromTheAvailablePackageNodes, setValuesFromTheAvailablePackageNodes] = useState(
+    {} as YAML.Document.Parsed<YAML.ParsedNode>,
+  );
+  const [valuesFromTheParentContainerNodes, setValuesFromTheParentContainerNodes] = useState(
+    {} as YAML.Document.Parsed<YAML.ParsedNode>,
+  );
+  const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
+  const [isLoaded, setIsloaded] = useState(false);
+  // const [defaultValues, setDefaultValues] = useState("");
 
   // setBasicFormParameters when basicFormParameters changes
   useEffect(() => {
-    const params = retrieveBasicFormParams(
-      valuesFromTheParentContainer,
-      schemaFromTheAvailablePackage,
-    );
-    if (!isEqual(params, basicFormParameters)) {
-      setBasicFormParameters(params);
+    if (
+      !isLoaded &&
+      schemaFromTheAvailablePackage &&
+      Object.keys(valuesFromTheParentContainerNodes).length
+    ) {
+      const initialParamsFromContainer = extractParamsFromSchema(
+        valuesFromTheParentContainerNodes,
+        schemaFromTheAvailablePackage,
+        deploymentEvent,
+      );
+      // if (!isEqual(initialParamsFromContainer, paramsFromComponentState)) {
+      console.log("deploymentfrombody.tsx useEffect 1 - initial params extraction");
+      setParamsFromComponentState(initialParamsFromContainer);
+      setIsloaded(true);
+      // }
     }
   }, [
-    setBasicFormParameters,
+    deploymentEvent,
+    isLoaded,
+    paramsFromComponentState,
     schemaFromTheAvailablePackage,
-    valuesFromTheParentContainer,
-    basicFormParameters,
+    valuesFromTheAvailablePackageNodes,
+    valuesFromTheParentContainerNodes,
   ]);
 
   // setDefaultValues when defaultValues changes
   useEffect(() => {
-    setDefaultValues(valuesFromTheAvailablePackage || "");
+    console.log("deploymentfrombody.tsx useEffect 2");
+    if (valuesFromTheAvailablePackage) {
+      console.log("SET deploymentfrombody.tsx useEffect 2");
+      setValuesFromTheAvailablePackageNodes(parseToYAMLNodes(valuesFromTheAvailablePackage));
+    }
   }, [valuesFromTheAvailablePackage]);
 
+  useEffect(() => {
+    if (valuesFromTheParentContainer) {
+      console.log(
+        "deploymentfrombody.tsx useEffect 3 - the values have been modified upstream, parsing them locally",
+      );
+      setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
+    }
+  }, [valuesFromTheParentContainer]);
+
   const handleValuesChange = (value: string) => {
+    console.log("deploymentfrombody.tsx handleValuesChange");
     setValuesFromTheParentContainer(value);
     setValuesModified();
   };
-  const refreshBasicParameters = () => {
-    setBasicFormParameters(
-      retrieveBasicFormParams(valuesFromTheParentContainer, schemaFromTheAvailablePackage),
-    );
-  };
 
-  const handleBasicFormParamChange = (param: IBasicFormParam) => {
-    const parsedDefaultValues = parseValues(defaultValues);
-    return (e: React.FormEvent<any>) => {
-      setValuesModified();
-      if (parsedDefaultValues !== defaultValues) {
-        setDefaultValues(parsedDefaultValues);
-      }
-      const value = getValueFromEvent(e);
-      setBasicFormParameters(
-        basicFormParameters.map(p => (p.path === param.path ? { ...param, value } : p)),
-      );
-      // Change raw values
-      setValuesFromTheParentContainer(setValue(valuesFromTheParentContainer, param.path, value));
-    };
-  };
+  // const refreshBasicParameters = () => {
+  //   console.log("deploymentfrombody.tsx refreshBasicParameters");
+  //   if (schemaFromTheAvailablePackage) {
+  //     setParamsFromComponentState(
+  //       extractParamsFromSchema(
+  //         valuesFromTheAvailablePackageNodes,
+  //         schemaFromTheAvailablePackage,
+  //         deploymentEvent,
+  //       ),
+  //     );
+  //   }
+  // };
+
+  // const handleBasicFormParamChange = (param: IBasicFormParam) => {
+  //   // const parsedDefaultValues = parseValues(valuesFromTheAvailablePackage);
+  //   return (e: React.FormEvent<any>) => {
+  //     // setValuesModified();
+  //     // if (parsedDefaultValues !== defaultValues) {
+  //     //   setDefaultValues(parsedDefaultValues);
+  //     // }
+  //     const value = getValueFromEvent(e);
+  //     console.log(value);
+  //     setBasicFormParameters(
+  //       basicFormParameters.map(p => (p.path === param.path ? { ...param, value } : p)),
+  //     );
+  //     // Change raw values
+  //     setValuesFromTheParentContainer(setValue(valuesFromTheParentContainer, param.path, value));
+  //   };
+  // };
+
+  const handleBasicFormParamChange = useCallback(
+    (value: IBasicFormParam2) => {
+      console.log("deploymentfrombody.tsx handleBasicFormParamChange");
+      return (e: FormEvent<any>) => {
+        setValuesModified();
+        const newValue = getValueFromEvent(e);
+        const newParamsFromComponentState = updateCurrentConfigByKey(
+          paramsFromComponentState,
+          value.key,
+          newValue,
+        );
+        console.log(`\tLocal param change in ${value.key}: ${newValue}`);
+        setParamsFromComponentState([...newParamsFromComponentState]);
+
+        const newValuesFromTheParentContainer = setValueee(
+          valuesFromTheParentContainerNodes,
+          value.key,
+          newValue,
+        );
+        console.log(`\tValues text change in ${value.key}: ${newValue}`);
+        setValuesFromTheParentContainer(newValuesFromTheParentContainer);
+      };
+    },
+    [
+      paramsFromComponentState,
+      setValuesFromTheParentContainer,
+      setValuesModified,
+      valuesFromTheParentContainerNodes,
+    ],
+  );
 
   // The basic form should be rendered if there are params to show
   const shouldRenderBasicForm = (schema: any) => {
@@ -117,12 +196,17 @@ function DeploymentFormBody({
   };
 
   const restoreDefaultValues = () => {
-    if (valuesFromTheAvailablePackage) {
-      setValuesFromTheParentContainer(valuesFromTheAvailablePackage);
-      setBasicFormParameters(
-        retrieveBasicFormParams(valuesFromTheAvailablePackage, schemaFromTheAvailablePackage),
-      );
-    }
+    console.log("deploymentfrombody.tsx restoreDefaultValues");
+    // if (valuesFromTheAvailablePackage && schemaFromTheAvailablePackage) {
+    //   setValuesFromTheParentContainer(valuesFromTheAvailablePackage);
+    //   setParamsFromComponentState(
+    //     extractParamsFromSchema(
+    //       valuesFromTheAvailablePackageNodes,
+    //       schemaFromTheAvailablePackage,
+    //       deploymentEvent,
+    //     ),
+    //   );
+    // }
     setRestoreModalOpen(false);
   };
   if (error) {
@@ -145,7 +229,7 @@ function DeploymentFormBody({
     <DifferentialTab
       key="differential-selector"
       deploymentEvent={deploymentEvent}
-      defaultValues={defaultValues}
+      defaultValues={valuesFromTheAvailablePackageNodes.toString(toStringOptions)}
       deployedValues={valuesFromTheDeployedPackage || ""}
       appValues={valuesFromTheParentContainer}
     />,
@@ -163,28 +247,31 @@ function DeploymentFormBody({
     <DifferentialSelector
       key="differential-selector"
       deploymentEvent={deploymentEvent}
-      defaultValues={defaultValues}
+      defaultValues={valuesFromTheAvailablePackageNodes.toString(toStringOptions)}
       deployedValues={valuesFromTheDeployedPackage || ""}
       appValues={valuesFromTheParentContainer}
     />,
   ];
   if (shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
-    tabColumns.unshift(
-      <span role="presentation" onClick={refreshBasicParameters}>
-        Form
-      </span>,
-    );
-    tabData.unshift(
-      <BasicDeploymentForm
-        deploymentEvent={deploymentEvent}
-        params={basicFormParameters}
-        handleBasicFormParamChange={handleBasicFormParamChange}
-        appValues={valuesFromTheParentContainer}
-        handleValuesChange={handleValuesChange}
-        schemaFromTheAvailablePackage={selected.schema}
-        valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
-      />,
-    );
+    tabColumns.unshift(<span role="presentation">Form</span>);
+    if (paramsFromComponentState.length && Object.keys(valuesFromTheAvailablePackageNodes).length) {
+      tabData.unshift(
+        <BasicDeploymentForm
+          handleBasicFormParamChange={handleBasicFormParamChange}
+          handleValuesChange={handleValuesChange}
+          deploymentEvent={deploymentEvent}
+          paramsFromComponentState={paramsFromComponentState}
+          schemaFromTheAvailablePackage={selected.schema}
+          valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
+          valuesFromTheDeployedPackage={valuesFromTheDeployedPackage}
+          valuesFromTheParentContainer={valuesFromTheParentContainer}
+        />,
+      );
+    } else {
+      tabData.unshift(
+        <LoadingWrapper loadingText="Fetching parameters from the schema..."></LoadingWrapper>,
+      );
+    }
   }
 
   return (
@@ -205,19 +292,14 @@ function DeploymentFormBody({
         <CdsButton status="primary" type="submit">
           <CdsIcon shape="deploy" /> Deploy {pkgVersion}
         </CdsButton>
-        {/* TODO(andresmgot): CdsButton "type" property doesn't work, so we need to use a normal <button>
-            https://github.com/vmware/clarity/issues/5038
-          */}
-        <span className="color-icon-info">
-          <button
-            className="btn btn-info-outline"
-            type="button"
-            onClick={openRestoreDefaultValuesModal}
-            style={{ marginTop: "-22px" }}
-          >
-            <CdsIcon shape="backup-restore" /> Restore Defaults
-          </button>
-        </span>
+        <CdsButton
+          type="button"
+          status="primary"
+          action="outline"
+          onClick={openRestoreDefaultValuesModal}
+        >
+          <CdsIcon shape="backup-restore" /> Restore Defaults
+        </CdsButton>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { JSONSchemaType } from "ajv";
-import { parsePath, toStringOptions } from "shared/schema";
+import _ from "lodash";
+import { parsePath, parsePathAndValue, toStringOptions } from "shared/schema";
 import { DeploymentEvent } from "shared/types";
 import YAML from "yaml";
 import { IBasicFormParam2 } from "./tempType";
@@ -76,4 +77,63 @@ export function getValueeeee(values: YAML.Document.Parsed<YAML.ParsedNode>, path
 
 export function parseToYAMLNodes(string: string) {
   return YAML.parseDocument(string, { toStringDefaults: toStringOptions });
+}
+
+export function setValueee(
+  valuesNode: YAML.Document.Parsed<YAML.ParsedNode>,
+  path: string,
+  newValue: any,
+) {
+  const { splittedPath, value } = parsePathAndValue(valuesNode, path, newValue);
+  valuesNode.setIn(splittedPath, value);
+  return valuesNode.toString(toStringOptions);
+}
+
+export function updateCurrentConfigByKey(
+  paramsList: IBasicFormParam2[],
+  key: string,
+  value: any,
+  depth = 1,
+): any {
+  console.log("updateCurrentConfigByKey");
+  // console.log("\tparamsList ", JSON.stringify(paramsList));
+  console.log("\tparamsList ", paramsList);
+  // Find item index using _.findIndex
+  const indexLeaf = _.findIndex(paramsList, { key: key });
+  // is it a leaf node?
+  console.log("trying... ", key);
+  if (!paramsList?.[indexLeaf]) {
+    //   console.log("yeah, it is a leaf node", paramsList?.[index]);
+    //   paramsList[index].currentValue = "PEPE";
+    //   return paramsList;
+    // } else {
+    // const a = key.split(/\/(.*)/s);
+    const a = key.split("/").slice(0, depth).join("/");
+    console.log("not leaf, trying... ", a);
+    const index = _.findIndex(paramsList, { key: a });
+    if (paramsList?.[index]?.properties) {
+      console.log("searching for ", a, "in", paramsList[index]);
+      _.set(
+        paramsList[index],
+        "currentValue",
+        updateCurrentConfigByKey(paramsList?.[index]?.properties || [], key, value, depth + 1),
+      );
+      return paramsList;
+    }
+  }
+
+  // // eslint-disable-next-line no-debugger
+  // debugger;
+  // // Replace item at index using native splice
+  console.log("\tparamsList[index] ", paramsList[indexLeaf]);
+  paramsList.splice(indexLeaf, 1, {
+    ...paramsList[indexLeaf],
+    currentValue: value,
+  });
+  console.log("\tparamsList[indexLeaf] -changed ", {
+    ...paramsList[indexLeaf],
+    currentValue: value,
+  });
+  console.log("\tparamsList ", paramsList);
+  return paramsList;
 }
