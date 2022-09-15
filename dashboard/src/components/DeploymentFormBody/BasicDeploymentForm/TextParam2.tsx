@@ -22,7 +22,7 @@ function TextParam2({
   inputType,
   handleBasicFormParamChange,
 }: IStringParamProps) {
-  const [value, setValue] = useState((param.value || "") as any);
+  const [value, setValue] = useState((param.currentValue || "") as any);
   const [valueModified, setValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
   const onChange = (
@@ -44,10 +44,10 @@ function TextParam2({
   };
 
   useEffect(() => {
-    if ((isNumber(param.value) || !isEmpty(param.value)) && !valueModified) {
-      setValue(param.value);
+    if ((isNumber(param.currentValue) || !isEmpty(param.currentValue)) && !valueModified) {
+      setValue(param.currentValue);
     }
-  }, [valueModified, param.value]);
+  }, [valueModified, param.currentValue]);
 
   let input = (
     <input
@@ -62,7 +62,7 @@ function TextParam2({
     input = <textarea id={id} onChange={onChange} value={value} />;
   } else if (param.enum != null && param.enum.length > 0) {
     input = (
-      <select id={id} onChange={handleBasicFormParamChange(param)} value={param.value}>
+      <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
         {param.enum.map((enumValue: any) => (
           <option key={enumValue}>{enumValue}</option>
         ))}

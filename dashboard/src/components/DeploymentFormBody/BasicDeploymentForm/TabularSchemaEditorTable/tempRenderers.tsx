@@ -1,5 +1,6 @@
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
+import ReactTooltip from "react-tooltip";
 import BooleanParam2 from "../BooleanParam2";
 import SliderParam2 from "../SliderParam2";
 import TextParam2 from "../TextParam2";
@@ -75,23 +76,22 @@ export function renderConfigDescription(value: IBasicFormParam2) {
   const maxLength = 55;
   return value?.description?.length > maxLength ? (
     // TODO: Add a tooltip to show the full description
-    <span className={value?.hasProperties ? "headerRow" : ""}>
-      {value?.description.slice(0, maxLength - 1)}
+    <span>
+      <p data-tip={value?.description}>{value?.description.slice(0, maxLength - 1) + "..."}</p>
+      <ReactTooltip />
     </span>
   ) : (
-    <span className={value?.hasProperties ? "headerRow" : ""}>{value?.description}</span>
+    <span>{value?.description}</span>
   );
 }
 
 export function renderConfigDefaultValue(value: IBasicFormParam2) {
   if (!value.hasProperties) {
     // TODO(agamez): add custom input for objects an arrays
-    return value?.type === "object" || value?.type === "array" ? (
-      <span className={value?.hasProperties ? "headerRow" : ""}>
-        {JSON.stringify(value?.defaultValue)}
-      </span>
+    return ["string", "number", "integer"].includes(value?.type) ? (
+      <span>{value?.defaultValue}</span>
     ) : (
-      <span className={value?.hasProperties ? "headerRow" : ""}>{value?.defaultValue}</span>
+      <span>{JSON.stringify(value?.defaultValue)}</span>
     );
   } else {
     return <></>;
@@ -99,20 +99,7 @@ export function renderConfigDefaultValue(value: IBasicFormParam2) {
 }
 
 export function renderConfigDeployedValue(value: IBasicFormParam2) {
-  if (!value.hasProperties) {
-    // TODO(agamez): add custom input for objects an arrays
-    return value?.type === "object" || value?.type === "array" ? (
-      <span className={value?.hasProperties ? "headerRow" : ""}>
-        {JSON.stringify(value?.deployedValue)}
-      </span>
-    ) : (
-      <span className={value?.hasProperties ? "headerRow" : ""}>
-        {JSON.stringify(value?.deployedValue)}
-      </span>
-    );
-  } else {
-    return <></>;
-  }
+  return renderConfigDefaultValue(value);
 }
 
 export function renderConfigCurrentValuePro(
@@ -123,16 +110,12 @@ export function renderConfigCurrentValuePro(
 ) {
   if (!param.hasProperties) {
     // TODO(agamez): add custom input for objects an arrays
-    return param?.type === "object" || param?.type === "array" ? (
-      <span className={param?.hasProperties ? "headerRow" : ""}>
-        {JSON.stringify(param?.currentValue)}
-      </span>
-    ) : (
+    return (
       <>
-        {param?.type === "boolean" && (
+        {["boolean"].includes(param?.type) && (
           <BooleanParam2 param={param} handleBasicFormParamChange={handleBasicFormParamChange} />
         )}
-        {param?.type === "integer" && (
+        {["integer", "number"].includes(param?.type) && (
           <SliderParam2
             label={param.title || param.path}
             handleBasicFormParamChange={handleBasicFormParamChange}
@@ -144,14 +127,22 @@ export function renderConfigCurrentValuePro(
             unit={""}
           />
         )}
-        {param?.type === "number" && <></>}
-        {param?.type === "string" && (
+        {["string"].includes(param?.type) && (
           <TextParam2
             label={param.title || param.path}
             handleBasicFormParamChange={handleBasicFormParamChange}
             id={param.key}
             param={param}
             inputType={param.title.includes("password") ? "password" : "string"}
+          />
+        )}
+        {["array", "object"].includes(param?.type) && (
+          <TextParam2
+            label={param.title || param.path}
+            handleBasicFormParamChange={handleBasicFormParamChange}
+            id={param.key}
+            param={param}
+            inputType={"textarea"}
           />
         )}
       </>

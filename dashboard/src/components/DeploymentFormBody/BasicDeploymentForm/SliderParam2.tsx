@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from "react";
-import { IBasicFormParam } from "shared/types";
 import Slider from "../../Slider";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
@@ -42,10 +41,10 @@ function SliderParam2({
   step,
   handleBasicFormParamChange,
 }: ISliderParamProps) {
-  const [value, setValue] = useState(getDefaultValue(min, param.value));
+  const [value, setValue] = useState(getDefaultValue(min, param.currentValue));
 
   useEffect(() => {
-    setValue(getDefaultValue(min, param.value));
+    setValue(getDefaultValue(min, param.currentValue));
   }, [param, min]);
 
   const handleParamChange = (newValue: number) => {

@@ -3,7 +3,7 @@
 
 import { CellContext, ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
-import { DeploymentEvent, IBasicFormParam } from "shared/types";
+import { DeploymentEvent } from "shared/types";
 import "./BasicDeploymentForm.css";
 import { fuzzySort } from "./TabularSchemaEditorTable/TableHelpers";
 import TabularSchemaEditorTable from "./TabularSchemaEditorTable/TabularSchemaEditorTable";
@@ -19,30 +19,30 @@ import {
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface IBasicDeploymentFormProps {
-  handleValuesChange: (value: string) => void;
+  // handleValuesChange: (value: string) => void;
   handleBasicFormParamChange: (
     p: IBasicFormParam2,
   ) => (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   deploymentEvent: DeploymentEvent;
-  paramsFromComponentState: IBasicFormParam[];
+  paramsFromComponentState: IBasicFormParam2[];
   // new
-  schemaFromTheAvailablePackage: any;
-  valuesFromTheAvailablePackageNodes: any;
-  valuesFromTheDeployedPackage: any;
-  valuesFromTheParentContainer: any;
+  // schemaFromTheAvailablePackage: any;
+  // valuesFromTheAvailablePackageNodes: any;
+  // valuesFromTheDeployedPackage: any;
+  // valuesFromTheParentContainer: any;
 }
 
 function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   // Fetch data from the parent component
   const {
-    handleValuesChange,
+    // handleValuesChange,
     handleBasicFormParamChange,
     deploymentEvent,
     paramsFromComponentState,
-    schemaFromTheAvailablePackage,
-    valuesFromTheAvailablePackageNodes,
-    valuesFromTheDeployedPackage,
-    valuesFromTheParentContainer,
+    // schemaFromTheAvailablePackage,
+    // valuesFromTheAvailablePackageNodes,
+    // valuesFromTheDeployedPackage,
+    // valuesFromTheParentContainer,
   } = props;
 
   // Component state
@@ -59,7 +59,7 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   // use useMemo to avoid re-creating the columns on every render
   const columnHelper = createColumnHelper<IBasicFormParam2>();
   const columns = useMemo<ColumnDef<IBasicFormParam2>[]>(() => {
-    return [
+    const cols = [
       // const columns = [
       columnHelper.accessor((row: IBasicFormParam2) => row.key, {
         id: "key",
@@ -86,20 +86,34 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
           renderConfigDefaultValue(info.row.original),
         header: () => <span>Default Value</span>,
       }),
-      columnHelper.accessor((row: IBasicFormParam2) => row.deployedValue, {
-        id: "deployedValue",
-        cell: (info: CellContext<IBasicFormParam2, any>) =>
-          renderConfigDeployedValue(info.row.original),
-        header: () => <span>Deployed Value</span>,
-      }),
+      // columnHelper.accessor((row: IBasicFormParam2) => row.deployedValue, {
+      //   id: "deployedValue",
+      //   cell: (info: CellContext<IBasicFormParam2, any>) =>
+      //     renderConfigDeployedValue(info.row.original),
+      //   header: () => <span>Deployed Value</span>,
+      // }),
       columnHelper.accessor((row: IBasicFormParam2) => row.currentValue, {
         id: "currentValue",
-        cell: (info: CellContext<IBasicFormParam2, any>) =>
-          renderConfigCurrentValuePro(info.row.original, handleBasicFormParamChange),
+        cell: (info: CellContext<IBasicFormParam2, any>) => {
+          return renderConfigCurrentValuePro(info.row.original, handleBasicFormParamChange);
+        },
         header: () => <span>Current Value</span>,
       }),
     ];
-  }, [columnHelper, handleBasicFormParamChange]);
+    if (deploymentEvent === "upgrade") {
+      cols.splice(
+        4,
+        0,
+        columnHelper.accessor((row: IBasicFormParam2) => row.deployedValue, {
+          id: "deployedValue",
+          cell: (info: CellContext<IBasicFormParam2, any>) =>
+            renderConfigDeployedValue(info.row.original),
+          header: () => <span>Deployed Value</span>,
+        }),
+      );
+    }
+    return cols;
+  }, [columnHelper, deploymentEvent, handleBasicFormParamChange]);
 
   // useEffects
 

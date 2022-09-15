@@ -20,6 +20,7 @@ import {
 import { Key, useState } from "react";
 import DebouncedInput from "./DebouncedInput";
 import { fuzzyFilter } from "./TableHelpers";
+import { IBasicFormParam2 } from "./tempType";
 
 export interface TabularSchemaEditorTableProps {
   columns: any;
@@ -54,7 +55,7 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getSubRows: row => row.properties,
+    getSubRows: (row: IBasicFormParam2) => row.params,
     globalFilterFn: fuzzyFilter,
     onColumnFiltersChange: setColumnFilters,
     onExpandedChange: setExpanded,

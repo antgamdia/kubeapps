@@ -63,6 +63,9 @@ function DeploymentFormBody({
   const [valuesFromTheAvailablePackageNodes, setValuesFromTheAvailablePackageNodes] = useState(
     {} as YAML.Document.Parsed<YAML.ParsedNode>,
   );
+  const [valuesFromTheDeployedPackageNodes, setValuesFromTheDeployedPackageNodes] = useState(
+    {} as YAML.Document.Parsed<YAML.ParsedNode>,
+  );
   const [valuesFromTheParentContainerNodes, setValuesFromTheParentContainerNodes] = useState(
     {} as YAML.Document.Parsed<YAML.ParsedNode>,
   );
@@ -79,8 +82,10 @@ function DeploymentFormBody({
     ) {
       const initialParamsFromContainer = extractParamsFromSchema(
         valuesFromTheParentContainerNodes,
+        valuesFromTheAvailablePackageNodes,
         schemaFromTheAvailablePackage,
         deploymentEvent,
+        valuesFromTheDeployedPackageNodes,
       );
       // if (!isEqual(initialParamsFromContainer, paramsFromComponentState)) {
       console.log("deploymentfrombody.tsx useEffect 1 - initial params extraction");
@@ -94,26 +99,50 @@ function DeploymentFormBody({
     paramsFromComponentState,
     schemaFromTheAvailablePackage,
     valuesFromTheAvailablePackageNodes,
+    valuesFromTheDeployedPackageNodes,
     valuesFromTheParentContainerNodes,
   ]);
 
   // setDefaultValues when defaultValues changes
   useEffect(() => {
-    console.log("deploymentfrombody.tsx useEffect 2");
-    if (valuesFromTheAvailablePackage) {
-      console.log("SET deploymentfrombody.tsx useEffect 2");
+    if (!isLoaded && valuesFromTheAvailablePackage) {
+      console.log("deploymentfrombody.tsx useEffect 2 - initial parsing of available package");
+      setValuesFromTheAvailablePackageNodes(parseToYAMLNodes(valuesFromTheAvailablePackage));
+    } else if (isLoaded && valuesFromTheAvailablePackage) {
+      console.log(
+        "deploymentfrombody.tsx useEffect 2 - upstream modified -  parsing of available package",
+      );
       setValuesFromTheAvailablePackageNodes(parseToYAMLNodes(valuesFromTheAvailablePackage));
     }
-  }, [valuesFromTheAvailablePackage]);
+  }, [isLoaded, valuesFromTheAvailablePackage]);
 
   useEffect(() => {
-    if (valuesFromTheParentContainer) {
+    if (!isLoaded && valuesFromTheParentContainer) {
+      console.log(
+        "deploymentfrombody.tsx useEffect 3 - initial parsing of values from the parent container",
+      );
+      setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
+    } else if (isLoaded && valuesFromTheParentContainer) {
       console.log(
         "deploymentfrombody.tsx useEffect 3 - the values have been modified upstream, parsing them locally",
       );
       setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
     }
-  }, [valuesFromTheParentContainer]);
+  }, [isLoaded, valuesFromTheParentContainer]);
+
+  useEffect(() => {
+    if (!isLoaded && valuesFromTheDeployedPackage) {
+      console.log(
+        "deploymentfrombody.tsx useEffect 4 - initial parsing of values from the parent container",
+      );
+      setValuesFromTheDeployedPackageNodes(parseToYAMLNodes(valuesFromTheDeployedPackage));
+    } else if (isLoaded && valuesFromTheDeployedPackage) {
+      console.log(
+        "deploymentfrombody.tsx useEffect 4 - the values have been modified upstream, parsing them locally",
+      );
+      setValuesFromTheDeployedPackageNodes(parseToYAMLNodes(valuesFromTheDeployedPackage));
+    }
+  }, [isLoaded, valuesFromTheDeployedPackage, valuesFromTheParentContainer]);
 
   const handleValuesChange = (value: string) => {
     console.log("deploymentfrombody.tsx handleValuesChange");
@@ -121,18 +150,20 @@ function DeploymentFormBody({
     setValuesModified();
   };
 
-  // const refreshBasicParameters = () => {
-  //   console.log("deploymentfrombody.tsx refreshBasicParameters");
-  //   if (schemaFromTheAvailablePackage) {
-  //     setParamsFromComponentState(
-  //       extractParamsFromSchema(
-  //         valuesFromTheAvailablePackageNodes,
-  //         schemaFromTheAvailablePackage,
-  //         deploymentEvent,
-  //       ),
-  //     );
-  //   }
-  // };
+  const refreshBasicParameters = () => {
+    console.log("deploymentfrombody.tsx refreshBasicParameters");
+    if (schemaFromTheAvailablePackage && shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
+      setParamsFromComponentState(
+        extractParamsFromSchema(
+          valuesFromTheParentContainerNodes,
+          valuesFromTheAvailablePackageNodes,
+          schemaFromTheAvailablePackage,
+          deploymentEvent,
+          valuesFromTheDeployedPackageNodes,
+        ),
+      );
+    }
+  };
 
   // const handleBasicFormParamChange = (param: IBasicFormParam) => {
   //   // const parsedDefaultValues = parseValues(valuesFromTheAvailablePackage);
@@ -184,7 +215,7 @@ function DeploymentFormBody({
 
   // The basic form should be rendered if there are params to show
   const shouldRenderBasicForm = (schema: any) => {
-    return Object.keys(schema?.properties).length > 0;
+    return schema && Object.keys(schema?.properties).length > 0;
   };
 
   const closeRestoreDefaultValuesModal = () => {
@@ -197,15 +228,19 @@ function DeploymentFormBody({
 
   const restoreDefaultValues = () => {
     console.log("deploymentfrombody.tsx restoreDefaultValues");
-    // if (valuesFromTheAvailablePackage && schemaFromTheAvailablePackage) {
-    //   setValuesFromTheParentContainer(valuesFromTheAvailablePackage);
-    //   setParamsFromComponentState(
-    //     extractParamsFromSchema(
-    //       valuesFromTheAvailablePackageNodes,
-    //       schemaFromTheAvailablePackage,
-    //       deploymentEvent,
-    //     ),
-    //   );
+    // // if (valuesFromTheAvailablePackage && schemaFromTheAvailablePackage) {
+    setValuesFromTheParentContainer(valuesFromTheAvailablePackage || "");
+    if (schemaFromTheAvailablePackage) {
+      setParamsFromComponentState(
+        extractParamsFromSchema(
+          valuesFromTheAvailablePackageNodes,
+          valuesFromTheAvailablePackageNodes,
+          schemaFromTheAvailablePackage,
+          deploymentEvent,
+          valuesFromTheDeployedPackageNodes,
+        ),
+      );
+    }
     // }
     setRestoreModalOpen(false);
   };
@@ -253,18 +288,22 @@ function DeploymentFormBody({
     />,
   ];
   if (shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
-    tabColumns.unshift(<span role="presentation">Form</span>);
+    tabColumns.unshift(
+      <span role="presentation" onClick={refreshBasicParameters}>
+        Form
+      </span>,
+    );
     if (paramsFromComponentState.length && Object.keys(valuesFromTheAvailablePackageNodes).length) {
       tabData.unshift(
         <BasicDeploymentForm
           handleBasicFormParamChange={handleBasicFormParamChange}
-          handleValuesChange={handleValuesChange}
+          // handleValuesChange={handleValuesChange}
           deploymentEvent={deploymentEvent}
           paramsFromComponentState={paramsFromComponentState}
-          schemaFromTheAvailablePackage={selected.schema}
-          valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
-          valuesFromTheDeployedPackage={valuesFromTheDeployedPackage}
-          valuesFromTheParentContainer={valuesFromTheParentContainer}
+          // schemaFromTheAvailablePackage={selected.schema}
+          // valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
+          // valuesFromTheDeployedPackage={valuesFromTheDeployedPackage}
+          // valuesFromTheParentContainer={valuesFromTheParentContainer}
         />,
       );
     } else {
