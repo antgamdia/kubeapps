@@ -20,8 +20,6 @@ export function extractParamsFromSchema(
     Object.keys(properties).forEach(propertyKey => {
       const schemaProperty = properties[propertyKey] as JSONSchemaType<any>;
 
-      console.log("schemaProperty", schemaProperty);
-
       // The param path is its parent path + the object key
       const itemPath = `${parentPath || ""}${propertyKey}`;
       const param: IBasicFormParam2 = {
@@ -107,28 +105,17 @@ export function updateCurrentConfigByKey(
   value: any,
   depth = 1,
 ): any {
-  console.log("updateCurrentConfigByKey");
   if (!paramsList) {
     return [];
   }
 
-  // console.log("\tparamsList ", JSON.stringify(paramsList));
-  // console.log("\tparamsList ", paramsList);
   // Find item index using _.findIndex
   const indexLeaf = _.findIndex(paramsList, { key: key });
   // is it a leaf node?
-  // console.log("trying... ", key);
   if (!paramsList?.[indexLeaf]) {
-    //   console.log("yeah, it is a leaf node", paramsList?.[index]);
-    //   paramsList[index].currentValue = "PEPE";
-    //   return paramsList;
-    // } else {
-    // const a = key.split(/\/(.*)/s);
     const a = key.split("/").slice(0, depth).join("/");
-    // console.log("not leaf, trying... ", a);
     const index = _.findIndex(paramsList, { key: a });
     if (paramsList?.[index]?.params) {
-      // console.log("searching for ", a, "in", paramsList[index]);
       _.set(
         paramsList[index],
         "currentValue",
@@ -138,15 +125,9 @@ export function updateCurrentConfigByKey(
     }
   }
   // Replace item at index using native splice
-  // console.log("\tparamsList[index] ", paramsList[indexLeaf]);
   paramsList?.splice(indexLeaf, 1, {
     ...paramsList[indexLeaf],
     currentValue: value,
   });
-  // console.log("\tparamsList[indexLeaf] -changed ", {
-  //   ...paramsList[indexLeaf],
-  //   currentValue: value,
-  // });
-  // console.log("\tparamsList ", paramsList);
   return paramsList;
 }

@@ -51,7 +51,6 @@ export function getValueFromEvent(
       value = parseInt(value, 10);
       break;
   }
-  console.log("getValueFromEvent", value);
   return value;
 }
 

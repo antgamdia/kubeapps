@@ -88,7 +88,6 @@ function DeploymentFormBody({
         valuesFromTheDeployedPackageNodes,
       );
       // if (!isEqual(initialParamsFromContainer, paramsFromComponentState)) {
-      console.log("deploymentfrombody.tsx useEffect 1 - initial params extraction");
       setParamsFromComponentState(initialParamsFromContainer);
       setIsloaded(true);
       // }
@@ -105,53 +104,29 @@ function DeploymentFormBody({
 
   // setDefaultValues when defaultValues changes
   useEffect(() => {
-    if (!isLoaded && valuesFromTheAvailablePackage) {
-      console.log("deploymentfrombody.tsx useEffect 2 - initial parsing of available package");
-      setValuesFromTheAvailablePackageNodes(parseToYAMLNodes(valuesFromTheAvailablePackage));
-    } else if (isLoaded && valuesFromTheAvailablePackage) {
-      console.log(
-        "deploymentfrombody.tsx useEffect 2 - upstream modified -  parsing of available package",
-      );
+    if (valuesFromTheAvailablePackage) {
       setValuesFromTheAvailablePackageNodes(parseToYAMLNodes(valuesFromTheAvailablePackage));
     }
   }, [isLoaded, valuesFromTheAvailablePackage]);
 
   useEffect(() => {
-    if (!isLoaded && valuesFromTheParentContainer) {
-      console.log(
-        "deploymentfrombody.tsx useEffect 3 - initial parsing of values from the parent container",
-      );
-      setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
-    } else if (isLoaded && valuesFromTheParentContainer) {
-      console.log(
-        "deploymentfrombody.tsx useEffect 3 - the values have been modified upstream, parsing them locally",
-      );
+    if (valuesFromTheParentContainer) {
       setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
     }
   }, [isLoaded, valuesFromTheParentContainer]);
 
   useEffect(() => {
-    if (!isLoaded && valuesFromTheDeployedPackage) {
-      console.log(
-        "deploymentfrombody.tsx useEffect 4 - initial parsing of values from the parent container",
-      );
-      setValuesFromTheDeployedPackageNodes(parseToYAMLNodes(valuesFromTheDeployedPackage));
-    } else if (isLoaded && valuesFromTheDeployedPackage) {
-      console.log(
-        "deploymentfrombody.tsx useEffect 4 - the values have been modified upstream, parsing them locally",
-      );
+    if (valuesFromTheDeployedPackage) {
       setValuesFromTheDeployedPackageNodes(parseToYAMLNodes(valuesFromTheDeployedPackage));
     }
   }, [isLoaded, valuesFromTheDeployedPackage, valuesFromTheParentContainer]);
 
   const handleValuesChange = (value: string) => {
-    console.log("deploymentfrombody.tsx handleValuesChange");
     setValuesFromTheParentContainer(value);
     setValuesModified();
   };
 
   const refreshBasicParameters = () => {
-    console.log("deploymentfrombody.tsx refreshBasicParameters");
     if (schemaFromTheAvailablePackage && shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
       setParamsFromComponentState(
         extractParamsFromSchema(
@@ -165,26 +140,8 @@ function DeploymentFormBody({
     }
   };
 
-  // const handleBasicFormParamChange = (param: IBasicFormParam) => {
-  //   // const parsedDefaultValues = parseValues(valuesFromTheAvailablePackage);
-  //   return (e: React.FormEvent<any>) => {
-  //     // setValuesModified();
-  //     // if (parsedDefaultValues !== defaultValues) {
-  //     //   setDefaultValues(parsedDefaultValues);
-  //     // }
-  //     const value = getValueFromEvent(e);
-  //     console.log(value);
-  //     setBasicFormParameters(
-  //       basicFormParameters.map(p => (p.path === param.path ? { ...param, value } : p)),
-  //     );
-  //     // Change raw values
-  //     setValuesFromTheParentContainer(setValue(valuesFromTheParentContainer, param.path, value));
-  //   };
-  // };
-
   const handleBasicFormParamChange = useCallback(
     (value: IBasicFormParam2) => {
-      console.log("deploymentfrombody.tsx handleBasicFormParamChange");
       return (e: FormEvent<any>) => {
         setValuesModified();
         const newValue = getValueFromEvent(e);
@@ -193,7 +150,6 @@ function DeploymentFormBody({
           value.key,
           newValue,
         );
-        console.log(`\tLocal param change in ${value.key}: ${newValue}`);
         setParamsFromComponentState([...newParamsFromComponentState]);
 
         const newValuesFromTheParentContainer = setValueee(
@@ -201,7 +157,6 @@ function DeploymentFormBody({
           value.key,
           newValue,
         );
-        console.log(`\tValues text change in ${value.key}: ${newValue}`);
         setValuesFromTheParentContainer(newValuesFromTheParentContainer);
       };
     },
@@ -227,8 +182,6 @@ function DeploymentFormBody({
   };
 
   const restoreDefaultValues = () => {
-    console.log("deploymentfrombody.tsx restoreDefaultValues");
-    // // if (valuesFromTheAvailablePackage && schemaFromTheAvailablePackage) {
     setValuesFromTheParentContainer(valuesFromTheAvailablePackage || "");
     if (schemaFromTheAvailablePackage) {
       setParamsFromComponentState(
@@ -241,7 +194,6 @@ function DeploymentFormBody({
         ),
       );
     }
-    // }
     setRestoreModalOpen(false);
   };
   if (error) {

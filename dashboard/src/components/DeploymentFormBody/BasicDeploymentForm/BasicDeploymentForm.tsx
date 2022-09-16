@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { CellContext, ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DeploymentEvent } from "shared/types";
 import "./BasicDeploymentForm.css";
 import { fuzzySort } from "./TabularSchemaEditorTable/TableHelpers";
@@ -19,41 +19,19 @@ import {
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface IBasicDeploymentFormProps {
-  // handleValuesChange: (value: string) => void;
   handleBasicFormParamChange: (
     p: IBasicFormParam2,
   ) => (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   deploymentEvent: DeploymentEvent;
   paramsFromComponentState: IBasicFormParam2[];
-  // new
-  // schemaFromTheAvailablePackage: any;
-  // valuesFromTheAvailablePackageNodes: any;
-  // valuesFromTheDeployedPackage: any;
-  // valuesFromTheParentContainer: any;
 }
 
 function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   // Fetch data from the parent component
-  const {
-    // handleValuesChange,
-    handleBasicFormParamChange,
-    deploymentEvent,
-    paramsFromComponentState,
-    // schemaFromTheAvailablePackage,
-    // valuesFromTheAvailablePackageNodes,
-    // valuesFromTheDeployedPackage,
-    // valuesFromTheParentContainer,
-  } = props;
+  const { handleBasicFormParamChange, deploymentEvent, paramsFromComponentState } = props;
 
   // Component state
   const [globalFilter, setGlobalFilter] = useState("");
-  // const [paramsFromComponentState, setParamsFromComponentState] = useState(
-  // [] as IBasicFormParam2[],
-  // );
-
-  useEffect(() => {
-    console.log(paramsFromComponentState);
-  }, [paramsFromComponentState]);
 
   // Column definitions
   // use useMemo to avoid re-creating the columns on every render
@@ -86,12 +64,6 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
           renderConfigDefaultValue(info.row.original),
         header: () => <span>Default Value</span>,
       }),
-      // columnHelper.accessor((row: IBasicFormParam2) => row.deployedValue, {
-      //   id: "deployedValue",
-      //   cell: (info: CellContext<IBasicFormParam2, any>) =>
-      //     renderConfigDeployedValue(info.row.original),
-      //   header: () => <span>Deployed Value</span>,
-      // }),
       columnHelper.accessor((row: IBasicFormParam2) => row.currentValue, {
         id: "currentValue",
         cell: (info: CellContext<IBasicFormParam2, any>) => {
@@ -114,19 +86,6 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
     }
     return cols;
   }, [columnHelper, deploymentEvent, handleBasicFormParamChange]);
-
-  // useEffects
-
-  // initialize params
-  // useEffect(() => {
-  //   console.log("basicdeploymentform.tsx useEffect 1");
-  //   const initialParamsFromContainer = extractParamsFromSchema(
-  //     valuesFromTheAvailablePackageNodes,
-  //     schemaFromTheAvailablePackage,
-  //     deploymentEvent,
-  //   );
-  //   setParamsFromComponentState(initialParamsFromContainer);
-  // }, [deploymentEvent, schemaFromTheAvailablePackage, valuesFromTheAvailablePackageNodes]);
 
   return (
     <TabularSchemaEditorTable
