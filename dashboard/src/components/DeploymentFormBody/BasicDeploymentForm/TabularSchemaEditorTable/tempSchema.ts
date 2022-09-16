@@ -15,13 +15,15 @@ export function extractParamsFromSchema(
   // currentParam: IBasicFormParam2,
 ): IBasicFormParam2[] {
   let params: IBasicFormParam2[] = [];
-  if (schema?.properties) {
+  if (!_.isEmpty(schema?.properties)) {
     const properties = schema.properties;
     Object.keys(properties).forEach(propertyKey => {
       const schemaProperty = properties[propertyKey] as JSONSchemaType<any>;
-
       // The param path is its parent path + the object key
       const itemPath = `${parentPath || ""}${propertyKey}`;
+      const isUpgrading = deploymentEvent === "upgrade" && deployedValues;
+      const isLeaf = !schemaProperty?.properties;
+
       const param: IBasicFormParam2 = {
         ...schemaProperty,
         title: schemaProperty.title || propertyKey,
@@ -38,15 +40,16 @@ export function extractParamsFromSchema(
             )
           : undefined,
         // If exists, the value that is currently deployed
-        deployedValue:
-          deploymentEvent === "upgrade" && deployedValues
-            ? getValueeeee(deployedValues, itemPath)
-            : "",
+        deployedValue: isLeaf ? (isUpgrading ? getValueeeee(deployedValues, itemPath) : "") : "",
         // The default is the value comming from the package values or the one defined in the schema,
         // or vice-verse, which one shoulf take precedence?
-        defaultValue: getValueeeeeWithDefault(packageValues, itemPath, schemaProperty.default),
+        defaultValue: isLeaf
+          ? getValueeeeeWithDefault(packageValues, itemPath, schemaProperty.default)
+          : "",
         // same as default value, but this one will be later overwritten by the user input
-        currentValue: getValueeeeeWithDefault(currentValues, itemPath, schemaProperty.default),
+        currentValue: isLeaf
+          ? getValueeeeeWithDefault(currentValues, itemPath, schemaProperty.default)
+          : "",
         // TODO(agamez): support custom components again
         // customComponent: schemaProperty.customComponent,
       };

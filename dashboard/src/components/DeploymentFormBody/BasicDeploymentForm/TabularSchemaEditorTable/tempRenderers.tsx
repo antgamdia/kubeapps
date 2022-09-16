@@ -6,6 +6,8 @@ import SliderParam2 from "../SliderParam2";
 import TextParam2 from "../TextParam2";
 import { IBasicFormParam2 } from "./tempType";
 
+const MAX_LENGTH = 55;
+
 export function renderConfigKeyHeader(table: any) {
   return (
     <>
@@ -68,38 +70,36 @@ export function renderConfigKey(value: IBasicFormParam2, row: any) {
     </div>
   );
 }
-export function renderConfigType(value: IBasicFormParam2) {
-  return <span className={value.hasProperties ? "headerRow" : ""}>{value?.type}</span>;
-}
 
-export function renderConfigDescription(value: IBasicFormParam2) {
-  const maxLength = 55;
-  return value?.description?.length > maxLength ? (
-    // TODO: Add a tooltip to show the full description
+function renderCellWithTooltip(value: IBasicFormParam2, property: string) {
+  const stringValue = ["string", "number"].includes(typeof value?.[property])
+    ? value?.[property] || ""
+    : JSON.stringify(value?.[property]);
+
+  return stringValue?.length > MAX_LENGTH ? (
     <span>
-      <p data-tip={value?.description}>{value?.description.slice(0, maxLength - 1) + "..."}</p>
+      <p data-tip={stringValue}>{stringValue.slice(0, MAX_LENGTH - 1) + "..."}</p>
       <ReactTooltip />
     </span>
   ) : (
-    <span>{value?.description}</span>
+    <span>{stringValue}</span>
   );
 }
 
+export function renderConfigType(value: IBasicFormParam2) {
+  return renderCellWithTooltip(value, "type");
+}
+
+export function renderConfigDescription(value: IBasicFormParam2) {
+  return renderCellWithTooltip(value, "title");
+}
+
 export function renderConfigDefaultValue(value: IBasicFormParam2) {
-  if (!value.hasProperties) {
-    // TODO(agamez): add custom input for objects an arrays
-    return ["string", "number", "integer"].includes(value?.type) ? (
-      <span>{value?.defaultValue}</span>
-    ) : (
-      <span>{JSON.stringify(value?.defaultValue)}</span>
-    );
-  } else {
-    return <></>;
-  }
+  return renderCellWithTooltip(value, "defaultValue");
 }
 
 export function renderConfigDeployedValue(value: IBasicFormParam2) {
-  return renderConfigDefaultValue(value);
+  return renderCellWithTooltip(value, "deployedValue");
 }
 
 export function renderConfigCurrentValuePro(

@@ -34,7 +34,7 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
 
   // Component state
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [globalExpanded, setGlobalExpanded] = useState<ExpandedState>({});
 
   const table = useReactTable({
     data,
@@ -45,8 +45,9 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
     state: {
       columnFilters,
       globalFilter,
-      expanded,
+      expanded: globalExpanded,
     },
+    autoResetPageIndex: false,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
@@ -58,7 +59,7 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
     getSubRows: (row: IBasicFormParam2) => row.params,
     globalFilterFn: fuzzyFilter,
     onColumnFiltersChange: setColumnFilters,
-    onExpandedChange: setExpanded,
+    onExpandedChange: setGlobalExpanded,
     onGlobalFilterChange: setGlobalFilter,
     debugTable: true,
   });

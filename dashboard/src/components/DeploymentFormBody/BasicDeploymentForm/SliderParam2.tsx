@@ -1,8 +1,8 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsRange } from "@cds/react/range";
 import { useEffect, useState } from "react";
-import Slider from "../../Slider";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface ISliderParamProps {
@@ -31,55 +31,78 @@ function getDefaultValue(min: number, value?: string) {
   return (value && toNumber(value)) || min;
 }
 
-function SliderParam2({
-  id,
-  label,
-  param,
-  unit,
-  min,
-  max,
-  step,
-  handleBasicFormParamChange,
-}: ISliderParamProps) {
+function SliderParam2(props: ISliderParamProps) {
+  const { handleBasicFormParamChange, id, max, min, param, step } = props;
   const [value, setValue] = useState(getDefaultValue(min, param.currentValue));
+  const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
 
   useEffect(() => {
     setValue(getDefaultValue(min, param.currentValue));
   }, [param, min]);
 
-  const handleParamChange = (newValue: number) => {
-    handleBasicFormParamChange(param)({
-      currentTarget: {
-        value: param.type === "string" ? `${newValue}${unit}` : newValue,
-      },
-    } as React.FormEvent<HTMLInputElement>);
-  };
+  // const handleParamChange = (newValue: number) => {
+  //   handleBasicFormParamChange(param)({
+  //     currentTarget: {
+  //       value: param.type === "string" ? `${newValue}${unit}` : newValue,
+  //     },
+  //   } as React.FormEvent<HTMLInputElement>);
+  // };
 
   // onChangeSlider is run when the slider is dropped at one point
   // at that point we update the parameter
-  const onChangeSlider = (values: readonly number[]) => {
-    handleParamChange(values[0]);
-  };
+  // const onChangeSlider = (values: readonly number[]) => {
+  //   handleParamChange(values[0]);
+  // };
 
-  // onUpdateSlider is run when dragging the slider
-  // we just update the state here for a faster response
-  const onUpdateSlider = (values: readonly number[]) => {
-    setValue(values[0]);
-  };
+  // // onUpdateSlider is run when dragging the slider
+  // // we just update the state here for a faster response
+  // const onUpdateSlider = (values: readonly number[]) => {
+  //   setValue(values[0]);
+  // };
 
-  const onChangeInput = (e: React.FormEvent<HTMLInputElement>) => {
-    const numberValue = toNumber(e.currentTarget.value);
-    setValue(numberValue);
-    handleParamChange(numberValue);
+  // const onChangeInput = (e: React.FormEvent<HTMLInputElement>) => {
+  //   const numberValue = toNumber(e.currentTarget.value);
+  //   setValue(numberValue);
+  //   handleParamChange(numberValue);
+  // };
+
+  const onChangeSlider = (e: React.FormEvent<HTMLInputElement>) => {
+    setValue(Number(e.currentTarget.value));
+    // setValueModified(true);
+    // Gather changes before submitting
+    clearTimeout(timeout);
+    const func = handleBasicFormParamChange(param);
+    // The reference to target get lost, so we need to keep a copy
+    const targetCopy = {
+      currentTarget: {
+        value: e.currentTarget.value,
+        type: e.currentTarget.type,
+      },
+    } as React.FormEvent<HTMLInputElement>;
+    setThisTimeout(setTimeout(() => func(targetCopy), 500));
   };
 
   return (
     <div>
-      <label htmlFor={id}>
+      {/* <label htmlFor={id}>
         <span className="centered deployment-form-label deployment-form-label-text-param">
           {label}
-        </span>
-        <div className="slider-block">
+        </span> */}
+
+      <CdsRange>
+        <label htmlFor={id}>{value}</label>
+        <input
+          type="range"
+          min={Math.min(param.minimum || min, value)}
+          max={Math.max(param.maximum || max, value)}
+          step={step || 1}
+          onChange={onChangeSlider}
+          // onUpdate={onUpdateSlider}
+          value={value}
+        />
+      </CdsRange>
+
+      {/* <div className="slider-block">
           <div className="slider-content">
             <Slider
               // If the parameter defines a minimum or maximum, maintain those
@@ -88,7 +111,7 @@ function SliderParam2({
               step={step || 1}
               default={value}
               onChange={onChangeSlider}
-              onUpdate={onUpdateSlider}
+              // onUpdate={onUpdateSlider}
               values={value}
               sliderStyle={{ width: "100%", margin: "1.2em 0 1.2em 0" }}
             />
@@ -104,7 +127,7 @@ function SliderParam2({
           </div>
         </div>
         {param.description && <span className="description">{param.description}</span>}
-      </label>
+      </label> */}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsInput } from "@cds/react/input";
+import { CdsTextarea } from "@cds/react/textarea";
 import { isEmpty, isNumber } from "lodash";
 import { useEffect, useState } from "react";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
@@ -25,6 +27,7 @@ function TextParam2({
   const [value, setValue] = useState((param.currentValue || "") as any);
   const [valueModified, setValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
+
   const onChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
@@ -50,37 +53,44 @@ function TextParam2({
   }, [valueModified, param.currentValue]);
 
   let input = (
-    <input
-      id={id}
-      onChange={onChange}
-      value={value}
-      className="clr-input deployment-form-text-input"
-      type={inputType ? inputType : "text"}
-    />
+    <CdsInput>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        onChange={onChange}
+        value={value}
+        className="clr-input deployment-form-text-input"
+        type={inputType ? inputType : "text"}
+      />
+    </CdsInput>
   );
   if (inputType === "textarea") {
-    input = <textarea id={id} onChange={onChange} value={value} />;
+    input = (
+      <CdsTextarea>
+        <label htmlFor={id}>{label}</label>
+        <textarea id={id} onChange={onChange} value={value} />
+      </CdsTextarea>
+    );
   } else if (param.enum != null && param.enum.length > 0) {
     input = (
-      <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
-        {param.enum.map((enumValue: any) => (
-          <option key={enumValue}>{enumValue}</option>
-        ))}
-      </select>
+      <>
+        <label htmlFor={id}>{label}</label>
+        <input
+          id={id}
+          onChange={onChange}
+          value={value}
+          className="clr-input deployment-form-text-input"
+          type={inputType ? inputType : "text"}
+        />
+        <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
+          {param.enum.map((enumValue: any) => (
+            <option key={enumValue}>{enumValue}</option>
+          ))}
+        </select>
+      </>
     );
   }
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="centered deployment-form-label deployment-form-label-text-param"
-      >
-        {label}
-      </label>
-      {input}
-      {param.description && <span className="description">{param.description}</span>}
-    </div>
-  );
+  return <div>{input}</div>;
 }
 
 export default TextParam2;

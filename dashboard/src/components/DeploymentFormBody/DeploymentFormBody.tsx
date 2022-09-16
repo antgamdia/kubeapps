@@ -5,14 +5,14 @@ import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
 import Alert from "components/js/Alert";
 import Tabs from "components/Tabs";
+import _ from "lodash";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import YAML from "yaml";
-import { toStringOptions } from "../../shared/schema";
 import { DeploymentEvent, IPackageState } from "../../shared/types";
 import { getValueFromEvent } from "../../shared/utils";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
-import AdvancedDeploymentForm from "./AdvancedDeploymentForm";
+import AdvancedDeploymentForm2 from "./AdvancedDeploymentForm2";
 import BasicDeploymentForm from "./BasicDeploymentForm/BasicDeploymentForm";
 import {
   extractParamsFromSchema,
@@ -21,8 +21,6 @@ import {
   updateCurrentConfigByKey,
 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
 import { IBasicFormParam2 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempType";
-import DifferentialSelector from "./DifferentialSelector";
-import DifferentialTab from "./DifferentialTab";
 
 export interface IDeploymentFormBodyProps {
   deploymentEvent: DeploymentEvent;
@@ -71,7 +69,6 @@ function DeploymentFormBody({
   );
   const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
   const [isLoaded, setIsloaded] = useState(false);
-  // const [defaultValues, setDefaultValues] = useState("");
 
   // setBasicFormParameters when basicFormParameters changes
   useEffect(() => {
@@ -170,7 +167,7 @@ function DeploymentFormBody({
 
   // The basic form should be rendered if there are params to show
   const shouldRenderBasicForm = (schema: any) => {
-    return schema && Object.keys(schema?.properties).length > 0;
+    return !_.isEmpty(schema.properties);
   };
 
   const closeRestoreDefaultValuesModal = () => {
@@ -196,6 +193,8 @@ function DeploymentFormBody({
     }
     setRestoreModalOpen(false);
   };
+
+  // early return if error
   if (error) {
     return (
       <Alert theme="danger">
@@ -203,7 +202,16 @@ function DeploymentFormBody({
       </Alert>
     );
   }
-  if (packagesIsFetching || !availablePackageDetail || !versions.length) {
+
+  // early return if loading
+  if (
+    packagesIsFetching ||
+    !availablePackageDetail ||
+    (!versions.length &&
+      shouldRenderBasicForm(schemaFromTheAvailablePackage) &&
+      !paramsFromComponentState.length &&
+      !Object.keys(valuesFromTheAvailablePackageNodes).length)
+  ) {
     return (
       <LoadingWrapper
         className="margin-t-xxl"
@@ -211,59 +219,43 @@ function DeploymentFormBody({
       />
     );
   }
-  const tabColumns = [
-    "YAML",
-    <DifferentialTab
-      key="differential-selector"
+
+  // creation of the each tab + its content
+  const tabColumns: JSX.Element[] = [];
+  const tabData: JSX.Element[] = [];
+
+  // Basic form creation
+  if (shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
+    tabColumns.push(
+      <div role="presentation" onClick={refreshBasicParameters}>
+        <span>Visual editor</span>
+      </div>,
+    );
+    tabData.push(
+      <BasicDeploymentForm
+        handleBasicFormParamChange={handleBasicFormParamChange}
+        deploymentEvent={deploymentEvent}
+        paramsFromComponentState={paramsFromComponentState}
+      />,
+    );
+  }
+
+  // Text editor creation
+  tabColumns.push(
+    <div role="presentation">
+      <span>YAML editor</span>
+    </div>,
+  );
+  tabData.push(
+    <AdvancedDeploymentForm2
+      valuesFromTheParentContainer={valuesFromTheParentContainer}
       deploymentEvent={deploymentEvent}
-      defaultValues={valuesFromTheAvailablePackageNodes.toString(toStringOptions)}
-      deployedValues={valuesFromTheDeployedPackage || ""}
-      appValues={valuesFromTheParentContainer}
-    />,
-  ] as Array<string | JSX.Element | JSX.Element[]>;
-  const tabData = [
-    <AdvancedDeploymentForm
-      appValues={valuesFromTheParentContainer}
+      valuesFromTheAvailablePackage={valuesFromTheAvailablePackage || ""}
+      valuesFromTheDeployedPackage={valuesFromTheDeployedPackage || ""}
       handleValuesChange={handleValuesChange}
       key="advanced-deployment-form"
-    >
-      <p>
-        <b>Note:</b> Only comments from the original package values will be preserved.
-      </p>
-    </AdvancedDeploymentForm>,
-    <DifferentialSelector
-      key="differential-selector"
-      deploymentEvent={deploymentEvent}
-      defaultValues={valuesFromTheAvailablePackageNodes.toString(toStringOptions)}
-      deployedValues={valuesFromTheDeployedPackage || ""}
-      appValues={valuesFromTheParentContainer}
-    />,
-  ];
-  if (shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
-    tabColumns.unshift(
-      <span role="presentation" onClick={refreshBasicParameters}>
-        Form
-      </span>,
-    );
-    if (paramsFromComponentState.length && Object.keys(valuesFromTheAvailablePackageNodes).length) {
-      tabData.unshift(
-        <BasicDeploymentForm
-          handleBasicFormParamChange={handleBasicFormParamChange}
-          // handleValuesChange={handleValuesChange}
-          deploymentEvent={deploymentEvent}
-          paramsFromComponentState={paramsFromComponentState}
-          // schemaFromTheAvailablePackage={selected.schema}
-          // valuesFromTheAvailablePackageNodes={valuesFromTheAvailablePackageNodes}
-          // valuesFromTheDeployedPackage={valuesFromTheDeployedPackage}
-          // valuesFromTheParentContainer={valuesFromTheParentContainer}
-        />,
-      );
-    } else {
-      tabData.unshift(
-        <LoadingWrapper loadingText="Fetching parameters from the schema..."></LoadingWrapper>,
-      );
-    }
-  }
+    ></AdvancedDeploymentForm2>,
+  );
 
   return (
     <div>
