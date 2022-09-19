@@ -1,5 +1,4 @@
 import { JSONSchemaType } from "ajv";
-import { DeploymentEvent, JSONSchemaBasicType } from "shared/types";
 
 // TEMPORARY INTERFACE, MOVE TO TYPES
 export type IBasicFormParam2 = JSONSchemaType<any> & {

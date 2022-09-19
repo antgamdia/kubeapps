@@ -69,13 +69,14 @@ function DeploymentFormBody({
   );
   const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
   const [isLoaded, setIsloaded] = useState(false);
+  const [isLoading, setIsloading] = useState(true);
 
   // setBasicFormParameters when basicFormParameters changes
   useEffect(() => {
     if (
       !isLoaded &&
       schemaFromTheAvailablePackage &&
-      Object.keys(valuesFromTheParentContainerNodes).length
+      !_.isEmpty(valuesFromTheParentContainerNodes)
     ) {
       const initialParamsFromContainer = extractParamsFromSchema(
         valuesFromTheParentContainerNodes,
@@ -84,10 +85,8 @@ function DeploymentFormBody({
         deploymentEvent,
         valuesFromTheDeployedPackageNodes,
       );
-      // if (!isEqual(initialParamsFromContainer, paramsFromComponentState)) {
       setParamsFromComponentState(initialParamsFromContainer);
       setIsloaded(true);
-      // }
     }
   }, [
     deploymentEvent,
@@ -109,6 +108,7 @@ function DeploymentFormBody({
   useEffect(() => {
     if (valuesFromTheParentContainer) {
       setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
+      setIsloading(false);
     }
   }, [isLoaded, valuesFromTheParentContainer]);
 
@@ -140,6 +140,7 @@ function DeploymentFormBody({
   const handleBasicFormParamChange = useCallback(
     (value: IBasicFormParam2) => {
       return (e: FormEvent<any>) => {
+        setIsloading(true);
         setValuesModified();
         const newValue = getValueFromEvent(e);
         const newParamsFromComponentState = updateCurrentConfigByKey(
@@ -236,6 +237,7 @@ function DeploymentFormBody({
         handleBasicFormParamChange={handleBasicFormParamChange}
         deploymentEvent={deploymentEvent}
         paramsFromComponentState={paramsFromComponentState}
+        isLoading={isLoading}
       />,
     );
   }

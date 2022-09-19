@@ -6,7 +6,34 @@ import SliderParam2 from "../SliderParam2";
 import TextParam2 from "../TextParam2";
 import { IBasicFormParam2 } from "./tempType";
 
-const MAX_LENGTH = 55;
+const MAX_LENGTH = 60;
+
+function renderCellWithTooltip(
+  value: IBasicFormParam2,
+  property: string,
+  className = "",
+  trimFromBeginning = false,
+  maxLength = MAX_LENGTH,
+) {
+  const stringValue = ["string", "number"].includes(typeof value?.[property])
+    ? value?.[property] || ""
+    : JSON.stringify(value?.[property]);
+
+  if (stringValue?.length > maxLength) {
+    const trimmedString = trimFromBeginning
+      ? "..." + stringValue.substring(stringValue.length - maxLength, stringValue.length)
+      : stringValue.substring(0, maxLength - 1) + "...";
+
+    return (
+      <span className={className}>
+        <p data-tip={stringValue}>{trimmedString}</p>
+        <ReactTooltip />
+      </span>
+    );
+  } else {
+    return <span className={className}>{stringValue}</span>;
+  }
+}
 
 export function renderConfigKeyHeader(table: any) {
   return (
@@ -16,19 +43,24 @@ export function renderConfigKeyHeader(table: any) {
           textAlign: "left",
         }}
       >
-        <CdsButton
-          type="button"
-          onClick={table.getToggleAllRowsExpandedHandler()}
-          action="flat"
-          status="primary"
-        >
-          {table.getIsAllRowsExpanded() ? (
-            <CdsIcon shape="eye-hide" size="sm" solid={true} />
-          ) : (
-            <CdsIcon shape="eye" size="sm" solid={true} />
-          )}
-        </CdsButton>
-        Key
+        <>
+          <CdsButton
+            title={table.getIsAllRowsExpanded() ? "Collapse All" : "Expand All"}
+            type="button"
+            onClick={table.getToggleAllRowsExpandedHandler()}
+            action="flat"
+            status="primary"
+            size="sm"
+            style={{ marginLeft: "-0.75em", marginRight: "-0.75em" }}
+          >
+            {table.getIsAllRowsExpanded() ? (
+              <CdsIcon shape="minus" size="sm" solid={true} />
+            ) : (
+              <CdsIcon shape="plus" size="sm" solid={true} />
+            )}
+          </CdsButton>
+          <span>Key</span>
+        </>
       </div>
     </>
   );
@@ -38,64 +70,43 @@ export function renderConfigKey(value: IBasicFormParam2, row: any) {
   return (
     <div
       style={{
-        // Since rows are flattened by default,
-        // we can use the row.depth property
-        // and paddingLeft to visually indicate the depth
-        // of the row
-        paddingLeft: `${row.depth * 2}rem`,
+        paddingLeft: `${row.depth * 0.5}rem`,
         textAlign: "left",
       }}
     >
       <>
-        {row.getCanExpand() ? (
-          <CdsButton
-            type="button"
-            onClick={row.getToggleExpandedHandler()}
-            action="flat"
-            status="primary"
-            size="sm"
-          >
-            {row.getIsExpanded() ? (
-              <CdsIcon shape="eye-hide" size="sm" solid={true} />
-            ) : (
-              <CdsIcon shape="eye" size="sm" solid={true} />
-            )}
-          </CdsButton>
-        ) : (
-          ""
-        )}
-        <br />
-        {value.key}
+        <CdsButton
+          title={row.getIsExpanded() ? "Collapse" : "Expand"}
+          type="button"
+          onClick={row.getToggleExpandedHandler()}
+          action="flat"
+          status="primary"
+          size="sm"
+          disabled={!row.getCanExpand()}
+          style={{ marginLeft: "-0.75em", marginRight: "-0.75em" }}
+        >
+          {!row.getCanExpand() || row.getIsExpanded() ? (
+            <CdsIcon shape="minus" size="sm" solid={true} />
+          ) : (
+            <CdsIcon shape="plus" size="sm" solid={true} />
+          )}
+        </CdsButton>
+        {renderCellWithTooltip(value, "key", "breakable", true, MAX_LENGTH / 1.5)}
       </>
     </div>
   );
 }
 
-function renderCellWithTooltip(value: IBasicFormParam2, property: string) {
-  const stringValue = ["string", "number"].includes(typeof value?.[property])
-    ? value?.[property] || ""
-    : JSON.stringify(value?.[property]);
-
-  return stringValue?.length > MAX_LENGTH ? (
-    <span>
-      <p data-tip={stringValue}>{stringValue.slice(0, MAX_LENGTH - 1) + "..."}</p>
-      <ReactTooltip />
-    </span>
-  ) : (
-    <span>{stringValue}</span>
-  );
-}
-
 export function renderConfigType(value: IBasicFormParam2) {
-  return renderCellWithTooltip(value, "type");
+  return renderCellWithTooltip(value, "type", "italics");
 }
 
 export function renderConfigDescription(value: IBasicFormParam2) {
-  return renderCellWithTooltip(value, "title");
+  return renderCellWithTooltip(value, "title", "breakable");
 }
 
 export function renderConfigDefaultValue(value: IBasicFormParam2) {
-  return renderCellWithTooltip(value, "defaultValue");
+  return renderCellWithTooltip(value, "defaultValue", "breakable");
 }
 
 export function renderConfigDeployedValue(value: IBasicFormParam2) {

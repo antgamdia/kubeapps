@@ -44,6 +44,10 @@
   align-items: center;
 }
 
+.italics {
+  font-style: italic;
+}
+
 .notification-icon {
   cds-icon {
     --color: var(--cds-alias-status-warning, #efc006);
@@ -82,7 +86,7 @@
 
 .deployment-form {
   &-tabs {
-    margin-bottom: 0.6rem;
+    margin-bottom: 1rem;
 
     &-data {
       margin-top: 0.6rem;

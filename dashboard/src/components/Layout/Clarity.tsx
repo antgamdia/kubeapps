@@ -35,6 +35,8 @@ import {
   timesIcon,
   trashIcon,
   uploadCloudIcon,
+  plusIcon,
+  minusIcon,
 } from "@cds/core/icon";
 import "@cds/core/accordion/register.js";
 import "@cds/core/checkbox/register.js";
@@ -43,6 +45,8 @@ import "@cds/core/range/register.js";
 import "@clr/ui/clr-ui.min.css"; // light clarity UI theme
 
 Icons.addIcons(
+  plusIcon,
+  minusIcon,
   angleIcon,
   applicationsIcon,
   backupRestoreIcon,

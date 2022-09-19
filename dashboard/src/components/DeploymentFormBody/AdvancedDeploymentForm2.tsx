@@ -2,9 +2,11 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
-import { CdsToggle, CdsToggleGroup } from "@cds/react/toggle";
+import { CdsRadio, CdsRadioGroup } from "@cds/react/radio";
+import Column from "components/js/Column";
+import Row from "components/js/Row";
 import monaco from "monaco-editor/esm/vs/editor/editor.api"; // for types only
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MonacoDiffEditor } from "react-monaco-editor";
 import { useSelector } from "react-redux";
 import { IStoreState } from "shared/types";
@@ -30,6 +32,12 @@ export default function AdvancedDeploymentForm2(props: IAdvancedDeploymentForm) 
     deploymentEvent,
   } = props;
 
+  const [usePackageDefaults, setUsePackageDefaults] = useState(
+    deploymentEvent === "upgrade" ? false : true,
+  );
+  const [useDiffEditor, setUseDiffEditor] = useState(true);
+  const [diffValues, setDiffValues] = useState(valuesFromTheAvailablePackage);
+
   const diffEditorOptions = {
     renderSideBySide: false,
     automaticLayout: true,
@@ -42,9 +50,21 @@ export default function AdvancedDeploymentForm2(props: IAdvancedDeploymentForm) 
     timeout = setTimeout(() => handleValuesChange(value || ""), 500);
   };
 
-  const [usePackageDefaults, setUsePackageDefaults] = useState(
-    deploymentEvent === "upgrade" ? false : true,
-  );
+  useEffect(() => {
+    if (!useDiffEditor) {
+      setDiffValues(valuesFromTheParentContainer || "");
+    } else if (!usePackageDefaults) {
+      setDiffValues(valuesFromTheDeployedPackage);
+    } else {
+      setDiffValues(valuesFromTheAvailablePackage);
+    }
+  }, [
+    usePackageDefaults,
+    useDiffEditor,
+    valuesFromTheAvailablePackage,
+    valuesFromTheDeployedPackage,
+    valuesFromTheParentContainer,
+  ]);
 
   const editorDidMount = (editor: monaco.editor.IStandaloneDiffEditor, m: typeof monaco) => {
     // Add "go to the next change" action
@@ -129,33 +149,84 @@ export default function AdvancedDeploymentForm2(props: IAdvancedDeploymentForm) 
 
   return (
     <div className="deployment-form-tabs-data">
-      {deploymentEvent === "upgrade" && (
-        <CdsToggleGroup className="flex-v-center">
-          <CdsToggle>
-            <label htmlFor={"toggle_"}>
-              {usePackageDefaults
-                ? "Compare against the package's default values"
-                : "Compare against the currently deployed values"}
-            </label>
-            <input
-              id={"toggle_"}
-              type="checkbox"
-              onChange={e => {
-                setUsePackageDefaults(e.target.checked);
-              }}
-              checked={!!usePackageDefaults}
-            />
-          </CdsToggle>
-        </CdsToggleGroup>
-      )}
+      <>
+        <Row>
+          <Column span={3}>
+            <CdsRadioGroup layout="vertical">
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label>Enable diff editor:</label>
+              <CdsRadio>
+                <label htmlFor="diff-compare-enable-true">Yes</label>
+                <input
+                  id="diff-compare-enable-true"
+                  type="radio"
+                  name="true"
+                  checked={useDiffEditor}
+                  onChange={e => {
+                    setUseDiffEditor(e.target.checked);
+                  }}
+                />
+              </CdsRadio>
+              <CdsRadio>
+                <label htmlFor="diff-compare-enable-false">No</label>
+                <input
+                  id="diff-compare-enable-false"
+                  type="radio"
+                  name="deployed"
+                  checked={!useDiffEditor}
+                  onChange={e => {
+                    setUseDiffEditor(!e.target.checked);
+                  }}
+                />
+              </CdsRadio>
+            </CdsRadioGroup>
+          </Column>
+          {deploymentEvent === "upgrade" ? (
+            <>
+              <Column span={3}>
+                <CdsRadioGroup layout="vertical">
+                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+                  <label>Values to compare against:</label>
+                  <CdsRadio>
+                    <label htmlFor="diff-compare-values-package">Package values</label>
+                    <input
+                      id="diff-compare-values-package"
+                      type="radio"
+                      name="package"
+                      checked={usePackageDefaults}
+                      onChange={e => {
+                        setUsePackageDefaults(e.target.checked);
+                      }}
+                    />
+                  </CdsRadio>
+                  <CdsRadio>
+                    <label htmlFor="diff-compare-values-deployed">Deployed values</label>
+                    <input
+                      id="diff-compare-values-deployed"
+                      type="radio"
+                      name="deployed"
+                      checked={!usePackageDefaults}
+                      onChange={e => {
+                        setUsePackageDefaults(!e.target.checked);
+                      }}
+                    />
+                  </CdsRadio>
+                </CdsRadioGroup>
+              </Column>
+            </>
+          ) : (
+            <></>
+          )}
+        </Row>
+      </>
       <br />
       <MonacoDiffEditor
-        original={usePackageDefaults ? valuesFromTheAvailablePackage : valuesFromTheDeployedPackage}
+        value={valuesFromTheParentContainer}
+        original={diffValues}
         className="editor"
         height="90vh"
         language="yaml"
         theme={theme === "dark" ? "vs-dark" : "light"}
-        value={valuesFromTheParentContainer}
         options={diffEditorOptions}
         onChange={onChange}
         editorDidMount={editorDidMount}

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { CellContext, ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DeploymentEvent } from "shared/types";
 import "./BasicDeploymentForm.css";
 import { fuzzySort } from "./TabularSchemaEditorTable/TableHelpers";
@@ -24,11 +24,13 @@ export interface IBasicDeploymentFormProps {
   ) => (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   deploymentEvent: DeploymentEvent;
   paramsFromComponentState: IBasicFormParam2[];
+  isLoading: boolean;
 }
 
 function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   // Fetch data from the parent component
-  const { handleBasicFormParamChange, deploymentEvent, paramsFromComponentState } = props;
+  const { handleBasicFormParamChange, deploymentEvent, paramsFromComponentState, isLoading } =
+    props;
 
   // Component state
   const [globalFilter, setGlobalFilter] = useState("");
@@ -38,13 +40,11 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   const columnHelper = createColumnHelper<IBasicFormParam2>();
   const columns = useMemo<ColumnDef<IBasicFormParam2>[]>(() => {
     const cols = [
-      // const columns = [
       columnHelper.accessor((row: IBasicFormParam2) => row.key, {
         id: "key",
         cell: (info: CellContext<IBasicFormParam2, any>) =>
           renderConfigKey(info.row.original, info.row),
         header: info => renderConfigKeyHeader(info.table),
-        // filterFn: "fuzzy",
         sortingFn: fuzzySort,
       }),
       columnHelper.accessor((row: IBasicFormParam2) => row.type, {
@@ -93,6 +93,7 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
       data={paramsFromComponentState}
       globalFilter={globalFilter}
       setGlobalFilter={setGlobalFilter}
+      isLoading={isLoading}
     />
   );
 }

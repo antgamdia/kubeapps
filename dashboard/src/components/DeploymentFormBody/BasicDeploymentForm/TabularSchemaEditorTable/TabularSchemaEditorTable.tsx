@@ -17,20 +17,25 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Key, useState } from "react";
+import Column from "components/js/Column";
+import Row from "components/js/Row";
+import LoadingWrapper from "components/LoadingWrapper";
+import { useState } from "react";
 import DebouncedInput from "./DebouncedInput";
 import { fuzzyFilter } from "./TableHelpers";
+import "./TabularSchemaEditorTable.css";
 import { IBasicFormParam2 } from "./tempType";
 
 export interface TabularSchemaEditorTableProps {
   columns: any;
-  data: any;
+  data: IBasicFormParam2[];
   globalFilter: any;
   setGlobalFilter: any;
+  isLoading: boolean;
 }
 
 export default function TabularSchemaEditorTable(props: TabularSchemaEditorTableProps) {
-  const { columns, data, globalFilter, setGlobalFilter } = props;
+  const { columns, data, globalFilter, setGlobalFilter, isLoading } = props;
 
   // Component state
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -61,34 +66,44 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
     onColumnFiltersChange: setColumnFilters,
     onExpandedChange: setGlobalExpanded,
     onGlobalFilterChange: setGlobalFilter,
-    debugTable: true,
+    enableColumnResizing: true,
   });
 
   const paginationButtons = (
     <>
-      <div style={{ marginTop: "1em" }}>
+      <div>
         <CdsButton
+          title="First page"
           style={{ marginRight: "0.5em" }}
           action="solid"
           status="primary"
           type="button"
+          size="sm"
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
           {"<<"}
         </CdsButton>
         <CdsButton
+          title="Previous Page"
           style={{ marginRight: "0.5em" }}
           action="solid"
           status="primary"
           type="button"
+          size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           {"<"}
         </CdsButton>
 
-        <CdsButton action="flat" type="button" status="neutral" style={{ marginRight: "0.5em" }}>
+        <CdsButton
+          style={{ marginRight: "0.5em" }}
+          action="flat"
+          status="neutral"
+          type="button"
+          size="sm"
+        >
           <span>
             Page{" "}
             <strong>
@@ -97,19 +112,24 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
           </span>
         </CdsButton>
         <CdsButton
+          title="Next Page"
           style={{ marginRight: "0.5em" }}
           action="solid"
           status="primary"
           type="button"
+          size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           {">"}
         </CdsButton>
         <CdsButton
+          title="Last Page"
+          style={{ marginRight: "0.5em" }}
           action="solid"
           status="primary"
           type="button"
+          size="sm"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
@@ -121,115 +141,94 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
 
   const topButtons = (
     <>
-      <div style={{ marginTop: "1em" }}>
-        <DebouncedInput
-          title="Param search"
-          value={globalFilter ?? ""}
-          onChange={value => setGlobalFilter(String(value))}
-          placeholder="Type anything to search in all columns..."
-        />
+      <div className="table-control">
+        <Row>
+          <Column span={8}>{paginationButtons}</Column>
+          <Column span={4}>
+            <DebouncedInput
+              title="Search"
+              value={globalFilter ?? ""}
+              onChange={value => setGlobalFilter(String(value))}
+              placeholder="Type to search by key..."
+            />
+          </Column>
+        </Row>
       </div>
-      {paginationButtons}
     </>
   );
   const bottomButtons = (
     <>
-      {paginationButtons}
-
-      <CdsSelect>
-        <label htmlFor="page-size">Page size</label>
-        <select
-          id="page-size"
-          value={table.getState().pagination.pageSize}
-          onChange={e => {
-            table.setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </CdsSelect>
+      <div className="table-control">
+        <Row>
+          <Column span={8}>{paginationButtons}</Column>
+          <Column span={4}>
+            <CdsSelect>
+              <label htmlFor="page-size">Page size</label>
+              <select
+                id="page-size"
+                value={table.getState().pagination.pageSize}
+                onChange={e => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+              >
+                {[10, 20, 30, 40, 50, 100].map(pageSize => (
+                  <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                  </option>
+                ))}
+              </select>
+            </CdsSelect>
+          </Column>
+        </Row>
+      </div>
     </>
   );
 
-  const tableHeader = table
-    .getHeaderGroups()
-    .map((headerGroup: { id: Key | null | undefined; headers: any[] }) => (
-      <tr key={headerGroup.id}>
-        {headerGroup.headers.map(
-          (header: {
-            id: Key | null | undefined;
-            isPlaceholder: any;
-            column: { columnDef: { header: any } };
-            getContext: () => any;
-          }) => (
-            <th key={header.id}>
-              {header.isPlaceholder
-                ? null
-                : flexRender(header.column.columnDef.header, header.getContext())}
-            </th>
-          ),
-        )}
-      </tr>
-    ));
+  const tableHeader = table.getHeaderGroups().map((headerGroup: any) => (
+    <tr key={headerGroup.id}>
+      {headerGroup.headers.map((header: any) => (
+        <th key={header.id}>
+          {header.isPlaceholder
+            ? null
+            : flexRender(header.column.columnDef.header, header.getContext())}
+        </th>
+      ))}
+    </tr>
+  ));
 
-  const tableBody = table
-    .getRowModel()
-    .rows.map((row: { id: Key | null | undefined; getVisibleCells: () => any[] }) => (
-      <tr key={row.id}>
-        {row
-          .getVisibleCells()
-          .map(
-            (cell: {
-              id: Key | null | undefined;
-              column: { columnDef: { cell: any } };
-              getContext: () => any;
-            }) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ),
-          )}
-      </tr>
-    ));
+  const tableBody = table.getRowModel().rows.map((row: any) => (
+    <tr key={row.id}>
+      {row.getVisibleCells().map((cell: any) => (
+        <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+      ))}
+    </tr>
+  ));
 
-  const tableFooter = table
-    .getFooterGroups()
-    .map((footerGroup: { id: Key | null | undefined; headers: any[] }) => (
-      <tr key={footerGroup.id}>
-        {footerGroup.headers.map(
-          (header: {
-            id: Key | null | undefined;
-            isPlaceholder: any;
-            column: { columnDef: { footer: any } };
-            getContext: () => any;
-          }) => (
-            <th key={header.id}>
-              {header.isPlaceholder
-                ? null
-                : flexRender(header.column.columnDef.footer, header.getContext())}
-            </th>
-          ),
-        )}
-      </tr>
-    ));
+  const tableFooter = table.getFooterGroups().map((footerGroup: any) => (
+    <tr key={footerGroup.id}>
+      {footerGroup.headers.map((header: any) => (
+        <th key={header.id}>
+          {header.isPlaceholder
+            ? null
+            : flexRender(header.column.columnDef.footer, header.getContext())}
+        </th>
+      ))}
+    </tr>
+  ));
 
   const tableObject = (
-    <>
-      <table className="table table-valign-center">
-        <thead>{tableHeader}</thead>
-        <tbody>{tableBody}</tbody>
-        <tfoot>{tableFooter}</tfoot>
-      </table>
-    </>
+    <table className="table table-valign-center">
+      <thead>{tableHeader}</thead>
+      <tbody>{tableBody}</tbody>
+      <tfoot>{tableFooter}</tfoot>
+    </table>
   );
 
   return (
-    <>
+    <LoadingWrapper loaded={!isLoading}>
       {topButtons}
       {tableObject}
       {bottomButtons}
-    </>
+    </LoadingWrapper>
   );
 }
