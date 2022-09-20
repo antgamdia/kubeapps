@@ -158,10 +158,15 @@ export function getValue(values: string, path: string, defaultValue?: any) {
   return value === undefined || value === null ? defaultValue : value;
 }
 
+export interface IAjvValidateResult {
+  valid: boolean;
+  errors: ErrorObject[] | null | undefined;
+}
+
 export function validate(
   values: string,
   schema: JSONSchemaType<any> | any,
 ): { valid: boolean; errors: ErrorObject[] | null | undefined } {
   const valid = ajv.validate(schema, yaml.load(values));
-  return { valid: !!valid, errors: ajv.errors };
+  return { valid: !!valid, errors: ajv.errors } as IAjvValidateResult;
 }

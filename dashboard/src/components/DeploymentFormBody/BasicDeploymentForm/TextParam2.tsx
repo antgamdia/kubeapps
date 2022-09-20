@@ -1,13 +1,17 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsControlMessage } from "@cds/react/forms";
 import { CdsInput } from "@cds/react/input";
 import { CdsTextarea } from "@cds/react/textarea";
-import { isEmpty, isNumber } from "lodash";
-import { useEffect, useState } from "react";
+import Column from "components/js/Column";
+import Row from "components/js/Row";
+import { useState } from "react";
+// import { IAjvValidateResult, validate } from "shared/schema";
+import { basicFormsDebounceTime } from "shared/utils";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
-export interface IStringParamProps {
+export interface ITextParamProps {
   id: string;
   label: string;
   inputType?: string;
@@ -17,22 +21,29 @@ export interface IStringParamProps {
   ) => (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
-function TextParam2({
-  id,
-  param,
-  label,
-  inputType,
-  handleBasicFormParamChange,
-}: IStringParamProps) {
-  const [value, setValue] = useState((param.currentValue || "") as any);
-  const [valueModified, setValueModified] = useState(false);
+function getStringValue(param: IBasicFormParam2, value?: any) {
+  if (["array", "object"].includes(param?.type)) {
+    return JSON.stringify(value || param?.currentValue);
+  } else {
+    return value?.toString() || param?.currentValue?.toString();
+  }
+}
+
+function TextParam2(props: ITextParamProps) {
+  const { id, label, inputType, param, handleBasicFormParamChange } = props;
+
+  const [currentValue, setCurrentValue] = useState(getStringValue(param));
+  // const [validated, setValidated] = useState<IAjvValidateResult>();
+  const [isValueModified, setIsValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
 
   const onChange = (
     e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
-    setValue(e.currentTarget.value);
-    setValueModified(true);
+    // TODO(agamez): validate the value
+    // setValidated(validate(e.currentTarget.value, param.schema));
+    setCurrentValue(e.currentTarget.value);
+    setIsValueModified(e.currentTarget.value !== param.currentValue);
     // Gather changes before submitting
     clearTimeout(timeout);
     const func = handleBasicFormParamChange(param);
@@ -43,54 +54,66 @@ function TextParam2({
         type: e.currentTarget.type,
       },
     } as React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
-    setThisTimeout(setTimeout(() => func(targetCopy), 500));
+    setThisTimeout(setTimeout(() => func(targetCopy), basicFormsDebounceTime));
   };
 
-  useEffect(() => {
-    if ((isNumber(param.currentValue) || !isEmpty(param.currentValue)) && !valueModified) {
-      setValue(param.currentValue);
-    }
-  }, [valueModified, param.currentValue]);
-
   let input = (
-    <CdsInput>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        onChange={onChange}
-        value={value}
-        className="clr-input deployment-form-text-input"
-        type={inputType ? inputType : "text"}
-      />
-    </CdsInput>
+    <>
+      <CdsInput>
+        <label htmlFor={id} className="hidden">
+          {label}
+        </label>
+        <input id={id} type={inputType ?? "text"} value={currentValue} onChange={onChange} />
+        {/* TODO(agamez): validate the value */}
+        {/* {!validated?.valid ? ( */}
+        {/* <CdsControlMessage status="error">{JSON.stringify(validated?.errors)}</CdsControlMessage> */}
+        {/* ) : ( */}
+        <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
+        {/* )} */}
+      </CdsInput>
+    </>
   );
   if (inputType === "textarea") {
     input = (
       <CdsTextarea>
-        <label htmlFor={id}>{label}</label>
-        <textarea id={id} onChange={onChange} value={value} />
+        <label htmlFor={id} className="hidden">
+          {label}
+        </label>
+        <textarea id={id} value={currentValue} onChange={onChange} />
+        {/* TODO(agamez): validate the value */}
+        {/* {!validated?.valid ? (
+          <CdsControlMessage status="error">{JSON.stringify(validated?.errors)}</CdsControlMessage>
+        ) : ( */}
+        <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
+        {/* )} */}
       </CdsTextarea>
     );
-  } else if (param.enum != null && param.enum.length > 0) {
-    input = (
-      <>
-        <label htmlFor={id}>{label}</label>
-        <input
-          id={id}
-          onChange={onChange}
-          value={value}
-          className="clr-input deployment-form-text-input"
-          type={inputType ? inputType : "text"}
-        />
-        <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
-          {param.enum.map((enumValue: any) => (
-            <option key={enumValue}>{enumValue}</option>
-          ))}
-        </select>
-      </>
-    );
   }
-  return <div>{input}</div>;
+  //TODO(agamez): check this case
+  //  else if (!_.isEmpty(param.enum)) {
+  //   input = (
+  //     <>
+  //       <label htmlFor={id}>{label}</label>
+  //       <input
+  //         id={id}
+  //         onChange={onChange}
+  //         value={value}
+  //         className="clr-input deployment-form-text-input"
+  //         type={inputType ? inputType : "text"}
+  //       />
+  //       <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
+  //         {param.enum.map((enumValue: any) => (
+  //           <option key={enumValue}>{enumValue}</option>
+  //         ))}
+  //       </select>
+  //     </>
+  //   );
+  // }
+  return (
+    <Row>
+      <Column span={10}>{input}</Column>
+    </Row>
+  );
 }
 
 export default TextParam2;

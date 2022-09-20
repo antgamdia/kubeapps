@@ -37,6 +37,8 @@ import {
   uploadCloudIcon,
   plusIcon,
   minusIcon,
+  floppyIcon,
+  windowCloseIcon,
 } from "@cds/core/icon";
 import "@cds/core/accordion/register.js";
 import "@cds/core/checkbox/register.js";
@@ -47,6 +49,8 @@ import "@clr/ui/clr-ui.min.css"; // light clarity UI theme
 Icons.addIcons(
   plusIcon,
   minusIcon,
+  floppyIcon,
+  windowCloseIcon,
   angleIcon,
   applicationsIcon,
   backupRestoreIcon,

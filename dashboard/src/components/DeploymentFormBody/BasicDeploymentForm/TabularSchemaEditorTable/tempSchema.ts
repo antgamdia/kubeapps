@@ -28,6 +28,7 @@ export function extractParamsFromSchema(
         ...schemaProperty,
         title: schemaProperty.title || propertyKey,
         key: itemPath,
+        schema: schemaProperty,
         hasProperties: Boolean(schemaProperty?.properties),
         params: schemaProperty?.properties
           ? extractParamsFromSchema(

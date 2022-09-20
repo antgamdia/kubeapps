@@ -9,6 +9,7 @@ export type IBasicFormParam2 = JSONSchemaType<any> & {
   defaultValue: any;
   deployedValue: any;
   currentValue: any;
+  schema: JSONSchemaType<any>;
   // TODO(agamez): support custom components again
   // customComponent?: object;
 

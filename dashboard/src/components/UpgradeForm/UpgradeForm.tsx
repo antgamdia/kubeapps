@@ -12,7 +12,7 @@ import PackageVersionSelector from "components/PackageHeader/PackageVersionSelec
 import { push } from "connected-react-router";
 import * as jsonpatch from "fast-json-patch";
 import * as yaml from "js-yaml";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
@@ -65,6 +65,7 @@ function UpgradeForm(props: IUpgradeFormProps) {
   const [deployedValues, setDeployedValues] = useState("");
   const [isDeploying, setIsDeploying] = useState(false);
   const [valuesModified, setValuesModified] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     // This block just will be run once, given that populating
@@ -223,7 +224,7 @@ function UpgradeForm(props: IUpgradeFormProps) {
                       <AvailablePackageDetailExcerpt pkg={availablePackageDetail} />
                     </Column>
                     <Column span={9}>
-                      <form onSubmit={handleDeploy}>
+                      <form onSubmit={handleDeploy} ref={formRef}>
                         <CdsFormGroup
                           className="deployment-form"
                           layout="vertical"
@@ -254,6 +255,7 @@ function UpgradeForm(props: IUpgradeFormProps) {
                           setValues={handleValuesChange}
                           appValues={appValues}
                           setValuesModified={setValuesModifiedTrue}
+                          formRef={formRef}
                         />
                       </form>
                     </Column>

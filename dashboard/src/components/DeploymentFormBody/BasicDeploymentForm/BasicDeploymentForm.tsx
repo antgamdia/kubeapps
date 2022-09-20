@@ -25,12 +25,18 @@ export interface IBasicDeploymentFormProps {
   deploymentEvent: DeploymentEvent;
   paramsFromComponentState: IBasicFormParam2[];
   isLoading: boolean;
+  saveAllChanges: () => void;
 }
 
 function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
   // Fetch data from the parent component
-  const { handleBasicFormParamChange, deploymentEvent, paramsFromComponentState, isLoading } =
-    props;
+  const {
+    handleBasicFormParamChange,
+    saveAllChanges,
+    deploymentEvent,
+    paramsFromComponentState,
+    isLoading,
+  } = props;
 
   // Component state
   const [globalFilter, setGlobalFilter] = useState("");
@@ -43,8 +49,8 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
       columnHelper.accessor((row: IBasicFormParam2) => row.key, {
         id: "key",
         cell: (info: CellContext<IBasicFormParam2, any>) =>
-          renderConfigKey(info.row.original, info.row),
-        header: info => renderConfigKeyHeader(info.table),
+          renderConfigKey(info.row.original, info.row, saveAllChanges),
+        header: info => renderConfigKeyHeader(info.table, saveAllChanges),
         sortingFn: fuzzySort,
       }),
       columnHelper.accessor((row: IBasicFormParam2) => row.type, {
@@ -85,7 +91,7 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
       );
     }
     return cols;
-  }, [columnHelper, deploymentEvent, handleBasicFormParamChange]);
+  }, [columnHelper, deploymentEvent, handleBasicFormParamChange, saveAllChanges]);
 
   return (
     <TabularSchemaEditorTable
@@ -94,6 +100,7 @@ function BasicDeploymentForm(props: IBasicDeploymentFormProps) {
       globalFilter={globalFilter}
       setGlobalFilter={setGlobalFilter}
       isLoading={isLoading}
+      saveAllChanges={saveAllChanges}
     />
   );
 }

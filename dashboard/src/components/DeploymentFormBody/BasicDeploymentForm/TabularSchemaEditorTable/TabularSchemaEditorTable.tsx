@@ -32,10 +32,11 @@ export interface TabularSchemaEditorTableProps {
   globalFilter: any;
   setGlobalFilter: any;
   isLoading: boolean;
+  saveAllChanges: () => void;
 }
 
 export default function TabularSchemaEditorTable(props: TabularSchemaEditorTableProps) {
-  const { columns, data, globalFilter, setGlobalFilter, isLoading } = props;
+  const { columns, data, globalFilter, setGlobalFilter, isLoading, saveAllChanges } = props;
 
   // Component state
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -79,7 +80,10 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
           status="primary"
           type="button"
           size="sm"
-          onClick={() => table.setPageIndex(0)}
+          onClick={() => {
+            saveAllChanges();
+            table.setPageIndex(0);
+          }}
           disabled={!table.getCanPreviousPage()}
         >
           {"<<"}
@@ -91,7 +95,10 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
           status="primary"
           type="button"
           size="sm"
-          onClick={() => table.previousPage()}
+          onClick={() => {
+            saveAllChanges();
+            table.previousPage();
+          }}
           disabled={!table.getCanPreviousPage()}
         >
           {"<"}
@@ -118,7 +125,10 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
           status="primary"
           type="button"
           size="sm"
-          onClick={() => table.nextPage()}
+          onClick={() => {
+            saveAllChanges();
+            table.nextPage();
+          }}
           disabled={!table.getCanNextPage()}
         >
           {">"}
@@ -130,7 +140,10 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
           status="primary"
           type="button"
           size="sm"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          onClick={() => {
+            saveAllChanges();
+            table.setPageIndex(table.getPageCount() - 1);
+          }}
           disabled={!table.getCanNextPage()}
         >
           {">>"}
@@ -148,7 +161,10 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
             <DebouncedInput
               title="Search"
               value={globalFilter ?? ""}
-              onChange={value => setGlobalFilter(String(value))}
+              onChange={value => {
+                saveAllChanges();
+                setGlobalFilter(String(value));
+              }}
               placeholder="Type to search by key..."
             />
           </Column>
@@ -168,10 +184,11 @@ export default function TabularSchemaEditorTable(props: TabularSchemaEditorTable
                 id="page-size"
                 value={table.getState().pagination.pageSize}
                 onChange={e => {
+                  saveAllChanges();
                   table.setPageSize(Number(e.target.value));
                 }}
               >
-                {[10, 20, 30, 40, 50, 100].map(pageSize => (
+                {[10, 20, 30, 40, 50].map(pageSize => (
                   <option key={pageSize} value={pageSize}>
                     Show {pageSize}
                   </option>

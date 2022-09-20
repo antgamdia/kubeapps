@@ -1,8 +1,14 @@
 // Copyright 2019-2022 the Kubeapps contributors.
 // SPDX-License-Identifier: Apache-2.0
 
+import { CdsControlMessage } from "@cds/react/forms";
+import { CdsInput } from "@cds/react/input";
 import { CdsRange } from "@cds/react/range";
-import { useEffect, useState } from "react";
+import Column from "components/js/Column";
+import Row from "components/js/Row";
+import _ from "lodash";
+import { useState } from "react";
+import { basicFormsDebounceTime } from "shared/utils";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface ISliderParamProps {
@@ -18,57 +24,16 @@ export interface ISliderParamProps {
   ) => (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-export interface ISliderParamState {
-  value: number;
-}
-
-function toNumber(value: string | number) {
-  // Force to return a Number from a string removing any character that is not a digit
-  return typeof value === "number" ? value : Number(value.replace(/[^\d.]/g, ""));
-}
-
-function getDefaultValue(min: number, value?: string) {
-  return (value && toNumber(value)) || min;
-}
-
 function SliderParam2(props: ISliderParamProps) {
-  const { handleBasicFormParamChange, id, max, min, param, step } = props;
-  const [value, setValue] = useState(getDefaultValue(min, param.currentValue));
+  const { handleBasicFormParamChange, id, label, max, min, param, step } = props;
+
+  const [currentValue, setCurrentValue] = useState(_.toNumber(param.currentValue) || min);
+  const [isValueModified, setIsValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
 
-  useEffect(() => {
-    setValue(getDefaultValue(min, param.currentValue));
-  }, [param, min]);
-
-  // const handleParamChange = (newValue: number) => {
-  //   handleBasicFormParamChange(param)({
-  //     currentTarget: {
-  //       value: param.type === "string" ? `${newValue}${unit}` : newValue,
-  //     },
-  //   } as React.FormEvent<HTMLInputElement>);
-  // };
-
-  // onChangeSlider is run when the slider is dropped at one point
-  // at that point we update the parameter
-  // const onChangeSlider = (values: readonly number[]) => {
-  //   handleParamChange(values[0]);
-  // };
-
-  // // onUpdateSlider is run when dragging the slider
-  // // we just update the state here for a faster response
-  // const onUpdateSlider = (values: readonly number[]) => {
-  //   setValue(values[0]);
-  // };
-
-  // const onChangeInput = (e: React.FormEvent<HTMLInputElement>) => {
-  //   const numberValue = toNumber(e.currentTarget.value);
-  //   setValue(numberValue);
-  //   handleParamChange(numberValue);
-  // };
-
-  const onChangeSlider = (e: React.FormEvent<HTMLInputElement>) => {
-    setValue(Number(e.currentTarget.value));
-    // setValueModified(true);
+  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setCurrentValue(_.toNumber(e.currentTarget.value));
+    setIsValueModified(_.toNumber(e.currentTarget.value) !== param.currentValue);
     // Gather changes before submitting
     clearTimeout(timeout);
     const func = handleBasicFormParamChange(param);
@@ -79,56 +44,40 @@ function SliderParam2(props: ISliderParamProps) {
         type: e.currentTarget.type,
       },
     } as React.FormEvent<HTMLInputElement>;
-    setThisTimeout(setTimeout(() => func(targetCopy), 500));
+    setThisTimeout(setTimeout(() => func(targetCopy), basicFormsDebounceTime));
   };
 
+  const input = (
+    <CdsRange>
+      <label htmlFor={id} className="hidden">
+        {label}
+      </label>
+      <input
+        type="range"
+        min={Math.min(min, currentValue)}
+        max={Math.max(max, currentValue)}
+        step={step}
+        onChange={onChange}
+        value={currentValue}
+      />
+      <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
+    </CdsRange>
+  );
+
+  const inputText = (
+    <CdsInput>
+      <label htmlFor={id + "_text"} className="hidden">
+        {label}
+      </label>
+      <input id={id + "_text"} type="number" step={step} onChange={onChange} value={currentValue} />
+    </CdsInput>
+  );
+
   return (
-    <div>
-      {/* <label htmlFor={id}>
-        <span className="centered deployment-form-label deployment-form-label-text-param">
-          {label}
-        </span> */}
-
-      <CdsRange>
-        <label htmlFor={id}>{value}</label>
-        <input
-          type="range"
-          min={Math.min(param.minimum || min, value)}
-          max={Math.max(param.maximum || max, value)}
-          step={step || 1}
-          onChange={onChangeSlider}
-          // onUpdate={onUpdateSlider}
-          value={value}
-        />
-      </CdsRange>
-
-      {/* <div className="slider-block">
-          <div className="slider-content">
-            <Slider
-              // If the parameter defines a minimum or maximum, maintain those
-              min={Math.min(param.minimum || min, value)}
-              max={Math.max(param.maximum || max, value)}
-              step={step || 1}
-              default={value}
-              onChange={onChangeSlider}
-              // onUpdate={onUpdateSlider}
-              values={value}
-              sliderStyle={{ width: "100%", margin: "1.2em 0 1.2em 0" }}
-            />
-          </div>
-          <div className="slider-input-and-unit">
-            <input
-              className="slider-input clr-input"
-              id={id}
-              onChange={onChangeInput}
-              value={value}
-            />
-            <span className="margin-l-normal">{unit}</span>
-          </div>
-        </div>
-        {param.description && <span className="description">{param.description}</span>}
-      </label> */}
-    </div>
+    <Row>
+      <Column span={3}>{inputText}</Column>
+      <Column span={7}>{input}</Column>
+    </Row>
   );
 }
 

@@ -35,7 +35,7 @@ function renderCellWithTooltip(
   }
 }
 
-export function renderConfigKeyHeader(table: any) {
+export function renderConfigKeyHeader(table: any, _saveAllChanges: any) {
   return (
     <>
       <div
@@ -66,7 +66,7 @@ export function renderConfigKeyHeader(table: any) {
   );
 }
 
-export function renderConfigKey(value: IBasicFormParam2, row: any) {
+export function renderConfigKey(value: IBasicFormParam2, row: any, _saveAllChanges: any) {
   return (
     <div
       style={{
@@ -85,10 +85,14 @@ export function renderConfigKey(value: IBasicFormParam2, row: any) {
           disabled={!row.getCanExpand()}
           style={{ marginLeft: "-0.75em", marginRight: "-0.75em" }}
         >
-          {!row.getCanExpand() || row.getIsExpanded() ? (
-            <CdsIcon shape="minus" size="sm" solid={true} />
+          {row.getCanExpand() ? (
+            row.getIsExpanded() ? (
+              <CdsIcon shape="minus" size="sm" solid={true} />
+            ) : (
+              <CdsIcon shape="plus" size="sm" solid={true} />
+            )
           ) : (
-            <CdsIcon shape="plus" size="sm" solid={true} />
+            <></>
           )}
         </CdsButton>
         {renderCellWithTooltip(value, "key", "breakable", true, MAX_LENGTH / 1.5)}
@@ -124,14 +128,19 @@ export function renderConfigCurrentValuePro(
     return (
       <>
         {["boolean"].includes(param?.type) && (
-          <BooleanParam2 param={param} handleBasicFormParamChange={handleBasicFormParamChange} />
+          <BooleanParam2
+            id={param.key}
+            label={param.title || param.path}
+            param={param}
+            handleBasicFormParamChange={handleBasicFormParamChange}
+          />
         )}
         {["integer", "number"].includes(param?.type) && (
           <SliderParam2
-            label={param.title || param.path}
-            handleBasicFormParamChange={handleBasicFormParamChange}
             id={param.key}
+            label={param.title || param.path}
             param={param}
+            handleBasicFormParamChange={handleBasicFormParamChange}
             min={param.minimum || 1}
             max={param.maximum || 1000}
             step={1}
@@ -140,20 +149,21 @@ export function renderConfigCurrentValuePro(
         )}
         {["string"].includes(param?.type) && (
           <TextParam2
-            label={param.title || param.path}
-            handleBasicFormParamChange={handleBasicFormParamChange}
             id={param.key}
+            label={param.title || param.path}
             param={param}
             inputType={param.title.includes("password") ? "password" : "string"}
+            handleBasicFormParamChange={handleBasicFormParamChange}
           />
         )}
+        {/* TODO(agamez): handle objects and arrays properly */}
         {["array", "object"].includes(param?.type) && (
           <TextParam2
-            label={param.title || param.path}
-            handleBasicFormParamChange={handleBasicFormParamChange}
             id={param.key}
+            label={param.title || param.path}
             param={param}
             inputType={"textarea"}
+            handleBasicFormParamChange={handleBasicFormParamChange}
           />
         )}
       </>

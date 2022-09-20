@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { CdsButton } from "@cds/react/button";
+import { CdsControlMessage } from "@cds/react/forms";
 import { CdsIcon } from "@cds/react/icon";
 import Alert from "components/js/Alert";
 import Tabs from "components/Tabs";
 import _ from "lodash";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, RefObject, useCallback, useEffect, useState } from "react";
 import YAML from "yaml";
 import { DeploymentEvent, IPackageState } from "../../shared/types";
 import { getValueFromEvent } from "../../shared/utils";
@@ -32,6 +33,7 @@ export interface IDeploymentFormBodyProps {
   appValues: string;
   setValues: (values: string) => void;
   setValuesModified: () => void;
+  formRef: RefObject<HTMLFormElement>;
 }
 
 function DeploymentFormBody({
@@ -44,6 +46,7 @@ function DeploymentFormBody({
   appValues: valuesFromTheParentContainer,
   setValues: setValuesFromTheParentContainer,
   setValuesModified,
+  formRef,
 }: IDeploymentFormBodyProps) {
   const {
     availablePackageDetail,
@@ -70,6 +73,8 @@ function DeploymentFormBody({
   const [restoreModalIsOpen, setRestoreModalOpen] = useState(false);
   const [isLoaded, setIsloaded] = useState(false);
   const [isLoading, setIsloading] = useState(true);
+  const [unsavedChangesMap] = useState(new Map<string, any>());
+  const [shouldForceSubmit, setShouldForceSubmit] = useState(false);
 
   // setBasicFormParameters when basicFormParameters changes
   useEffect(() => {
@@ -87,6 +92,7 @@ function DeploymentFormBody({
       );
       setParamsFromComponentState(initialParamsFromContainer);
       setIsloaded(true);
+      setIsloading(false);
     }
   }, [
     deploymentEvent,
@@ -108,7 +114,6 @@ function DeploymentFormBody({
   useEffect(() => {
     if (valuesFromTheParentContainer) {
       setValuesFromTheParentContainerNodes(parseToYAMLNodes(valuesFromTheParentContainer));
-      setIsloading(false);
     }
   }, [isLoaded, valuesFromTheParentContainer]);
 
@@ -118,11 +123,47 @@ function DeploymentFormBody({
     }
   }, [isLoaded, valuesFromTheDeployedPackage, valuesFromTheParentContainer]);
 
-  const handleValuesChange = (value: string) => {
+  const handleYAMLEditorChange = (value: string) => {
     setValuesFromTheParentContainer(value);
     setValuesModified();
   };
 
+  const forceSubmit = useCallback(() => {
+    // the API was added recently, but should replace the manual dispatch of a submit event with bubbles:true (react>=17)
+    formRef?.current?.requestSubmit();
+  }, [formRef]);
+
+  // if this flag is set, force the submit of the form
+  useEffect(() => {
+    if (shouldForceSubmit) {
+      forceSubmit();
+      setShouldForceSubmit(false);
+    }
+  }, [forceSubmit, shouldForceSubmit]);
+
+  const saveAllChanges = () => {
+    let newValuesFromTheParentContainer, newParamsFromComponentState;
+    unsavedChangesMap.forEach((value, key) => {
+      setIsloading(true);
+      setValuesModified();
+      const aa = updateCurrentConfigByKey(paramsFromComponentState, key, value);
+      newParamsFromComponentState = [...aa];
+      setParamsFromComponentState(newParamsFromComponentState);
+
+      newValuesFromTheParentContainer = setValueee(valuesFromTheParentContainerNodes, key, value);
+      setValuesFromTheParentContainer(newValuesFromTheParentContainer);
+    });
+    unsavedChangesMap.clear();
+    setIsloading(false);
+  };
+
+  // save the pending changes and fire the submit event (via useEffect, to actually get the saved changes)
+  const handleDeployClick = () => {
+    saveAllChanges();
+    setShouldForceSubmit(true);
+  };
+
+  // re-build the table based on the new YAML
   const refreshBasicParameters = () => {
     if (schemaFromTheAvailablePackage && shouldRenderBasicForm(schemaFromTheAvailablePackage)) {
       setParamsFromComponentState(
@@ -137,33 +178,15 @@ function DeploymentFormBody({
     }
   };
 
-  const handleBasicFormParamChange = useCallback(
+  // a change in the table is just a new entry in the unsavedChangesMap for performance reasons
+  // later on, the changes will be saved in bulk
+  const handleTableChange = useCallback(
     (value: IBasicFormParam2) => {
       return (e: FormEvent<any>) => {
-        setIsloading(true);
-        setValuesModified();
-        const newValue = getValueFromEvent(e);
-        const newParamsFromComponentState = updateCurrentConfigByKey(
-          paramsFromComponentState,
-          value.key,
-          newValue,
-        );
-        setParamsFromComponentState([...newParamsFromComponentState]);
-
-        const newValuesFromTheParentContainer = setValueee(
-          valuesFromTheParentContainerNodes,
-          value.key,
-          newValue,
-        );
-        setValuesFromTheParentContainer(newValuesFromTheParentContainer);
+        unsavedChangesMap.set(value.key, getValueFromEvent(e));
       };
     },
-    [
-      paramsFromComponentState,
-      setValuesFromTheParentContainer,
-      setValuesModified,
-      valuesFromTheParentContainerNodes,
-    ],
+    [unsavedChangesMap],
   );
 
   // The basic form should be rendered if there are params to show
@@ -210,8 +233,8 @@ function DeploymentFormBody({
     !availablePackageDetail ||
     (!versions.length &&
       shouldRenderBasicForm(schemaFromTheAvailablePackage) &&
-      !paramsFromComponentState.length &&
-      !Object.keys(valuesFromTheAvailablePackageNodes).length)
+      !_.isEmpty(paramsFromComponentState) &&
+      !_.isEmpty(valuesFromTheAvailablePackageNodes))
   ) {
     return (
       <LoadingWrapper
@@ -233,18 +256,21 @@ function DeploymentFormBody({
       </div>,
     );
     tabData.push(
-      <BasicDeploymentForm
-        handleBasicFormParamChange={handleBasicFormParamChange}
-        deploymentEvent={deploymentEvent}
-        paramsFromComponentState={paramsFromComponentState}
-        isLoading={isLoading}
-      />,
+      <>
+        <BasicDeploymentForm
+          handleBasicFormParamChange={handleTableChange}
+          deploymentEvent={deploymentEvent}
+          paramsFromComponentState={paramsFromComponentState}
+          isLoading={isLoading}
+          saveAllChanges={saveAllChanges}
+        />
+      </>,
     );
   }
 
   // Text editor creation
   tabColumns.push(
-    <div role="presentation">
+    <div role="presentation" onClick={saveAllChanges}>
       <span>YAML editor</span>
     </div>,
   );
@@ -254,7 +280,7 @@ function DeploymentFormBody({
       deploymentEvent={deploymentEvent}
       valuesFromTheAvailablePackage={valuesFromTheAvailablePackage || ""}
       valuesFromTheDeployedPackage={valuesFromTheDeployedPackage || ""}
-      handleValuesChange={handleValuesChange}
+      handleValuesChange={handleYAMLEditorChange}
       key="advanced-deployment-form"
     ></AdvancedDeploymentForm2>,
   );
@@ -272,9 +298,12 @@ function DeploymentFormBody({
       />
       <div className="deployment-form-tabs">
         <Tabs columns={tabColumns} data={tabData} id="deployment-form-body-tabs" />
+        <CdsControlMessage>
+          The unsaved changes will be applied before deploying or visualizing the diff view.
+        </CdsControlMessage>
       </div>
       <div className="deployment-form-control-buttons">
-        <CdsButton status="primary" type="submit">
+        <CdsButton status="primary" type="button" onClick={handleDeployClick}>
           <CdsIcon shape="deploy" /> Deploy {pkgVersion}
         </CdsButton>
         <CdsButton

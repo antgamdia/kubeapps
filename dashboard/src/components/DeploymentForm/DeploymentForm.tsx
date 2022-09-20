@@ -17,7 +17,7 @@ import {
   ReconciliationOptions,
 } from "gen/kubeappsapis/core/packages/v1alpha1/packages";
 import { Plugin } from "gen/kubeappsapis/core/plugins/v1alpha1/plugins";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as ReactRouter from "react-router-dom";
 import "react-tabs/style/react-tabs.css";
@@ -63,6 +63,7 @@ export default function DeploymentForm() {
   const [valuesModified, setValuesModified] = useState(false);
   const [serviceAccountList, setServiceAccountList] = useState([] as string[]);
   const [reconciliationOptions, setReconciliationOptions] = useState({} as ReconciliationOptions);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const error = apps.error || selectedPackage.error;
 
@@ -209,7 +210,7 @@ export default function DeploymentForm() {
           </Column>
           <Column span={9}>
             {error && <Alert theme="danger">An error occurred: {error.message}</Alert>}
-            <form onSubmit={handleDeploy}>
+            <form onSubmit={handleDeploy} ref={formRef}>
               <CdsFormGroup
                 validate={true}
                 className="deployment-form"
@@ -267,6 +268,7 @@ export default function DeploymentForm() {
                 setValues={handleValuesChange}
                 appValues={appValues}
                 setValuesModified={setValuesModifiedTrue}
+                formRef={formRef}
               />
             </form>
           </Column>

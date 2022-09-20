@@ -22,6 +22,7 @@ const defaultProps: IDeploymentFormBodyProps = {
   appValues: "foo: bar\n",
   setValues: jest.fn(),
   setValuesModified: jest.fn(),
+  formRef: { current: null },
 };
 
 jest.useFakeTimers();

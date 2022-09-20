@@ -43,11 +43,9 @@ export default function AdvancedDeploymentForm2(props: IAdvancedDeploymentForm) 
     automaticLayout: true,
   };
 
-  let timeout: NodeJS.Timeout;
   const onChange = (value: string | undefined, _ev: any) => {
-    // Gather changes before submitting
-    clearTimeout(timeout);
-    timeout = setTimeout(() => handleValuesChange(value || ""), 500);
+    // debouncing is not required as the diff calculation happens in a webworker
+    handleValuesChange(value || "");
   };
 
   useEffect(() => {
