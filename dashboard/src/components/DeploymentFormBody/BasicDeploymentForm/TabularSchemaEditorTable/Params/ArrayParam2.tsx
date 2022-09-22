@@ -9,8 +9,8 @@ import { CdsToggle, CdsToggleGroup } from "@cds/react/toggle";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
 import { useState } from "react";
+import { IBasicFormParam2 } from "shared/types";
 import { basicFormsDebounceTime as DEFAULT_DEBOUNCE_TIME } from "shared/utils";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface IArrayParamProps {
   id: string;
@@ -43,7 +43,6 @@ function ArrayParam2(props: IArrayParamProps) {
     setThisTimeout(setTimeout(() => func(targetCopy), DEFAULT_DEBOUNCE_TIME));
   };
 
-  //
   const onChangeArrayItem = (index: number, value: string | number | boolean) => {
     currentArrayItems[index] = value;
     setCurrentArrayItems([...currentArrayItems]);
@@ -57,10 +56,8 @@ function ArrayParam2(props: IArrayParamProps) {
         return (
           <>
             <CdsInput className="self-center">
-              <label htmlFor={id + "-" + index} className="hidden">
-                {label}
-              </label>
               <input
+                aria-label={label}
                 key={id + "-" + index}
                 id={id + "-" + index}
                 type="number"
@@ -70,10 +67,8 @@ function ArrayParam2(props: IArrayParamProps) {
               />
             </CdsInput>
             <CdsRange>
-              <label htmlFor={id + "-" + index} className="hidden">
-                {label}
-              </label>
               <input
+                aria-label={label}
                 key={id + "-" + index}
                 id={id + "-" + index}
                 type="range"
@@ -87,10 +82,8 @@ function ArrayParam2(props: IArrayParamProps) {
         return (
           <CdsToggleGroup className="flex-v-center">
             <CdsToggle>
-              <label htmlFor={id + "-" + index} className="hidden">
-                {label}
-              </label>
               <input
+                aria-label={label}
                 key={id + "-" + index}
                 id={id + "-" + index}
                 type="checkbox"
@@ -101,13 +94,12 @@ function ArrayParam2(props: IArrayParamProps) {
           </CdsToggleGroup>
         );
 
+      // TODO(agamez): handle enums
       default:
         return (
           <CdsInput>
-            <label htmlFor={id + "-" + index} className="hidden">
-              {label}
-            </label>
             <input
+              aria-label={label}
               key={id + "-" + index}
               id={id + "-" + index}
               value={currentArrayItems[index] as string}

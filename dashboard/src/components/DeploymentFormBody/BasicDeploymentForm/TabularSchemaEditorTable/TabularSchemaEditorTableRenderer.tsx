@@ -1,13 +1,12 @@
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
-import _ from "lodash";
 import ReactTooltip from "react-tooltip";
-import ArrayParam2 from "../ArrayParam2";
-import BooleanParam2 from "../BooleanParam2";
-import CustomFormComponentLoader2 from "../CustomFormParam2";
-import SliderParam2 from "../SliderParam2";
-import TextParam2 from "../TextParam2";
-import { IBasicFormParam2 } from "./tempType";
+import { IBasicFormParam2 } from "shared/types";
+import ArrayParam2 from "./Params/ArrayParam2";
+import BooleanParam2 from "./Params/BooleanParam2";
+import CustomFormComponentLoader2 from "./Params/CustomFormParam2";
+import SliderParam2 from "./Params/SliderParam2";
+import TextParam2 from "./Params/TextParam2";
 
 const MAX_LENGTH = 60;
 
@@ -142,7 +141,7 @@ export function renderConfigCurrentValuePro(
     );
   }
   // if the param has properties, each of them will be rendered as a row
-  if (!_.isEmpty(param.hasProperties)) {
+  if (param.hasProperties) {
     return <></>;
   }
 
@@ -184,14 +183,14 @@ export function renderConfigCurrentValuePro(
         />
       );
     case "array":
-      if (["string", "number", "integer", "boolean"].includes(param?.schema?.items?.type)) {
+      if (param?.schema?.items?.type !== "object") {
         return (
           <ArrayParam2
             id={param.key}
             label={param.title || param.path}
             param={param}
             handleBasicFormParamChange={handleBasicFormParamChange}
-            type={param?.schema?.items?.type}
+            type={param?.schema?.items?.type ?? "string"}
           />
         );
       } else {

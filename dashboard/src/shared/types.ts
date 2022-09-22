@@ -434,6 +434,21 @@ export interface IBasicFormParam {
     | string;
   children?: IBasicFormParam[];
 }
+
+// TODO(agamez): TEMPORARY INTERFACE, rename it to IBasicFormParam instead
+export type IBasicFormParam2 = JSONSchemaType<any> & {
+  key: string;
+  title: string;
+  hasProperties: boolean;
+  params?: IBasicFormParam2[];
+  enum?: string[];
+  defaultValue: any;
+  deployedValue: any;
+  currentValue: any;
+  schema: JSONSchemaType<any>;
+  isCustomComponent?: boolean;
+};
+
 export interface IBasicFormSliderParam extends IBasicFormParam {
   sliderMin?: number;
   sliderMax?: number;

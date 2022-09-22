@@ -6,7 +6,7 @@ import { CdsToggle, CdsToggleGroup } from "@cds/react/toggle";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
 import { useState } from "react";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
+import { IBasicFormParam2 } from "shared/types";
 
 export interface IBooleanParamProps {
   id: string;
@@ -39,10 +39,13 @@ export default function BooleanParam2(props: IBooleanParamProps) {
   const input = (
     <CdsToggleGroup className="flex-v-center">
       <CdsToggle>
-        <label htmlFor={id} className="hidden">
-          {label}
-        </label>
-        <input id={id} type="checkbox" onChange={onChange} checked={currentValue} />
+        <input
+          aria-label={label}
+          id={id}
+          type="checkbox"
+          onChange={onChange}
+          checked={currentValue}
+        />
         <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
       </CdsToggle>
     </CdsToggleGroup>

@@ -1,9 +1,8 @@
 import { JSONSchemaType } from "ajv";
 import _ from "lodash";
 import { parsePath, parsePathAndValue, toStringOptions } from "shared/schema";
-import { DeploymentEvent } from "shared/types";
+import { DeploymentEvent, IBasicFormParam2 } from "shared/types";
 import YAML from "yaml";
-import { IBasicFormParam2 } from "./tempType";
 
 const IS_CUSTOM_COMPONENT_PROP_NAME = "x-is-custom-component";
 

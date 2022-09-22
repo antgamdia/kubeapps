@@ -4,7 +4,6 @@
 import { CdsInput } from "@cds/react/input";
 import { InputHTMLAttributes, useEffect, useState } from "react";
 
-/* eslint-disable jsx-a11y/label-has-associated-control */
 export default function DebouncedInput({
   value: initialValue,
   onChange,
@@ -31,8 +30,8 @@ export default function DebouncedInput({
 
   return (
     <CdsInput>
-      <label>{props.title || "input"}</label>
-      <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+      <label htmlFor={props.id}> {props.title || "input"}</label>
+      <input id={props.id} {...props} value={value} onChange={e => setValue(e.target.value)} />
     </CdsInput>
   );
 }

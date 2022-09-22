@@ -9,8 +9,8 @@ import Column from "components/js/Column";
 import Row from "components/js/Row";
 import _ from "lodash";
 import { useState } from "react";
+import { IBasicFormParam2 } from "shared/types";
 import { basicFormsDebounceTime } from "shared/utils";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface ITextParamProps {
   id: string;
@@ -63,10 +63,13 @@ function TextParam2(props: ITextParamProps) {
   let input = (
     <>
       <CdsInput>
-        <label htmlFor={id} className="hidden">
-          {label}
-        </label>
-        <input id={id} type={inputType ?? "text"} value={currentValue} onChange={onChange} />
+        <input
+          aria-label={label}
+          id={id}
+          type={inputType ?? "text"}
+          value={currentValue}
+          onChange={onChange}
+        />
         {/* TODO(agamez): validate the value */}
         {/* {!validated?.valid && !_.isEmpty(validated?.errors) && (
           <CdsControlMessage status="error">
@@ -80,10 +83,7 @@ function TextParam2(props: ITextParamProps) {
   if (inputType === "textarea") {
     input = (
       <CdsTextarea>
-        <label htmlFor={id} className="hidden">
-          {label}
-        </label>
-        <textarea id={id} value={currentValue} onChange={onChange} />
+        <textarea aria-label={label} id={id} value={currentValue} onChange={onChange} />
         {/* TODO(agamez): validate the value */}
         {/* {!validated?.valid && (
           <CdsControlMessage status="error">
@@ -97,10 +97,7 @@ function TextParam2(props: ITextParamProps) {
     input = (
       <>
         <CdsSelect layout="horizontal">
-          <label htmlFor={id} className="hidden">
-            {label}
-          </label>
-          <select id={id} onChange={onChange} value={currentValue}>
+          <select aria-label={label} id={id} onChange={onChange} value={currentValue}>
             {param?.enum?.map((enumValue: any) => (
               <option key={enumValue}>{enumValue}</option>
             ))}

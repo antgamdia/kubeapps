@@ -8,8 +8,8 @@ import Column from "components/js/Column";
 import Row from "components/js/Row";
 import _ from "lodash";
 import { useState } from "react";
+import { IBasicFormParam2 } from "shared/types";
 import { basicFormsDebounceTime } from "shared/utils";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
 export interface ISliderParamProps {
   id: string;
@@ -49,10 +49,8 @@ function SliderParam2(props: ISliderParamProps) {
 
   const input = (
     <CdsRange>
-      <label htmlFor={id} className="hidden">
-        {label}
-      </label>
       <input
+        aria-label={label}
         type="range"
         min={Math.min(min, currentValue)}
         max={Math.max(max, currentValue)}
@@ -65,12 +63,18 @@ function SliderParam2(props: ISliderParamProps) {
   );
 
   const inputText = (
-    <CdsInput>
-      <label htmlFor={id + "_text"} className="hidden">
-        {label}
-      </label>
-      <input id={id + "_text"} type="number" step={step} onChange={onChange} value={currentValue} />
-    </CdsInput>
+    <div className="self-center">
+      <CdsInput>
+        <input
+          aria-label={label}
+          id={id + "_text"}
+          type="number"
+          step={step}
+          onChange={onChange}
+          value={currentValue}
+        />
+      </CdsInput>
+    </div>
   );
 
   return (

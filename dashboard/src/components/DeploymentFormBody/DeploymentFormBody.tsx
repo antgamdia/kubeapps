@@ -9,7 +9,7 @@ import Tabs from "components/Tabs";
 import _ from "lodash";
 import { FormEvent, RefObject, useCallback, useEffect, useState } from "react";
 import YAML from "yaml";
-import { DeploymentEvent, IPackageState } from "../../shared/types";
+import { DeploymentEvent, IBasicFormParam2, IPackageState } from "../../shared/types";
 import { getValueFromEvent } from "../../shared/utils";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
@@ -21,7 +21,6 @@ import {
   setValueee,
   updateCurrentConfigByKey,
 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
-import { IBasicFormParam2 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempType";
 
 export interface IDeploymentFormBodyProps {
   deploymentEvent: DeploymentEvent;

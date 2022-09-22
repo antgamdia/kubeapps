@@ -22,9 +22,9 @@ import Row from "components/js/Row";
 import LoadingWrapper from "components/LoadingWrapper";
 import { useState } from "react";
 import DebouncedInput from "./DebouncedInput";
-import { fuzzyFilter } from "./TableHelpers";
+import { fuzzyFilter } from "./TabularSchemaEditorTableHelpers";
 import "./TabularSchemaEditorTable.css";
-import { IBasicFormParam2 } from "./tempType";
+import { IBasicFormParam2 } from "shared/types";
 
 export interface TabularSchemaEditorTableProps {
   columns: any;

@@ -3,10 +3,10 @@
 
 import { CellContext, ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import React, { useMemo, useState } from "react";
-import { DeploymentEvent } from "shared/types";
+import { DeploymentEvent, IBasicFormParam2 } from "shared/types";
 import "./BasicDeploymentForm.css";
-import { fuzzySort } from "./TabularSchemaEditorTable/TableHelpers";
 import TabularSchemaEditorTable from "./TabularSchemaEditorTable/TabularSchemaEditorTable";
+import { fuzzySort } from "./TabularSchemaEditorTable/TabularSchemaEditorTableHelpers";
 import {
   renderConfigCurrentValuePro,
   renderConfigDefaultValue,
@@ -15,8 +15,7 @@ import {
   renderConfigKey,
   renderConfigKeyHeader,
   renderConfigType,
-} from "./TabularSchemaEditorTable/tempRenderers";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
+} from "./TabularSchemaEditorTable/TabularSchemaEditorTableRenderer";
 
 export interface IBasicDeploymentFormProps {
   handleBasicFormParamChange: (

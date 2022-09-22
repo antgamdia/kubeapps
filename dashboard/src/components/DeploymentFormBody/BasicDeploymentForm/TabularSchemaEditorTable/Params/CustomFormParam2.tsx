@@ -3,9 +3,9 @@
 
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { IStoreState } from "shared/types";
-import { CustomComponent } from "../../../RemoteComponent";
-import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
+import { CustomComponent } from "RemoteComponent";
+import { IBasicFormParam2, IStoreState } from "shared/types";
+
 export interface ICustomParamProps {
   param: IBasicFormParam2;
   handleBasicFormParamChange: (
