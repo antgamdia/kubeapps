@@ -3,11 +3,12 @@
 
 import { CdsControlMessage } from "@cds/react/forms";
 import { CdsInput } from "@cds/react/input";
+import { CdsSelect } from "@cds/react/select";
 import { CdsTextarea } from "@cds/react/textarea";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
+import _ from "lodash";
 import { useState } from "react";
-// import { IAjvValidateResult, validate } from "shared/schema";
 import { basicFormsDebounceTime } from "shared/utils";
 import { IBasicFormParam2 } from "./TabularSchemaEditorTable/tempType";
 
@@ -32,8 +33,8 @@ function getStringValue(param: IBasicFormParam2, value?: any) {
 function TextParam2(props: ITextParamProps) {
   const { id, label, inputType, param, handleBasicFormParamChange } = props;
 
-  const [currentValue, setCurrentValue] = useState(getStringValue(param));
   // const [validated, setValidated] = useState<IAjvValidateResult>();
+  const [currentValue, setCurrentValue] = useState(getStringValue(param));
   const [isValueModified, setIsValueModified] = useState(false);
   const [timeout, setThisTimeout] = useState({} as NodeJS.Timeout);
 
@@ -57,6 +58,8 @@ function TextParam2(props: ITextParamProps) {
     setThisTimeout(setTimeout(() => func(targetCopy), basicFormsDebounceTime));
   };
 
+  const unsavedMessage = isValueModified ? "Unsaved" : "";
+
   let input = (
     <>
       <CdsInput>
@@ -65,11 +68,12 @@ function TextParam2(props: ITextParamProps) {
         </label>
         <input id={id} type={inputType ?? "text"} value={currentValue} onChange={onChange} />
         {/* TODO(agamez): validate the value */}
-        {/* {!validated?.valid ? ( */}
-        {/* <CdsControlMessage status="error">{JSON.stringify(validated?.errors)}</CdsControlMessage> */}
-        {/* ) : ( */}
-        <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
-        {/* )} */}
+        {/* {!validated?.valid && !_.isEmpty(validated?.errors) && (
+          <CdsControlMessage status="error">
+            {validated?.errors?.map(e => e.message).join(", ")}
+          </CdsControlMessage>
+        )} */}
+        <CdsControlMessage>{unsavedMessage}</CdsControlMessage>
       </CdsInput>
     </>
   );
@@ -81,34 +85,37 @@ function TextParam2(props: ITextParamProps) {
         </label>
         <textarea id={id} value={currentValue} onChange={onChange} />
         {/* TODO(agamez): validate the value */}
-        {/* {!validated?.valid ? (
-          <CdsControlMessage status="error">{JSON.stringify(validated?.errors)}</CdsControlMessage>
-        ) : ( */}
-        <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
-        {/* )} */}
+        {/* {!validated?.valid && (
+          <CdsControlMessage status="error">
+            {validated?.errors?.map(e => e.message).join(", ")}
+          </CdsControlMessage>
+        )} */}
+        <CdsControlMessage>{unsavedMessage}</CdsControlMessage>
       </CdsTextarea>
     );
+  } else if (!_.isEmpty(param.enum)) {
+    input = (
+      <>
+        <CdsSelect layout="horizontal">
+          <label htmlFor={id} className="hidden">
+            {label}
+          </label>
+          <select id={id} onChange={onChange} value={currentValue}>
+            {param?.enum?.map((enumValue: any) => (
+              <option key={enumValue}>{enumValue}</option>
+            ))}
+          </select>
+          {/* TODO(agamez): validate the value */}
+          {/* {!validated?.valid && (
+            <CdsControlMessage status="error">
+              {validated?.errors?.map(e => e.message).join(", ")}
+            </CdsControlMessage>
+          )} */}
+          <CdsControlMessage>{unsavedMessage}</CdsControlMessage>
+        </CdsSelect>
+      </>
+    );
   }
-  //TODO(agamez): check this case
-  //  else if (!_.isEmpty(param.enum)) {
-  //   input = (
-  //     <>
-  //       <label htmlFor={id}>{label}</label>
-  //       <input
-  //         id={id}
-  //         onChange={onChange}
-  //         value={value}
-  //         className="clr-input deployment-form-text-input"
-  //         type={inputType ? inputType : "text"}
-  //       />
-  //       <select id={id} onChange={handleBasicFormParamChange(param)} value={param.currentValue}>
-  //         {param.enum.map((enumValue: any) => (
-  //           <option key={enumValue}>{enumValue}</option>
-  //         ))}
-  //       </select>
-  //     </>
-  //   );
-  // }
   return (
     <Row>
       <Column span={10}>{input}</Column>

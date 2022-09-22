@@ -1,7 +1,10 @@
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
+import _ from "lodash";
 import ReactTooltip from "react-tooltip";
+import ArrayParam2 from "../ArrayParam2";
 import BooleanParam2 from "../BooleanParam2";
+import CustomFormComponentLoader2 from "../CustomFormParam2";
 import SliderParam2 from "../SliderParam2";
 import TextParam2 from "../TextParam2";
 import { IBasicFormParam2 } from "./tempType";
@@ -15,6 +18,7 @@ function renderCellWithTooltip(
   trimFromBeginning = false,
   maxLength = MAX_LENGTH,
 ) {
+  // If the value is an object/array, we need to stringify it
   const stringValue = ["string", "number"].includes(typeof value?.[property])
     ? value?.[property] || ""
     : JSON.stringify(value?.[property]);
@@ -51,7 +55,7 @@ export function renderConfigKeyHeader(table: any, _saveAllChanges: any) {
             action="flat"
             status="primary"
             size="sm"
-            style={{ marginLeft: "-0.75em", marginRight: "-0.75em" }}
+            className="table-button"
           >
             {table.getIsAllRowsExpanded() ? (
               <CdsIcon shape="minus" size="sm" solid={true} />
@@ -69,33 +73,35 @@ export function renderConfigKeyHeader(table: any, _saveAllChanges: any) {
 export function renderConfigKey(value: IBasicFormParam2, row: any, _saveAllChanges: any) {
   return (
     <div
+      className="left-algin self-center"
       style={{
         paddingLeft: `${row.depth * 0.5}rem`,
-        textAlign: "left",
       }}
     >
       <>
-        <CdsButton
-          title={row.getIsExpanded() ? "Collapse" : "Expand"}
-          type="button"
-          onClick={row.getToggleExpandedHandler()}
-          action="flat"
-          status="primary"
-          size="sm"
-          disabled={!row.getCanExpand()}
-          style={{ marginLeft: "-0.75em", marginRight: "-0.75em" }}
-        >
-          {row.getCanExpand() ? (
-            row.getIsExpanded() ? (
-              <CdsIcon shape="minus" size="sm" solid={true} />
+        <div style={{ display: "inline-flex" }}>
+          <CdsButton
+            title={row.getIsExpanded() ? "Collapse" : "Expand"}
+            type="button"
+            onClick={row.getToggleExpandedHandler()}
+            action="flat"
+            status="primary"
+            size="sm"
+            disabled={!row.getCanExpand()}
+            className="table-button"
+          >
+            {row.getCanExpand() ? (
+              row.getIsExpanded() ? (
+                <CdsIcon shape="minus" size="sm" solid={true} />
+              ) : (
+                <CdsIcon shape="plus" size="sm" solid={true} />
+              )
             ) : (
-              <CdsIcon shape="plus" size="sm" solid={true} />
-            )
-          ) : (
-            <></>
-          )}
-        </CdsButton>
-        {renderCellWithTooltip(value, "key", "breakable", true, MAX_LENGTH / 1.5)}
+              <></>
+            )}
+          </CdsButton>
+          {renderCellWithTooltip(value, "key", "breakable self-center", true, MAX_LENGTH / 1.5)}
+        </div>
       </>
     </div>
   );
@@ -123,41 +129,74 @@ export function renderConfigCurrentValuePro(
     p: IBasicFormParam2,
   ) => (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void,
 ) {
-  if (!param.hasProperties) {
-    // TODO(agamez): add custom input for objects an arrays
+  // early return if the value is marked as a custom form component
+  if (param.isCustomComponent) {
+    // TODO(agamez): consider using a modal window to display the full value
     return (
-      <>
-        {["boolean"].includes(param?.type) && (
-          <BooleanParam2
+      <div id={param.key}>
+        <CustomFormComponentLoader2
+          param={param}
+          handleBasicFormParamChange={handleBasicFormParamChange}
+        />
+      </div>
+    );
+  }
+  // if the param has properties, each of them will be rendered as a row
+  if (!_.isEmpty(param.hasProperties)) {
+    return <></>;
+  }
+
+  // if it isn't a custom component or an with more properties, render an input
+  switch (param.type) {
+    case "string":
+      return (
+        <TextParam2
+          id={param.key}
+          label={param.title || param.path}
+          param={param}
+          inputType={param.title.includes("password") ? "password" : "string"}
+          handleBasicFormParamChange={handleBasicFormParamChange}
+        />
+      );
+
+    case "boolean":
+      return (
+        <BooleanParam2
+          id={param.key}
+          label={param.title || param.path}
+          param={param}
+          handleBasicFormParamChange={handleBasicFormParamChange}
+        />
+      );
+
+    case "integer":
+    case "number":
+      return (
+        <SliderParam2
+          id={param.key}
+          label={param.title || param.path}
+          param={param}
+          handleBasicFormParamChange={handleBasicFormParamChange}
+          min={param.minimum || 1}
+          max={param.maximum || 1000}
+          step={param.type === "integer" ? 1 : 0.1}
+          unit={""}
+        />
+      );
+    case "array":
+      if (["string", "number", "integer", "boolean"].includes(param?.schema?.items?.type)) {
+        return (
+          <ArrayParam2
             id={param.key}
             label={param.title || param.path}
             param={param}
             handleBasicFormParamChange={handleBasicFormParamChange}
+            type={param?.schema?.items?.type}
           />
-        )}
-        {["integer", "number"].includes(param?.type) && (
-          <SliderParam2
-            id={param.key}
-            label={param.title || param.path}
-            param={param}
-            handleBasicFormParamChange={handleBasicFormParamChange}
-            min={param.minimum || 1}
-            max={param.maximum || 1000}
-            step={1}
-            unit={""}
-          />
-        )}
-        {["string"].includes(param?.type) && (
-          <TextParam2
-            id={param.key}
-            label={param.title || param.path}
-            param={param}
-            inputType={param.title.includes("password") ? "password" : "string"}
-            handleBasicFormParamChange={handleBasicFormParamChange}
-          />
-        )}
-        {/* TODO(agamez): handle objects and arrays properly */}
-        {["array", "object"].includes(param?.type) && (
+        );
+      } else {
+        // TODO(agamez): render the object properties
+        return (
           <TextParam2
             id={param.key}
             label={param.title || param.path}
@@ -165,10 +204,17 @@ export function renderConfigCurrentValuePro(
             inputType={"textarea"}
             handleBasicFormParamChange={handleBasicFormParamChange}
           />
-        )}
-      </>
-    );
-  } else {
-    return <></>;
+        );
+      }
+    default:
+      return (
+        <TextParam2
+          id={param.key}
+          label={param.title || param.path}
+          param={param}
+          inputType={"textarea"}
+          handleBasicFormParamChange={handleBasicFormParamChange}
+        />
+      );
   }
 }

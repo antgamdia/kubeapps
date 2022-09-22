@@ -6,40 +6,10 @@ export type IBasicFormParam2 = JSONSchemaType<any> & {
   title: string;
   hasProperties: boolean;
   params?: IBasicFormParam2[];
+  enum?: string[];
   defaultValue: any;
   deployedValue: any;
   currentValue: any;
   schema: JSONSchemaType<any>;
-  // TODO(agamez): support custom components again
-  // customComponent?: object;
-
-  // type: JSONSchemaBasicType;
-  // description: string;
-  // hasProperties: boolean;
-  // enum?: string[];
-
-  // OLD
-  // path: string;
-  // type?: "string" | "number" | "integer" | "boolean" | "object" | "array" | "null" | "any"; // https://json-schema.org/understanding-json-schema/reference/type.html
-  // value?: any;
-  // title?: string;
-  // minimum?: number;
-  // maximum?: number;
-  // render?: string;
-  // description?: string;
-  // enum?: string[];
-  // hidden?:
-  //   | {
-  //       event: DeploymentEvent;
-  //       path: string;
-  //       value: string;
-  //       conditions: Array<{
-  //         event: DeploymentEvent;
-  //         path: string;
-  //         value: string;
-  //       }>;
-  //       operator: string;
-  //     }
-  //   | string;
-  // children?: IBasicFormParam2[];
+  isCustomComponent?: boolean;
 };

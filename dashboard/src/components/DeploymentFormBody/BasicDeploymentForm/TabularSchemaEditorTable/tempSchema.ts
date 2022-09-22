@@ -5,6 +5,8 @@ import { DeploymentEvent } from "shared/types";
 import YAML from "yaml";
 import { IBasicFormParam2 } from "./tempType";
 
+const IS_CUSTOM_COMPONENT_PROP_NAME = "x-is-custom-component";
+
 export function extractParamsFromSchema(
   currentValues: YAML.Document.Parsed<YAML.ParsedNode>,
   packageValues: YAML.Document.Parsed<YAML.ParsedNode>,
@@ -40,6 +42,7 @@ export function extractParamsFromSchema(
               `${itemPath}/`,
             )
           : undefined,
+        enum: schemaProperty?.enum?.map((item: { toString: () => any }) => item?.toString() ?? ""),
         // If exists, the value that is currently deployed
         deployedValue: isLeaf ? (isUpgrading ? getValueeeee(deployedValues, itemPath) : "") : "",
         // The default is the value comming from the package values or the one defined in the schema,
@@ -51,8 +54,8 @@ export function extractParamsFromSchema(
         currentValue: isLeaf
           ? getValueeeeeWithDefault(currentValues, itemPath, schemaProperty.default)
           : "",
-        // TODO(agamez): support custom components again
-        // customComponent: schemaProperty.customComponent,
+        isCustomComponent:
+          schemaProperty?.customComponent || schemaProperty?.[IS_CUSTOM_COMPONENT_PROP_NAME],
       };
       params = params.concat(param);
 
