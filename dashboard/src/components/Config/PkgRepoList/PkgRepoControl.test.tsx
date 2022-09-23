@@ -8,7 +8,7 @@ import { PackageRepositorySummary } from "gen/kubeappsapis/core/packages/v1alpha
 import { act } from "react-dom/test-utils";
 import * as ReactRedux from "react-redux";
 import { defaultStore, mountWrapper } from "shared/specs/mountWrapper";
-import { PkgRepoAddButton } from "./PkgRepoButton";
+import { PkgRepoAddButton } from "./PkgRepoAddButton";
 import { IPkgRepoListItemProps, PkgRepoControl } from "./PkgRepoControl";
 
 let spyOnUseDispatch: jest.SpyInstance;

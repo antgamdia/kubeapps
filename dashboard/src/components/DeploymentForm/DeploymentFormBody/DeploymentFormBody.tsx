@@ -18,10 +18,9 @@ import BasicDeploymentForm from "./BasicDeploymentForm/BasicDeploymentForm";
 import {
   extractParamsFromSchema,
   parseToYAMLNodes,
-  setValueee,
   updateCurrentConfigByKey,
+  setValueee,
 } from "./BasicDeploymentForm/TabularSchemaEditorTable/tempSchema";
-
 export interface IDeploymentFormBodyProps {
   deploymentEvent: DeploymentEvent;
   packageId: string;

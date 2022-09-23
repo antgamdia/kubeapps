@@ -3,13 +3,13 @@
 
 import { CdsButton } from "@cds/react/button";
 import { CdsIcon } from "@cds/react/icon";
+import ConfirmDialog from "components/ConfirmDialog";
 import Alert from "components/js/Alert";
+import LoadingWrapper from "components/LoadingWrapper";
 import Tabs from "components/Tabs";
 import * as yaml from "js-yaml";
 import { useEffect, useState } from "react";
 import { IResource } from "shared/types";
-import ConfirmDialog from "../../ConfirmDialog/ConfirmDialog";
-import LoadingWrapper from "../../LoadingWrapper";
 import OperatorAdvancedDeploymentForm from "./OperatorAdvancedDeploymentForm/OperatorAdvancedDeploymentForm";
 
 export interface IOperatorInstanceFormProps {

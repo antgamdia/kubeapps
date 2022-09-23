@@ -3,12 +3,12 @@
 
 import { CdsIcon } from "@cds/react/icon";
 import Alert from "components/js/Alert";
+import LoadingWrapper from "components/LoadingWrapper";
+import HeadingRenderer from "components/MarkdownRenderer/HeadingRenderer";
+import LinkRenderer from "components/MarkdownRenderer/LinkRenderer";
+import TableRenderer from "components/MarkdownRenderer/TableRenderer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
-import HeadingRenderer from "../MarkdownRenderer/HeadingRenderer";
-import LinkRenderer from "../MarkdownRenderer/LinkRenderer";
-import TableRenderer from "../MarkdownRenderer/TableRenderer";
 
 interface IPackageReadmeProps {
   error?: string;

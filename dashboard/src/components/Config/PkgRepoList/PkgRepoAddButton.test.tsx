@@ -9,7 +9,7 @@ import { PackageRepositoryReference } from "gen/kubeappsapis/core/packages/v1alp
 import { act } from "react-dom/test-utils";
 import * as ReactRedux from "react-redux";
 import { defaultStore, mountWrapper } from "shared/specs/mountWrapper";
-import { IPkgRepoAddButtonProps, PkgRepoAddButton } from "./PkgRepoButton";
+import { IPkgRepoAddButtonProps, PkgRepoAddButton } from "./PkgRepoAddButton";
 import { PkgRepoForm } from "./PkgRepoForm";
 
 // Mocking PkgRepoForm to easily test this component standalone

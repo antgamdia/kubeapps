@@ -11,7 +11,7 @@ import { MonacoDiffEditor } from "react-monaco-editor";
 import { defaultStore, mountWrapper } from "shared/specs/mountWrapper";
 import { IPackageState } from "shared/types";
 import BasicDeploymentForm from "./BasicDeploymentForm";
-import DeploymenetFormBody, { IDeploymentFormBodyProps } from "./DeploymentFormBody";
+import DeploymentFormBody, { IDeploymentFormBodyProps } from "./DeploymentFormBody";
 
 const defaultProps: IDeploymentFormBodyProps = {
   deploymentEvent: "install",
@@ -51,7 +51,7 @@ c: d
 
   const wrapper = mountWrapper(
     defaultStore,
-    <DeploymenetFormBody {...defaultProps} selected={selected} />,
+    <DeploymentFormBody {...defaultProps} selected={selected} />,
   );
   expect(wrapper.find(MonacoDiffEditor).prop("defaultValues")).toBe(oldValues);
 
