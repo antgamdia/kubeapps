@@ -29,8 +29,23 @@ function getStringValue(param: IBasicFormParam2, value?: any) {
     return value?.toString() || param?.currentValue?.toString();
   }
 }
+function getValueFromString(param: IBasicFormParam2, value: any) {
+  if (["array", "object"].includes(param?.type)) {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return value?.toString();
+    }
+  } else {
+    return value?.toString();
+  }
+}
 
-function TextParam2(props: ITextParamProps) {
+function toStringValue(value: any) {
+  return JSON.stringify(value.toString());
+}
+
+export default function TextParam2(props: ITextParamProps) {
   const { id, label, inputType, param, handleBasicFormParamChange } = props;
 
   // const [validated, setValidated] = useState<IAjvValidateResult>();
@@ -44,14 +59,16 @@ function TextParam2(props: ITextParamProps) {
     // TODO(agamez): validate the value
     // setValidated(validate(e.currentTarget.value, param.schema));
     setCurrentValue(e.currentTarget.value);
-    setIsValueModified(e.currentTarget.value !== param.currentValue);
+    setIsValueModified(
+      JSON.stringify(e.currentTarget.value) !== JSON.stringify(param.currentValue.toString()),
+    );
     // Gather changes before submitting
     clearTimeout(timeout);
     const func = handleBasicFormParamChange(param);
     // The reference to target get lost, so we need to keep a copy
     const targetCopy = {
       currentTarget: {
-        value: e.currentTarget.value,
+        value: getValueFromString(param, e.currentTarget.value),
         type: e.currentTarget.type,
       },
     } as React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
@@ -59,10 +76,17 @@ function TextParam2(props: ITextParamProps) {
   };
 
   const unsavedMessage = isValueModified ? "Unsaved" : "";
+  const isDiffCurrentVsDefault =
+    toStringValue(param.currentValue) !== toStringValue(param.defaultValue);
+  const isDiffCurrentVsDeployed =
+    toStringValue(param.currentValue) !== toStringValue(param.defaultValue.toString());
+  const isModified =
+    isValueModified ||
+    (isDiffCurrentVsDefault && (!param.deployedValue || isDiffCurrentVsDeployed));
 
   let input = (
     <>
-      <CdsInput>
+      <CdsInput className={isModified ? "bolder" : ""}>
         <input
           aria-label={label}
           id={id}
@@ -82,7 +106,7 @@ function TextParam2(props: ITextParamProps) {
   );
   if (inputType === "textarea") {
     input = (
-      <CdsTextarea>
+      <CdsTextarea className={isModified ? "bolder" : ""}>
         <textarea aria-label={label} id={id} value={currentValue} onChange={onChange} />
         {/* TODO(agamez): validate the value */}
         {/* {!validated?.valid && (
@@ -96,7 +120,7 @@ function TextParam2(props: ITextParamProps) {
   } else if (!_.isEmpty(param.enum)) {
     input = (
       <>
-        <CdsSelect layout="horizontal">
+        <CdsSelect layout="horizontal" className={isModified ? "bolder" : ""}>
           <select aria-label={label} id={id} onChange={onChange} value={currentValue}>
             {param?.enum?.map((enumValue: any) => (
               <option key={enumValue}>{enumValue}</option>
@@ -113,11 +137,10 @@ function TextParam2(props: ITextParamProps) {
       </>
     );
   }
+
   return (
     <Row>
       <Column span={10}>{input}</Column>
     </Row>
   );
 }
-
-export default TextParam2;

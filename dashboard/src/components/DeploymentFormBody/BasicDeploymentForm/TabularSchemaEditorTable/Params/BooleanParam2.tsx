@@ -36,9 +36,16 @@ export default function BooleanParam2(props: IBooleanParamProps) {
     handleBasicFormParamChange(param)(event);
   };
 
+  const unsavedMessage = isValueModified ? "Unsaved" : "";
+
+  const isModified =
+    isValueModified ||
+    (param.currentValue !== param.defaultValue && param.currentValue !== param.deployedValue);
+
   const input = (
-    <CdsToggleGroup className="flex-v-center">
-      <CdsToggle>
+    <CdsToggleGroup id={id + "_group"}>
+      <label htmlFor={id + "_group"}>{""}</label>
+      <CdsToggle className={isModified ? "cosa" : ""}>
         <input
           aria-label={label}
           id={id}
@@ -46,8 +53,11 @@ export default function BooleanParam2(props: IBooleanParamProps) {
           onChange={onChange}
           checked={currentValue}
         />
-        <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
+        <CdsControlMessage className={isModified ? "italics" : ""}>
+          {currentValue ? "true" : "false"}
+        </CdsControlMessage>
       </CdsToggle>
+      <CdsControlMessage>{unsavedMessage}</CdsControlMessage>
     </CdsToggleGroup>
   );
 

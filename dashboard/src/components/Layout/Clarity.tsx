@@ -41,6 +41,7 @@ import {
   windowCloseIcon,
 } from "@cds/core/icon";
 import "@cds/core/accordion/register.js";
+import "@cds/core/badge/register.js";
 import "@cds/core/checkbox/register.js";
 import "@cds/core/icon/register.js";
 import "@cds/core/range/register.js";

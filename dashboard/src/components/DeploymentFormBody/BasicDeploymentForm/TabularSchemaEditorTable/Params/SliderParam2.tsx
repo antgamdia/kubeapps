@@ -11,7 +11,7 @@ import { useState } from "react";
 import { IBasicFormParam2 } from "shared/types";
 import { basicFormsDebounceTime } from "shared/utils";
 
-export interface ISliderParamProps {
+interface ISliderParamProps {
   id: string;
   label: string;
   param: IBasicFormParam2;
@@ -24,7 +24,7 @@ export interface ISliderParamProps {
   ) => (e: React.FormEvent<HTMLInputElement>) => void;
 }
 
-function SliderParam2(props: ISliderParamProps) {
+export default function SliderParam2(props: ISliderParamProps) {
   const { handleBasicFormParamChange, id, label, max, min, param, step } = props;
 
   const [currentValue, setCurrentValue] = useState(_.toNumber(param.currentValue) || min);
@@ -47,6 +47,11 @@ function SliderParam2(props: ISliderParamProps) {
     setThisTimeout(setTimeout(() => func(targetCopy), basicFormsDebounceTime));
   };
 
+  const unsavedMessage = isValueModified ? "Unsaved" : "";
+  const isModified =
+    isValueModified ||
+    (param.currentValue !== param.defaultValue && param.currentValue !== param.deployedValue);
+
   const input = (
     <CdsRange>
       <input
@@ -58,13 +63,13 @@ function SliderParam2(props: ISliderParamProps) {
         onChange={onChange}
         value={currentValue}
       />
-      <CdsControlMessage>{isValueModified ? "Unsaved" : ""}</CdsControlMessage>
+      <CdsControlMessage>{unsavedMessage}</CdsControlMessage>
     </CdsRange>
   );
 
   const inputText = (
     <div className="self-center">
-      <CdsInput>
+      <CdsInput className={isModified ? "bolder" : ""}>
         <input
           aria-label={label}
           id={id + "_text"}
@@ -79,10 +84,8 @@ function SliderParam2(props: ISliderParamProps) {
 
   return (
     <Row>
-      <Column span={3}>{inputText}</Column>
-      <Column span={7}>{input}</Column>
+      <Column span={4}>{inputText}</Column>
+      <Column span={6}>{input}</Column>
     </Row>
   );
 }
-
-export default SliderParam2;

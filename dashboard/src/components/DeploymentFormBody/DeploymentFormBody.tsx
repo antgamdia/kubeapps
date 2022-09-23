@@ -297,8 +297,20 @@ function DeploymentFormBody({
       />
       <div className="deployment-form-tabs">
         <Tabs columns={tabColumns} data={tabData} id="deployment-form-body-tabs" />
+        {/* eslint-disable jsx-a11y/anchor-is-valid */}
         <CdsControlMessage>
-          The unsaved changes will be applied before deploying or visualizing the diff view.
+          The unsaved changes will automatically be applied before deploying or when visualizing the
+          diff view. You can also{" "}
+          <a
+            href="#"
+            role="button"
+            tabIndex={0}
+            onClick={saveAllChanges}
+            onKeyDown={saveAllChanges}
+          >
+            save the changes manually
+          </a>
+          .
         </CdsControlMessage>
       </div>
       <div className="deployment-form-control-buttons">
