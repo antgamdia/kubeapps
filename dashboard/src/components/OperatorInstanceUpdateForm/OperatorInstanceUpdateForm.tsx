@@ -17,7 +17,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { IClusterServiceVersionCRD, IResource, IStoreState } from "shared/types";
 import * as url from "shared/url";
 import placeholder from "icons/placeholder.svg";
-import OperatorInstanceFormBody from "../OperatorInstanceFormBody/OperatorInstanceFormBody";
+import OperatorInstanceFormBody from "../OperatorInstanceForm/OperatorInstanceFormBody/OperatorInstanceFormBody";
 
 export interface IOperatorInstanceUpgradeFormProps {
   csvName: string;

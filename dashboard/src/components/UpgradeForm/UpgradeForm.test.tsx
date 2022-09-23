@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import actions from "actions";
-import DeploymentFormBody from "components/DeploymentFormBody/DeploymentFormBody";
+import DeploymentFormBody from "components/DeploymentForm/DeploymentFormBody";
 import Alert from "components/js/Alert";
 import LoadingWrapper from "components/LoadingWrapper/LoadingWrapper";
 import PackageHeader from "components/PackageHeader/PackageHeader";

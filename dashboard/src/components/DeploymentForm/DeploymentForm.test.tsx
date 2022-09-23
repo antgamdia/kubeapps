@@ -22,8 +22,8 @@ import { MemoryRouter, Route, Router } from "react-router-dom";
 import { Kube } from "shared/Kube";
 import { getStore, mountWrapper } from "shared/specs/mountWrapper";
 import { FetchError, IStoreState, PluginNames } from "shared/types";
-import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
 import DeploymentForm from "./DeploymentForm";
+import DeploymentFormBody from "./DeploymentFormBody";
 
 const defaultProps = {
   pkgName: "foo",

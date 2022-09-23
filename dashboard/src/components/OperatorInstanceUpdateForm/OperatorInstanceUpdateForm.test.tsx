@@ -3,7 +3,7 @@
 
 import actions from "actions";
 import Alert from "components/js/Alert";
-import OperatorInstanceFormBody from "components/OperatorInstanceFormBody/OperatorInstanceFormBody";
+import OperatorInstanceFormBody from "components/OperatorInstanceForm/OperatorInstanceFormBody/OperatorInstanceFormBody";
 import OperatorHeader from "components/OperatorView/OperatorHeader";
 import * as ReactRedux from "react-redux";
 import { defaultStore, getStore, initialState, mountWrapper } from "shared/specs/mountWrapper";

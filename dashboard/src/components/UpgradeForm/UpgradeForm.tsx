@@ -4,6 +4,7 @@
 import { CdsFormGroup } from "@cds/react/forms";
 import actions from "actions";
 import AvailablePackageDetailExcerpt from "components/Catalog/AvailablePackageDetailExcerpt";
+import DeploymentFormBody from "components/DeploymentForm/DeploymentFormBody";
 import Alert from "components/js/Alert";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
@@ -19,7 +20,6 @@ import { ThunkDispatch } from "redux-thunk";
 import { deleteValue, setValue } from "../../shared/schema";
 import { IStoreState } from "../../shared/types";
 import * as url from "../../shared/url";
-import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
 import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
 
 export interface IUpgradeFormProps {

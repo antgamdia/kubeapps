@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import actions from "actions";
-import AdvancedDeploymentForm from "components/DeploymentFormBody/AdvancedDeploymentForm";
+import AdvancedDeploymentForm from "components/DeploymentForm/DeploymentFormBody/AdvancedDeploymentForm";
 import Alert from "components/js/Alert";
-import OperatorInstanceFormBody from "components/OperatorInstanceFormBody/OperatorInstanceFormBody";
+import OperatorInstanceFormBody from "components/OperatorInstanceForm/OperatorInstanceFormBody/OperatorInstanceFormBody";
 import OperatorHeader from "components/OperatorView/OperatorHeader";
 import { act } from "react-dom/test-utils";
 import * as ReactRedux from "react-redux";

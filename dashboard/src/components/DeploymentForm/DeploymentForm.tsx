@@ -10,6 +10,7 @@ import AvailablePackageDetailExcerpt from "components/Catalog/AvailablePackageDe
 import Alert from "components/js/Alert";
 import Column from "components/js/Column";
 import Row from "components/js/Row";
+import LoadingWrapper from "components/LoadingWrapper";
 import PackageHeader from "components/PackageHeader/PackageHeader";
 import { push } from "connected-react-router";
 import {
@@ -27,8 +28,7 @@ import { Kube } from "shared/Kube";
 import { FetchError, IStoreState } from "shared/types";
 import * as url from "shared/url";
 import { getPluginsRequiringSA, k8sObjectNameRegex } from "shared/utils";
-import DeploymentFormBody from "../DeploymentFormBody/DeploymentFormBody";
-import LoadingWrapper from "../LoadingWrapper/LoadingWrapper";
+import DeploymentFormBody from "./DeploymentFormBody";
 interface IRouteParams {
   cluster: string;
   namespace: string;
