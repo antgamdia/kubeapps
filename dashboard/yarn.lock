@@ -10891,10 +10891,10 @@ protobufjs@^6.11.3, protobufjs@^6.8.8:
     "@types/node" ">=13.7.0"
     long "^4.0.0"
 
-protobufjs@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.1.1.tgz#0117befb4b0f5a49d028e93f2ca62c3c1f5e7c65"
-  integrity sha512-d0nMQqS/aT3lfV8bKi9Gbg73vPd2LcDdTDOu6RE/M+h9DY8g1EmDzk3ADPccthEWfTBjkR2oxNdx9Gs8YubT+g==
+protobufjs@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.1.2.tgz#a0cf6aeaf82f5625bffcf5a38b7cd2a7de05890c"
+  integrity sha512-4ZPTPkXCdel3+L81yw3dG6+Kq3umdWKh7Dc7GW/CpNk4SX3hK58iPCWeCyhVTDrbkNeKrYNZ7EojM5WDaEWTLQ==
   dependencies:
     "@protobufjs/aspromise" "^1.1.2"
     "@protobufjs/base64" "^1.1.2"
@@ -11274,10 +11274,10 @@ react-minimal-pie-chart@^8.3.0:
   resolved "https://registry.yarnpkg.com/react-minimal-pie-chart/-/react-minimal-pie-chart-8.3.0.tgz#cf6de3d712ea07e87e404276cbb811143ca00682"
   integrity sha512-ICot74PGPrmGkaie8O+5tRZ5ivukYQ3fRN5ppvw1J01sIa5tHO9cekakyv9nXUkxKifiKn/FQu5uWHfSD39mRQ==
 
-react-redux@^7.2.4, react-redux@^7.2.8:
-  version "7.2.8"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.8.tgz#a894068315e65de5b1b68899f9c6ee0923dd28de"
-  integrity sha512-6+uDjhs3PSIclqoCk0kd6iX74gzrGc3W5zcAjbrFgEdIjRSQObdIwfx80unTkVUYvbQ95Y8Av3OvFHq1w5EOUw==
+react-redux@^7.2.4, react-redux@^7.2.9:
+  version "7.2.9"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.9.tgz#09488fbb9416a4efe3735b7235055442b042481d"
+  integrity sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==
   dependencies:
     "@babel/runtime" "^7.15.4"
     "@types/react-redux" "^7.1.20"
@@ -12985,10 +12985,10 @@ swagger-client@^3.18.5:
     traverse "~0.6.6"
     url "~0.11.0"
 
-swagger-ui-react@^4.14.0:
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/swagger-ui-react/-/swagger-ui-react-4.14.0.tgz#c1a26955d8481ad024eada6e1d59c44d0b061ab1"
-  integrity sha512-Yz3E5a5ujj2jqI4V+OELUjgs04uGNkJxbFLTe9KyrSs37yeMsyoDwLRGWuAAP6BRLhonJzLeZRTbnD2cK+iVew==
+swagger-ui-react@^4.14.1:
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/swagger-ui-react/-/swagger-ui-react-4.14.1.tgz#d4be27b07494f0c94212da8a289a7a6a122af078"
+  integrity sha512-aKduDkf9gZUHmkT2jIXtyxIhsfj7oarQkXF+54OYa1wtzgtMujKj4z55GqGPnLlS1gIjxtn2aDPNI5+936jmxQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.18.9"
     "@braintree/sanitize-url" "=6.0.0"
