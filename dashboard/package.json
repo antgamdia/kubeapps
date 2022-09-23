@@ -47,7 +47,7 @@
     "modern-normalize": "^1.1.0",
     "monaco-editor": "^0.34.0",
     "prop-types": "^15.8.1",
-    "protobufjs": "^7.1.1",
+    "protobufjs": "^7.1.2",
     "qs": "^6.11.0",
     "react": "^17.0.2",
     "react-ace": "^10.1.0",
@@ -74,7 +74,7 @@
     "remark-breaks": "^3.0.2",
     "remark-gfm": "^3.0.1",
     "rxjs": "^7.5.6",
-    "swagger-ui-react": "^4.14.0",
+    "swagger-ui-react": "^4.14.1",
     "typesafe-actions": "^5.1.0",
     "yaml": "^2.1.1"
   },
