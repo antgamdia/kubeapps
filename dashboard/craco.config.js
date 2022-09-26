@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const webpack = require("webpack");
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 module.exports = {
   webpack: {
@@ -18,7 +18,6 @@ module.exports = {
           process: "process/browser.js",
           Buffer: ["buffer", "Buffer"],
         }),
-        // available options are documented at https://github.com/microsoft/monaco-editor/blob/main/webpack-plugin/README.md#options
         new MonacoWebpackPlugin(),
       ],
       ignoreWarnings: [/Failed to parse source map/], // ignore source map warnings

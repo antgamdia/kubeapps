@@ -3,6 +3,7 @@
 
 import MonacoEditor from "react-monaco-editor";
 import { useSelector } from "react-redux";
+import { SupportedThemes } from "shared/Config";
 import { IStoreState } from "shared/types";
 import "./AppValues.css";
 
@@ -19,11 +20,11 @@ function AppValues(props: IAppValuesProps) {
   if (props.values !== "") {
     values = (
       <MonacoEditor
-        value={props.values}
+        language="yaml"
+        theme={theme === SupportedThemes.dark ? "vs-dark" : "light"}
         className="installation-values"
         height="50vh"
-        language="yaml"
-        theme={theme === "dark" ? "vs-dark" : "light"}
+        value={props.values}
         options={{
           automaticLayout: true,
           readOnly: true,
