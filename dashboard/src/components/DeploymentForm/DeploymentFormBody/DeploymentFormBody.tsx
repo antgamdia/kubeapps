@@ -189,7 +189,7 @@ function DeploymentFormBody({
 
   // The basic form should be rendered if there are params to show
   const shouldRenderBasicForm = (schema: any) => {
-    return !_.isEmpty(schema.properties);
+    return !_.isEmpty(schema?.properties);
   };
 
   const closeRestoreDefaultValuesModal = () => {

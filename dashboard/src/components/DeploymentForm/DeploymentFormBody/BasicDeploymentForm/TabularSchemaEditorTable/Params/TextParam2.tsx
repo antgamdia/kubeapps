@@ -42,7 +42,7 @@ function getValueFromString(param: IBasicFormParam2, value: any) {
 }
 
 function toStringValue(value: any) {
-  return JSON.stringify(value.toString());
+  return JSON.stringify(value?.toString() || "");
 }
 
 export default function TextParam2(props: ITextParamProps) {
@@ -59,9 +59,7 @@ export default function TextParam2(props: ITextParamProps) {
     // TODO(agamez): validate the value
     // setValidated(validate(e.currentTarget.value, param.schema));
     setCurrentValue(e.currentTarget.value);
-    setIsValueModified(
-      JSON.stringify(e.currentTarget.value) !== JSON.stringify(param.currentValue.toString()),
-    );
+    setIsValueModified(toStringValue(e.currentTarget.value) !== toStringValue(param.currentValue));
     // Gather changes before submitting
     clearTimeout(timeout);
     const func = handleBasicFormParamChange(param);
@@ -79,7 +77,7 @@ export default function TextParam2(props: ITextParamProps) {
   const isDiffCurrentVsDefault =
     toStringValue(param.currentValue) !== toStringValue(param.defaultValue);
   const isDiffCurrentVsDeployed =
-    toStringValue(param.currentValue) !== toStringValue(param.defaultValue.toString());
+    toStringValue(param.currentValue) !== toStringValue(param.defaultValue);
   const isModified =
     isValueModified ||
     (isDiffCurrentVsDefault && (!param.deployedValue || isDiffCurrentVsDeployed));

@@ -95,20 +95,24 @@ c: d
     defaultStore,
     <DeploymentFormBody {...defaultProps} selected={selected} />,
   );
-  expect(wrapper.find(MonacoDiffEditor).prop("defaultValues")).toBe(oldValues);
+  expect(wrapper.find(MonacoDiffEditor).prop("original")).toBe(oldValues);
 
   // Trigger a change in the basic form and a YAML parse
-  const input = wrapper.find(BasicDeploymentForm).find("input");
+  const input = wrapper
+    .find(BasicDeploymentForm)
+    .find("input")
+    .filterWhere(i => i.prop("id") === "a"); // the input for the property "a"
+
   act(() => {
     input.simulate("change", { currentTarget: "e" });
     jest.advanceTimersByTime(500);
   });
   wrapper.update();
 
-  // The original double empty line gets deleted
   const expectedValues = `a: b
+
 
 c: d
 `;
-  expect(wrapper.find(MonacoDiffEditor).prop("defaultValues")).toBe(expectedValues);
+  expect(wrapper.find(MonacoDiffEditor).prop("original")).toBe(expectedValues);
 });

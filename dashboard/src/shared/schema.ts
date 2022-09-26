@@ -27,7 +27,7 @@ export function retrieveBasicFormParams(
 ): IBasicFormParam[] {
   let params: IBasicFormParam[] = [];
 
-  if (schema && !_.isEmpty(schema?.properties)) {
+  if (schema?.properties && !_.isEmpty(schema.properties)) {
     const properties = schema.properties;
     Object.keys(properties).forEach(propertyKey => {
       // The param path is its parent path + the object key
