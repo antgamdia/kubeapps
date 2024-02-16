@@ -63,7 +63,7 @@
     "react-router-hash-link": "^2.4.3",
     "react-tooltip": "^5.26.2",
     "react-transition-group": "^4.4.5",
-    "redux": "^4.2.1",
+    "redux": "^5.0.1",
     "redux-thunk": "^2.4.2",
     "remark-breaks": "^3.0.3",
     "remark-gfm": "^3.0.1",
