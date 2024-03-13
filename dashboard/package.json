@@ -31,7 +31,7 @@
     "@cds/core": "^6.9.2",
     "@cds/react": "^6.9.2",
     "@clr/ui": "^17.0.1",
-    "@connectrpc/connect": "^1.2.0",
+    "@connectrpc/connect": "^1.4.0",
     "@connectrpc/connect-web": "^1.2.0",
     "@paciolan/remote-component": "^2.13.0",
     "@redux-devtools/extension": "^3.3.0",
