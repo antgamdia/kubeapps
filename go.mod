@@ -6,18 +6,18 @@ module github.com/vmware-tanzu/kubeapps
 go 1.22
 
 require (
-	carvel.dev/vendir v0.40.0
+	carvel.dev/vendir v0.40.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/adhocore/gronx v1.8.1
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/bufbuild/connect-go v1.10.0
 	github.com/bufbuild/connect-grpchealth-go v1.1.1
-	github.com/containerd/containerd v1.7.14
+	github.com/containerd/containerd v1.7.15
 	github.com/cppforlife/go-cli-ui v0.0.0-20220622150351-995494831c6c
 	github.com/disintegration/imaging v1.6.2
 	github.com/distribution/reference v0.6.0
-	github.com/docker/cli v26.0.0+incompatible
+	github.com/docker/cli v26.0.2+incompatible
 	github.com/fluxcd/helm-controller/api v0.37.4
 	github.com/fluxcd/pkg/apis/meta v1.4.0
 	github.com/fluxcd/pkg/oci v0.36.0
@@ -41,17 +41,16 @@ require (
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef
 	github.com/stretchr/testify v1.9.0
-	github.com/vmware-tanzu/carvel-kapp v0.60.0
-	github.com/vmware-tanzu/carvel-kapp-controller v0.50.2
-	github.com/vmware-tanzu/carvel-vendir v0.36.1
+	github.com/vmware-tanzu/carvel-kapp v0.61.0
+	github.com/vmware-tanzu/carvel-kapp-controller v0.51.0
 	golang.org/x/net v0.24.0
 	golang.org/x/sync v0.7.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda
-	google.golang.org/grpc v1.63.0
+	google.golang.org/grpc v1.63.2
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.3.0
 	google.golang.org/protobuf v1.33.0
 	gopkg.in/yaml.v3 v3.0.1
-	helm.sh/helm/v3 v3.14.3
+	helm.sh/helm/v3 v3.14.4
 	k8s.io/api v0.29.3
 	k8s.io/apiextensions-apiserver v0.29.3
 	k8s.io/apimachinery v0.29.3
@@ -63,7 +62,7 @@ require (
 	k8s.io/utils v0.0.0-20240310230437-4693a0247e57
 	oras.land/oras-go v1.2.5
 	oras.land/oras-go/v2 v2.5.0
-	sigs.k8s.io/controller-runtime v0.17.2
+	sigs.k8s.io/controller-runtime v0.17.3
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -96,7 +95,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.28.6 // indirect
 	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/carvel-dev/semver/v4 v4.0.1-0.20230221220520-8090ce423695 // indirect
+	github.com/carvel-dev/semver/v4 v4.0.1-0.20240402203627-beb83fbf25e4 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/containerd/log v0.1.0 // indirect
