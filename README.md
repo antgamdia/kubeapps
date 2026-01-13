@@ -5,6 +5,11 @@
 [![CodeQL](https://github.com/vmware-tanzu/kubeapps/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/vmware-tanzu/kubeapps/actions/workflows/codeql-scheduled.yml)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7e0e2833-1d75-43f6-b006-632d359bb83b/deploy-status)](https://app.netlify.com/sites/kubeapps-dev/deploys)
 
+> [!CAUTION]
+> After many years of growth and milestones, the time has come for the next chapter of Kubeapps. The current maintainers are concentrating their efforts on new projects. As of August 25th, 2025, the project has been deprecated and the repository archived. If a widely adopted fork emerges, we will link to it here to guide users arriving at this repository.
+> 
+> The Kubeapps project has been forked by the SAP SE team. This team will continue the development and maintenance of the project so we strongly recommend users to use https://github.com/SAP/kubeapps.
+
 ## Overview
 
 Kubeapps is an in-cluster web-based application that enables users with a one-time installation to deploy, manage, and upgrade applications on a Kubernetes cluster.
@@ -25,9 +30,8 @@ With Kubeapps you can:
 Installing Kubeapps is as simple as:
 
 ```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
 kubectl create namespace kubeapps
-helm install kubeapps --namespace kubeapps bitnami/kubeapps
+helm install kubeapps --namespace kubeapps oci://registry-1.docker.io/bitnamicharts/kubeapps
 ```
 
 See the [Getting Started Guide](./site/content/docs/latest/tutorials/getting-started.md) for detailed instructions on how to install and use Kubeapps.

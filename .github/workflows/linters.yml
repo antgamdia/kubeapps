@@ -8,7 +8,11 @@ on:
       golang_version:
         type: string
         required: false
-        default: "1.22"
+        default: "1.23"
+      golangci_lint_version:
+        type: string
+        required: false
+        default: "1.61.0"
 
 jobs:
   yaml-linter:
@@ -33,9 +37,9 @@ jobs:
         with:
           go-version: ${{ inputs.golang_version }}
       - uses: actions/checkout@v4
-      - uses: golangci/golangci-lint-action@v4
+      - uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          version: ${{ inputs.golangci_lint_version }}
           args: --timeout=10m
 
   license-headers-linter:
@@ -46,4 +50,4 @@ jobs:
           go-version: ${{ inputs.golang_version }}
       - uses: actions/checkout@v4
       - name: Check license Headers
-        uses: apache/skywalking-eyes/header@v0.5.0
+        uses: apache/skywalking-eyes/header@v0.6.0
